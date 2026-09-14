@@ -1,13 +1,13 @@
 {
   "name": "memostem",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Connect AI clients to MemoStem's reviewed-knowledge MCP and add repository-aware maintenance skills.",
   "author": {
-    "name": "OkYongChoi",
-    "url": "https://github.com/OkYongChoi"
+    "name": "Girapphe",
+    "url": "https://github.com/girapphe"
   },
-  "homepage": "https://github.com/OkYongChoi/memostem-plugins",
-  "repository": "https://github.com/OkYongChoi/memostem-plugins",
+  "homepage": "https://github.com/girapphe/memostem-plugins",
+  "repository": "https://github.com/girapphe/memostem-plugins",
   "keywords": [
     "memostem",
     "mcp",
@@ -21,7 +21,7 @@
     "displayName": "MemoStem",
     "shortDescription": "Capture and maintain reviewed knowledge.",
     "longDescription": "Connect to MemoStem's remote MCP for reviewed knowledge capture and reuse, plus guarded skills for authorized source maintainers.",
-    "developerName": "OkYongChoi",
+    "developerName": "Girapphe",
     "category": "Developer Tools",
     "capabilities": [
       "Reviewed MCP knowledge capture",

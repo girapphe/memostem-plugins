@@ -25,7 +25,7 @@ GitHub, Cloudflare, Clerk, Neon, database, or app-store access.
 ## Install in Codex
 
 ```bash
-codex plugin marketplace add OkYongChoi/memostem-plugins --ref main
+codex plugin marketplace add girapphe/memostem-plugins --ref main
 codex plugin add memostem@memostem
 codex plugin list
 ```
@@ -44,7 +44,7 @@ codex plugin remove memostem@memostem
 ## Install in Claude Code
 
 ```bash
-claude plugin marketplace add OkYongChoi/memostem-plugins
+claude plugin marketplace add girapphe/memostem-plugins
 claude plugin install memostem@memostem
 claude plugin list
 ```

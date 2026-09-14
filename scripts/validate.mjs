@@ -28,6 +28,7 @@ const claudeMarketplace = await readJson('.claude-plugin/marketplace.json');
 const codexManifest = await readJson('plugins/memostem/.codex-plugin/plugin.json');
 const claudeManifest = await readJson('plugins/memostem/.claude-plugin/plugin.json');
 const mcp = await readJson('plugins/memostem/.mcp.json');
+const packageManifest = await readJson('package.json');
 
 assert.equal(codexMarketplace.name, 'memostem');
 assert.equal(codexMarketplace.interface.displayName, 'MemoStem');
@@ -46,10 +47,11 @@ assert.equal(claudeMarketplace.plugins.length, 1);
 assert.equal(claudeMarketplace.plugins[0].source, './plugins/memostem');
 
 assert.equal(codexManifest.name, 'memostem');
+assert.equal(packageManifest.version, codexManifest.version);
 assert.equal(codexManifest.skills, './skills/');
 assert.equal(codexManifest.mcpServers, './.mcp.json');
 assert.match(codexManifest.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/u);
-assert.equal(codexManifest.repository, 'https://github.com/OkYongChoi/memostem-plugins');
+assert.equal(codexManifest.repository, 'https://github.com/girapphe/memostem-plugins');
 assert.equal(codexManifest.homepage, codexManifest.repository);
 assert.equal(codexManifest.interface.websiteURL, 'https://www.memostem.com');
 assert.ok(Array.isArray(codexManifest.interface.defaultPrompt));

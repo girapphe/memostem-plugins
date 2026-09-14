@@ -1,7 +1,7 @@
 {
   "name": "memostem",
   "owner": {
-    "name": "OkYongChoi"
+    "name": "Girapphe"
   },
   "metadata": {
     "description": "Official AI-client integrations and repository workflows for MemoStem."
@@ -11,7 +11,7 @@
       "name": "memostem",
       "source": "./plugins/memostem",
       "description": "Connect AI clients to MemoStem's reviewed-knowledge MCP and add repository-aware maintenance skills.",
-      "version": "0.3.0"
+      "version": "0.3.1"
     }
   ]
 }
