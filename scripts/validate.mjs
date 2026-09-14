@@ -1,0 +1,134 @@
+import assert from 'node:assert/strict';
+import { lstat, readFile, readdir } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pluginRoot = path.join(root, 'plugins', 'memostem');
+const skillsRoot = path.join(pluginRoot, 'skills');
+
+async function readJson(relativePath) {
+  return JSON.parse(await readFile(path.join(root, relativePath), 'utf8'));
+}
+
+async function walk(directory) {
+  const files = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const absolute = path.join(directory, entry.name);
+    const metadata = await lstat(absolute);
+    assert.equal(metadata.isSymbolicLink(), false, `symlinks are not allowed: ${absolute}`);
+    if (entry.isDirectory()) files.push(...await walk(absolute));
+    else if (entry.isFile()) files.push(absolute);
+  }
+  return files;
+}
+
+const codexMarketplace = await readJson('.agents/plugins/marketplace.json');
+const claudeMarketplace = await readJson('.claude-plugin/marketplace.json');
+const codexManifest = await readJson('plugins/memostem/.codex-plugin/plugin.json');
+const claudeManifest = await readJson('plugins/memostem/.claude-plugin/plugin.json');
+const mcp = await readJson('plugins/memostem/.mcp.json');
+
+assert.equal(codexMarketplace.name, 'memostem');
+assert.equal(codexMarketplace.interface.displayName, 'MemoStem');
+assert.equal(codexMarketplace.plugins.length, 1);
+assert.deepEqual(codexMarketplace.plugins[0].source, {
+  source: 'local',
+  path: './plugins/memostem',
+});
+assert.deepEqual(codexMarketplace.plugins[0].policy, {
+  installation: 'AVAILABLE',
+  authentication: 'ON_INSTALL',
+});
+
+assert.equal(claudeMarketplace.name, 'memostem');
+assert.equal(claudeMarketplace.plugins.length, 1);
+assert.equal(claudeMarketplace.plugins[0].source, './plugins/memostem');
+
+assert.equal(codexManifest.name, 'memostem');
+assert.equal(codexManifest.skills, './skills/');
+assert.equal(codexManifest.mcpServers, './.mcp.json');
+assert.match(codexManifest.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/u);
+assert.equal(codexManifest.repository, 'https://github.com/OkYongChoi/memostem-plugins');
+assert.equal(codexManifest.homepage, codexManifest.repository);
+assert.equal(codexManifest.interface.websiteURL, 'https://www.memostem.com');
+assert.ok(Array.isArray(codexManifest.interface.defaultPrompt));
+assert.ok(codexManifest.interface.defaultPrompt.length <= 3);
+
+for (const field of [
+  'name',
+  'version',
+  'description',
+  'author',
+  'homepage',
+  'repository',
+  'keywords',
+]) {
+  assert.deepEqual(claudeManifest[field], codexManifest[field], `manifest drift: ${field}`);
+}
+assert.equal(claudeMarketplace.plugins[0].version, codexManifest.version);
+assert.equal(claudeMarketplace.plugins[0].description, codexManifest.description);
+
+assert.deepEqual(mcp, {
+  mcpServers: {
+    memostem: {
+      type: 'http',
+      url: 'https://www.memostem.com/api/mcp',
+    },
+  },
+});
+
+const expectedSkills = [
+  'memostem-card-hygiene',
+  'memostem-db-sync',
+  'memostem-knowledge-graph',
+  'memostem-protected-release',
+  'memostem-validation',
+];
+const skillDirectories = (await readdir(skillsRoot, { withFileTypes: true }))
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .sort();
+assert.deepEqual(skillDirectories, expectedSkills);
+
+for (const skill of expectedSkills) {
+  const source = await readFile(path.join(skillsRoot, skill, 'SKILL.md'), 'utf8');
+  assert.match(source, /^---\n[\s\S]*?\n---\n/u, `${skill} must have YAML frontmatter`);
+  assert.match(source, new RegExp(`^name: ${skill}$`, 'mu'), `${skill} name must match its directory`);
+  assert.match(source, /^description: .+$/mu, `${skill} must have a description`);
+}
+
+const publicFiles = await walk(root);
+const trackedCandidates = publicFiles.filter((file) => !file.includes(`${path.sep}.git${path.sep}`));
+const forbiddenRoots = [
+  'apps/',
+  'packages/',
+  'migrations/',
+  'drizzle/',
+  'schema.sql',
+];
+for (const file of trackedCandidates) {
+  const relative = path.relative(root, file).replaceAll('\\', '/');
+  assert.equal(
+    forbiddenRoots.some((prefix) => relative === prefix || relative.startsWith(prefix)),
+    false,
+    `private application path is not allowed: ${relative}`,
+  );
+}
+
+const secretPatterns = [
+  /-----BEGIN (?:RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----/u,
+  /\bgh[pousr]_[A-Za-z0-9]{20,}\b/u,
+  /\bsk-[A-Za-z0-9_-]{20,}\b/u,
+  /\bAKIA[0-9A-Z]{16}\b/u,
+  /\bmemostem_mcp_[A-Za-z0-9_-]{12,}\b/u,
+  /\b(?:DATABASE_URL|CLERK_SECRET_KEY|OPENAI_API_KEY)\s*=\s*[^$'"<\s][^\s]*/u,
+];
+for (const file of trackedCandidates) {
+  const source = await readFile(file, 'utf8');
+  for (const pattern of secretPatterns) {
+    assert.equal(pattern.test(source), false, `possible secret in ${path.relative(root, file)}`);
+  }
+}
+
+console.log('MemoStem public plugin boundary and manifests are valid.');

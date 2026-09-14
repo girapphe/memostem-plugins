@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "memostem": {
+      "type": "http",
+      "url": "https://www.memostem.com/api/mcp"
+    }
+  }
+}

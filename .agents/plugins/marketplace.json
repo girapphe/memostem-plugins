@@ -1,0 +1,20 @@
+{
+  "name": "memostem",
+  "interface": {
+    "displayName": "MemoStem"
+  },
+  "plugins": [
+    {
+      "name": "memostem",
+      "source": {
+        "source": "local",
+        "path": "./plugins/memostem"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

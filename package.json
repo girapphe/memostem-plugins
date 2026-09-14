@@ -1,0 +1,12 @@
+{
+  "name": "memostem-plugins",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Public distribution layer for MemoStem agent plugins, skills, and MCP connection metadata.",
+  "scripts": {
+    "check": "node scripts/validate.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "memostem",
+  "version": "0.3.0",
+  "description": "Connect AI clients to MemoStem's reviewed-knowledge MCP and add repository-aware maintenance skills.",
+  "author": {
+    "name": "OkYongChoi",
+    "url": "https://github.com/OkYongChoi"
+  },
+  "homepage": "https://github.com/OkYongChoi/memostem-plugins",
+  "repository": "https://github.com/OkYongChoi/memostem-plugins",
+  "keywords": [
+    "memostem",
+    "mcp",
+    "knowledge-graph",
+    "release",
+    "validation"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "MemoStem",
+    "shortDescription": "Capture and maintain reviewed knowledge.",
+    "longDescription": "Connect to MemoStem's remote MCP for reviewed knowledge capture and reuse, plus guarded skills for authorized source maintainers.",
+    "developerName": "OkYongChoi",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Reviewed MCP knowledge capture",
+      "Private knowledge recall",
+      "Repository maintenance and release validation"
+    ],
+    "websiteURL": "https://www.memostem.com",
+    "defaultPrompt": [
+      "Save selected ideas from this conversation to MemoStem for review.",
+      "Recall my approved MemoStem knowledge about this topic.",
+      "Validate this MemoStem source change through its protected release flow."
+    ]
+  }
+}
