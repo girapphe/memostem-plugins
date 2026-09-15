@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.girapphe/memostem",
   "title": "MemoStem",
-  "description": "Suggest reusable AI ideas, create private drafts only after consent, and reuse confirmed knowledge with review-first MCP.",
+  "description": "Suggest reusable AI knowledge, draft it after consent, and reuse reviewed context.",
   "repository": {
     "url": "https://github.com/girapphe/memostem-plugins",
     "source": "github"
   },
-  "version": "0.5.0",
+  "version": "0.5.1",
   "remotes": [
     {
       "type": "streamable-http",
