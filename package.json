@@ -1,6 +1,6 @@
 {
   "name": "memostem-plugins",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Suggest reusable AI-conversation knowledge and create private MemoStem drafts only after consent.",
   "scripts": {

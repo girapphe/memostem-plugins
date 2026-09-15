@@ -84,6 +84,11 @@ assert.deepEqual(mcp, {
 
 assert.equal(registryManifest.name, 'io.github.girapphe/memostem');
 assert.equal(registryManifest.title, 'MemoStem');
+assert.equal(typeof registryManifest.description, 'string');
+assert.ok(
+  registryManifest.description.length <= 100,
+  'MCP Registry description must be at most 100 characters',
+);
 assert.deepEqual(registryManifest.repository, {
   url: 'https://github.com/girapphe/memostem-plugins',
   source: 'github',
