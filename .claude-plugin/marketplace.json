@@ -4,14 +4,14 @@
     "name": "Girapphe"
   },
   "metadata": {
-    "description": "Official AI-client integrations and repository workflows for MemoStem."
+    "description": "Private, review-first knowledge capture and reuse for AI conversations."
   },
   "plugins": [
     {
       "name": "memostem",
       "source": "./plugins/memostem",
-      "description": "Connect AI clients to MemoStem's reviewed-knowledge MCP and add repository-aware maintenance skills.",
-      "version": "0.3.1"
+      "description": "Turn selected AI-conversation ideas into private, reviewable MemoStem knowledge and reuse confirmed context.",
+      "version": "0.4.0"
     }
   ]
 }

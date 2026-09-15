@@ -1,5 +1,10 @@
 # MemoStem MCP connection guide
 
+MemoStem is a review-first memory layer for AI conversations. It accepts only
+the concise material a person deliberately selects from the current
+conversation, saves it as private pending drafts, and keeps approval inside
+MemoStem. It does not ingest a full conversation archive.
+
 ## Endpoint and tools
 
 The production Streamable HTTP endpoint is:
@@ -20,9 +25,11 @@ scope and an explicit or bounded selection.
 
 ## ChatGPT and OpenAI API
 
-For a ChatGPT custom app, register the endpoint above and use the service's
-OAuth flow. Do not paste a MemoStem personal access token into ChatGPT's browser
-settings.
+For a ChatGPT custom app, register the endpoint above as a remote MCP server and
+use the service's OAuth flow. Do not paste a MemoStem personal access token into
+ChatGPT's browser settings. The public
+[MemoStem connection page](https://www.memostem.com/plugins) links a signed-in
+person to the detailed setup guide.
 
 For a server-side Responses API integration, keep both tokens in environment
 variables and require approval for every MemoStem tool call:
@@ -74,6 +81,14 @@ claude mcp add-json memostem '{"type":"http","url":"https://www.memostem.com/api
 Do not place the expanded token in `.mcp.json`, shell history, screenshots, or
 issues. Revoke it in MemoStem if it is exposed.
 
+## Claude web and Desktop
+
+Add `https://www.memostem.com/api/mcp` as a custom remote connector, select
+OAuth, and complete MemoStem sign-in. The public Git marketplace in this
+repository is also supported by Claude Code and compatible Claude plugin
+surfaces, but a GitHub marketplace install and a Claude Connectors Directory
+listing are separate distribution states.
+
 ## Privacy and trust boundary
 
 - Send only content the user deliberately selected from the current
@@ -91,5 +106,8 @@ issues. Revoke it in MemoStem if it is exposed.
 Official references:
 
 - [OpenAI MCP and Connectors](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
+- [OpenAI plugin submission](https://developers.openai.com/plugins/deploy/submission)
+- [Claude connector submission](https://claude.com/docs/connectors/building/submission)
 - [Claude Code MCP](https://code.claude.com/docs/en/mcp)
 - [Claude Code plugin reference](https://code.claude.com/docs/en/plugins-reference)
+- [Official MCP Registry](https://modelcontextprotocol.io/registry/about)

@@ -1,7 +1,7 @@
 {
   "name": "memostem",
-  "version": "0.3.1",
-  "description": "Connect AI clients to MemoStem's reviewed-knowledge MCP and add repository-aware maintenance skills.",
+  "version": "0.4.0",
+  "description": "Turn selected AI-conversation ideas into private, reviewable MemoStem knowledge and reuse confirmed context.",
   "author": {
     "name": "Girapphe",
     "url": "https://github.com/girapphe"
@@ -11,28 +11,32 @@
   "keywords": [
     "memostem",
     "mcp",
-    "knowledge-graph",
-    "release",
-    "validation"
+    "mcp-server",
+    "chatgpt",
+    "claude",
+    "codex",
+    "knowledge-management",
+    "private-knowledge",
+    "second-brain"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "MemoStem",
-    "shortDescription": "Capture and maintain reviewed knowledge.",
-    "longDescription": "Connect to MemoStem's remote MCP for reviewed knowledge capture and reuse, plus guarded skills for authorized source maintainers.",
+    "shortDescription": "Save selected AI ideas as private drafts.",
+    "longDescription": "Select ideas from the current AI conversation, send them to MemoStem as private pending drafts, review them before saving, and reuse bounded confirmed knowledge later. Includes guarded repository skills for authorized maintainers.",
     "developerName": "Girapphe",
-    "category": "Developer Tools",
+    "category": "Productivity",
     "capabilities": [
-      "Reviewed MCP knowledge capture",
-      "Private knowledge recall",
+      "Private pending knowledge drafts",
+      "Bounded confirmed knowledge recall",
       "Repository maintenance and release validation"
     ],
     "websiteURL": "https://www.memostem.com",
     "defaultPrompt": [
-      "Save selected ideas from this conversation to MemoStem for review.",
-      "Recall my approved MemoStem knowledge about this topic.",
-      "Validate this MemoStem source change through its protected release flow."
+      "Turn only the ideas I select from this conversation into private MemoStem drafts for review.",
+      "Create a structured MemoStem decision draft from these options and tradeoffs.",
+      "Recall a bounded selection of my confirmed MemoStem knowledge about this topic."
     ]
   }
 }

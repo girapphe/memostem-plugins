@@ -28,6 +28,7 @@ const claudeMarketplace = await readJson('.claude-plugin/marketplace.json');
 const codexManifest = await readJson('plugins/memostem/.codex-plugin/plugin.json');
 const claudeManifest = await readJson('plugins/memostem/.claude-plugin/plugin.json');
 const mcp = await readJson('plugins/memostem/.mcp.json');
+const registryManifest = await readJson('server.json');
 const packageManifest = await readJson('package.json');
 
 assert.equal(codexMarketplace.name, 'memostem');
@@ -48,6 +49,7 @@ assert.equal(claudeMarketplace.plugins[0].source, './plugins/memostem');
 
 assert.equal(codexManifest.name, 'memostem');
 assert.equal(packageManifest.version, codexManifest.version);
+assert.equal(registryManifest.version, codexManifest.version);
 assert.equal(codexManifest.skills, './skills/');
 assert.equal(codexManifest.mcpServers, './.mcp.json');
 assert.match(codexManifest.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/u);
@@ -79,6 +81,34 @@ assert.deepEqual(mcp, {
     },
   },
 });
+
+assert.equal(registryManifest.name, 'io.github.girapphe/memostem');
+assert.equal(registryManifest.title, 'MemoStem');
+assert.deepEqual(registryManifest.repository, {
+  url: 'https://github.com/girapphe/memostem-plugins',
+  source: 'github',
+});
+assert.deepEqual(registryManifest.remotes, [{
+  type: 'streamable-http',
+  url: 'https://www.memostem.com/api/mcp',
+}]);
+assert.equal('packages' in registryManifest, false);
+
+const readme = await readFile(path.join(root, 'README.md'), 'utf8');
+const submissionKit = await readFile(path.join(root, 'docs', 'directory-submissions.md'), 'utf8');
+for (const requiredUrl of [
+  'https://www.memostem.com/plugins',
+  'https://www.memostem.com/privacy',
+  'https://www.memostem.com/terms',
+  'https://www.memostem.com/support',
+  'https://www.memostem.com/api/mcp',
+]) {
+  assert.match(readme, new RegExp(requiredUrl.replaceAll('.', '\\.')), `README must include ${requiredUrl}`);
+  assert.match(submissionKit, new RegExp(requiredUrl.replaceAll('.', '\\.')), `submission kit must include ${requiredUrl}`);
+}
+assert.match(submissionKit, /five|5 positive|Positive review cases/iu);
+assert.match(submissionKit, /three|3 negative|Negative review cases/iu);
+assert.doesNotMatch(submissionKit, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
 
 const expectedSkills = [
   'memostem-card-hygiene',
