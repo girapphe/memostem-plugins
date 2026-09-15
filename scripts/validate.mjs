@@ -114,6 +114,7 @@ const expectedSkills = [
   'memostem-card-hygiene',
   'memostem-db-sync',
   'memostem-knowledge-graph',
+  'memostem-proactive-capture',
   'memostem-protected-release',
   'memostem-validation',
 ];
@@ -129,6 +130,21 @@ for (const skill of expectedSkills) {
   assert.match(source, new RegExp(`^name: ${skill}$`, 'mu'), `${skill} name must match its directory`);
   assert.match(source, /^description: .+$/mu, `${skill} must have a description`);
 }
+
+const proactiveCaptureSkill = await readFile(
+  path.join(skillsRoot, 'memostem-proactive-capture', 'SKILL.md'),
+  'utf8',
+);
+assert.match(proactiveCaptureSkill, /natural\s+stopping\s+point/iu);
+assert.match(proactiveCaptureSkill, /offer itself is not consent/iu);
+assert.match(proactiveCaptureSkill, /clear affirmative reply to that specific offer/iu);
+assert.match(proactiveCaptureSkill, /at most one offer per topic/iu);
+assert.match(proactiveCaptureSkill, /private and pending/iu);
+const proactiveCaptureAgent = await readFile(
+  path.join(skillsRoot, 'memostem-proactive-capture', 'agents', 'openai.yaml'),
+  'utf8',
+);
+assert.match(proactiveCaptureAgent, /allow_implicit_invocation:\s*true/u);
 
 const publicFiles = await walk(root);
 const trackedCandidates = publicFiles.filter((file) => !file.includes(`${path.sep}.git${path.sep}`));

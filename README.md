@@ -4,8 +4,9 @@
 
 # MemoStem for ChatGPT, Claude, and Codex
 
-Turn the ideas you choose from an AI conversation into private, reviewable
-knowledge—without uploading the whole conversation or auto-publishing anything.
+Let a connected AI client suggest one reusable idea at the right moment, then
+turn only what you clearly accept into private, reviewable knowledge—without
+uploading the whole conversation or auto-publishing anything.
 
 [Use MemoStem](https://www.memostem.com/plugins) ·
 [Connection guide](docs/mcp.md) ·
@@ -20,6 +21,9 @@ The MemoStem application and server implementation remain private.
 
 ## Why MemoStem
 
+- **Get a timely suggestion.** In supported plugin clients, the assistant can
+  name a reusable result and ask whether to keep it, so you do not need to
+  remember a MemoStem or card command.
 - **Select, don't scrape.** Send only the concise ideas you deliberately choose
   from the current conversation, never a transcript or hidden history.
 - **Review before saving.** New material stays in a private pending inbox until
@@ -50,6 +54,21 @@ compatible plugin surfaces.
 
 See [the MCP connection guide](docs/mcp.md) for provider-specific setup and
 server-side OpenAI API usage.
+
+## Consent-first proactive capture
+
+Draft-authorized MCP clients receive guidance to make one brief save offer at a
+natural stopping point when the current conversation produces a reusable
+decision, explanation, procedure, correction, open question, or durable
+preference. The installable plugin also includes an implicitly discoverable
+`memostem-proactive-capture` skill with the same behavior.
+
+The offer sends nothing and is not consent. The client may call a creation tool
+only after a clear affirmative reply to that specific proposal or a direct
+request identifying the current-conversation material. It must not repeat a
+declined topic or propose sensitive, secret, credential, or do-not-retain
+material. AI hosts decide whether and when to surface MCP instructions, so a
+connection cannot guarantee an offer in every client.
 
 ## Install the Git plugin
 
@@ -100,7 +119,10 @@ claude plugin marketplace remove memostem
 Draft creation cannot approve knowledge, publish to the public graph, or retain
 a conversation transcript. See [the complete trust boundary](docs/mcp.md).
 
-## Repository-maintainer skills
+## Included skills
+
+The user-facing `memostem-proactive-capture` skill provides consent-first save
+suggestions when the packaged MCP connection is available.
 
 The Git plugin also includes five guarded skills for authorized MemoStem source
 maintainers:
@@ -111,9 +133,9 @@ maintainers:
 - `memostem-protected-release`
 - `memostem-validation`
 
-These skills require an authorized MemoStem source checkout and its separately
-configured dependencies and credentials. Installing this public plugin grants
-no GitHub, Cloudflare, Clerk, Neon, database, or app-store access.
+The five maintenance skills require an authorized MemoStem source checkout and
+its separately configured dependencies and credentials. Installing this public
+plugin grants no GitHub, Cloudflare, Clerk, Neon, database, or app-store access.
 
 ## Directory publication
 

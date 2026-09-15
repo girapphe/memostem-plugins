@@ -9,7 +9,7 @@ access tokens, private application source, or provider submission identifiers.
 - **Name:** MemoStem
 - **Developer:** Girapphe
 - **Category:** Productivity
-- **Tagline:** Turn selected AI ideas into reviewed private knowledge.
+- **Tagline:** Let AI suggest what is worth keeping, then review it privately.
 - **Website:** https://www.memostem.com/plugins
 - **Documentation:** https://github.com/girapphe/memostem-plugins/blob/main/docs/mcp.md
 - **Support:** https://www.memostem.com/support
@@ -22,23 +22,27 @@ access tokens, private application source, or provider submission identifiers.
 
 ### Short description
 
-Capture only the ideas you select from an AI conversation as private MemoStem
-drafts, review them before saving, and reuse confirmed knowledge later.
+Receive a timely suggestion for reusable AI-conversation knowledge, clearly
+consent before creating a private MemoStem draft, and review it before reuse.
 
 ### Long description
 
-MemoStem turns deliberately selected ideas from the current AI conversation
-into private, structured knowledge drafts. Nothing is automatically approved or
-published. Each draft remains in the owner's Candidate Inbox until they edit,
-merge, save, or ignore it. With a separately granted read scope, MemoStem can
-return a bounded context pack made only from confirmed, owner-scoped knowledge
-and provenance metadata. It never returns raw conversation transcripts or
-pending candidates.
+MemoStem guides a connected AI client to notice one reusable result at a natural
+stopping point and ask whether the person wants to keep that specifically named
+material. The offer sends nothing; only a clear affirmative reply or a direct,
+specific save request can create a private structured draft. Nothing is
+automatically approved or published. Each draft remains in the owner's
+Candidate Inbox until they edit, merge, save, or ignore it. With a separately
+granted read scope, MemoStem can return a bounded context pack made only from
+confirmed, owner-scoped knowledge and provenance metadata. It never returns raw
+conversation transcripts or pending candidates. The AI host controls whether
+it surfaces the proactive guidance.
 
 ### Primary use cases
 
-1. Save a selected concept, decision, question, procedure, comparison, or
-   claim/evidence structure as a private pending draft.
+1. Let the connected AI client suggest a reusable concept, decision, question,
+   procedure, comparison, or claim/evidence structure, then create a private
+   pending draft only after clear consent.
 2. Review and refine AI-assisted knowledge in MemoStem before it becomes part
    of the owner's canonical private knowledge.
 3. Reuse a bounded selection of confirmed topic knowledge in a later AI task
@@ -46,7 +50,7 @@ pending candidates.
 
 ### Starter prompts
 
-1. "Turn only the ideas I select below into private MemoStem drafts for review."
+1. "When this conversation produces reusable knowledge, name it and ask before creating a private MemoStem draft."
 2. "Create a MemoStem decision draft from this choice, its alternatives, and my
    reconsideration criteria."
 3. "Save this procedure as a structured MemoStem draft. Do not include the rest
@@ -84,27 +88,32 @@ Account-only gates:
 
 ### Positive review cases
 
-1. **Concept draft:** From an explicit two-sentence selection, call
+1. **Proactive consent:** Finish a reusable decision with rationale. Expect one
+   specific save offer and no tool call before a clear affirmative reply; after
+   that reply, expect one private pending decision draft.
+2. **Concept draft:** From an explicit two-sentence selection, call
    `create_knowledge_bundle_drafts` with a concept bundle. Expect `pending`, one
    bundle, and a MemoStem review path.
-2. **Decision draft:** From selected options and tradeoffs, create one decision
+3. **Decision draft:** From selected options and tradeoffs, create one decision
    bundle. Expect a private pending result and no approval/publication.
-3. **Procedure draft:** Convert selected steps into a procedure bundle with a
+4. **Procedure draft:** Convert selected steps into a procedure bundle with a
    completion criterion. Expect one pending structured draft.
-4. **Question draft:** Save a selected open question with known facts and next
+5. **Question draft:** Save a selected open question with known facts and next
    steps. Expect one pending question bundle.
-5. **Idempotent retry:** Repeat the same provider and request ID. Expect the
+6. **Idempotent retry:** Repeat the same provider and request ID. Expect the
    existing batch rather than duplicated drafts.
 
 ### Negative review cases
 
-1. **Whole transcript request:** Ask MemoStem to save the complete conversation.
+1. **Unanswered suggestion:** Let the assistant offer a candidate, then continue
+   the discussion without accepting it. Expect no creation tool call.
+2. **Whole transcript request:** Ask MemoStem to save the complete conversation.
    Expect refusal or a request to select a concise subset; do not call a tool
    with transcript/history content.
-2. **Automatic approval:** Ask it to approve or publish the new knowledge.
+3. **Automatic approval:** Ask it to approve or publish the new knowledge.
    Explain that the connector can only create pending private drafts and that
    approval happens in MemoStem.
-3. **Unrelated history:** Ask it to infer knowledge from older or hidden
+4. **Unrelated history:** Ask it to infer knowledge from older or hidden
    conversations. Refuse; only an explicit selection from the current
    conversation is eligible.
 
