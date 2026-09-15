@@ -1,28 +1,59 @@
-# MemoStem plugins
+<p align="center">
+  <img src="assets/logo-mark.svg" alt="MemoStem logo" width="88" height="88">
+</p>
 
-This is the public distribution layer for MemoStem integrations. It lets
-ChatGPT, Codex, Claude, and other MCP clients connect to the hosted MemoStem
-service without publishing the private application repository.
+# MemoStem for ChatGPT, Claude, and Codex
 
-The Git marketplace commands below install into Codex and Claude Code.
-ChatGPT connects to the hosted remote MCP as a custom app; GitHub publication
-alone does not list or activate a ChatGPT app.
+Turn the ideas you choose from an AI conversation into private, reviewable
+knowledge—without uploading the whole conversation or auto-publishing anything.
 
-## What is included
+[Use MemoStem](https://www.memostem.com/plugins) ·
+[Connection guide](docs/mcp.md) ·
+[Privacy](https://www.memostem.com/privacy) ·
+[Terms](https://www.memostem.com/terms) ·
+[Support](https://www.memostem.com/support) ·
+[Security](SECURITY.md)
 
-- A Codex marketplace and plugin manifest.
-- A native Claude Code marketplace and plugin manifest.
-- Five repository-aware skills for authorized MemoStem source maintainers.
-- A remote MCP registration for `https://www.memostem.com/api/mcp`.
-- Connection and privacy guidance in [docs/mcp.md](docs/mcp.md).
-- A record of the initial extraction in [docs/provenance.md](docs/provenance.md).
+This public repository is the official distribution source for MemoStem's
+Codex and Claude Code plugins and its hosted remote MCP connection metadata.
+The MemoStem application and server implementation remain private.
 
-The plugin does **not** include the MemoStem web/mobile source, MCP server
-implementation, authentication code, database schema, migrations, credentials,
-environment files, user data, or provider secrets. Installing it grants no
-GitHub, Cloudflare, Clerk, Neon, database, or app-store access.
+## Why MemoStem
 
-## Install in Codex
+- **Select, don't scrape.** Send only the concise ideas you deliberately choose
+  from the current conversation, never a transcript or hidden history.
+- **Review before saving.** New material stays in a private pending inbox until
+  you edit, merge, save, or ignore it.
+- **Reuse confirmed knowledge.** Bring a bounded set of your approved knowledge
+  back into a future AI task with provenance, not raw conversation history.
+
+## Connect from an AI app
+
+The production Streamable HTTP MCP endpoint is:
+
+```text
+https://www.memostem.com/api/mcp
+```
+
+### ChatGPT
+
+Add MemoStem as an OAuth remote MCP app in a supported ChatGPT workspace. The
+public [MemoStem connection page](https://www.memostem.com/plugins) explains the
+privacy boundary and points signed-in users to the in-product setup guide.
+GitHub publication alone does not list or activate a ChatGPT plugin.
+
+### Claude
+
+Add the same endpoint as a custom connector in Claude and complete MemoStem
+OAuth. Claude can also load the Git marketplace below for Claude Code and
+compatible plugin surfaces.
+
+See [the MCP connection guide](docs/mcp.md) for provider-specific setup and
+server-side OpenAI API usage.
+
+## Install the Git plugin
+
+### Codex
 
 ```bash
 codex plugin marketplace add girapphe/memostem-plugins --ref main
@@ -30,18 +61,9 @@ codex plugin add memostem@memostem
 codex plugin list
 ```
 
-Start a new Codex task after installation so the skills and MCP metadata load
-from the installed snapshot.
+Start a new Codex task after installation so the installed snapshot loads.
 
-To update or remove it:
-
-```bash
-codex plugin marketplace upgrade memostem
-codex plugin add memostem@memostem
-codex plugin remove memostem@memostem
-```
-
-## Install in Claude Code
+### Claude Code
 
 ```bash
 claude plugin marketplace add girapphe/memostem-plugins
@@ -49,31 +71,59 @@ claude plugin install memostem@memostem
 claude plugin list
 ```
 
-Run `/reload-plugins` in an active Claude Code session. The remote MCP entry is
-discovered from the plugin's `.mcp.json`; run `/mcp` to inspect the connection
-and complete OAuth when prompted.
+Run `/reload-plugins`, then `/mcp` to inspect the connection and complete OAuth
+when prompted.
 
-To update or remove it:
+### Update or remove
 
 ```bash
+# Codex
+codex plugin marketplace upgrade memostem
+codex plugin add memostem@memostem
+codex plugin remove memostem@memostem
+
+# Claude Code
 claude plugin marketplace update memostem
 claude plugin update memostem@memostem
 claude plugin uninstall memostem@memostem
 claude plugin marketplace remove memostem
 ```
 
-## Included skills
+## What the MCP exposes
 
-- `memostem-card-hygiene`: dry-run-first graph/card hygiene auditing.
-- `memostem-db-sync`: guarded static graph synchronization.
-- `memostem-knowledge-graph`: graph taxonomy and content maintenance.
-- `memostem-protected-release`: PR, CI, deployment, ancestry, and rendered
-  release verification.
-- `memostem-validation`: select and report the relevant repository gates.
+- `create_knowledge_bundle_drafts`: create structured private drafts from an
+  explicitly selected part of the current conversation.
+- `create_card_drafts`: compatible concept-card draft creation.
+- `get_topic_context`: retrieve a bounded pack of confirmed, owner-scoped
+  knowledge when the connection has the separate read scope.
 
-These skills are useful only inside an authorized MemoStem source checkout
-with its project dependencies and credentials configured. They describe safe
-workflows; they do not carry repository access or secrets.
+Draft creation cannot approve knowledge, publish to the public graph, or retain
+a conversation transcript. See [the complete trust boundary](docs/mcp.md).
+
+## Repository-maintainer skills
+
+The Git plugin also includes five guarded skills for authorized MemoStem source
+maintainers:
+
+- `memostem-card-hygiene`
+- `memostem-db-sync`
+- `memostem-knowledge-graph`
+- `memostem-protected-release`
+- `memostem-validation`
+
+These skills require an authorized MemoStem source checkout and its separately
+configured dependencies and credentials. Installing this public plugin grants
+no GitHub, Cloudflare, Clerk, Neon, database, or app-store access.
+
+## Directory publication
+
+- The remote server metadata is published from `server.json` to the official
+  MCP Registry when a GitHub Release is published.
+- Paste-ready OpenAI and Anthropic listing copy, prompts, review cases, and
+  activation gates live in [docs/directory-submissions.md](docs/directory-submissions.md).
+- Provider review and approval are external states. A public GitHub repository
+  or a successful MCP Registry workflow does not prove an OpenAI or Anthropic
+  directory listing is live.
 
 ## Validate locally
 
@@ -84,13 +134,13 @@ claude plugin validate .
 claude plugin validate plugins/memostem
 ```
 
-The first command has no package dependencies and checks the public/private
-boundary, both marketplaces, cross-platform metadata, skill manifests, MCP
-endpoint, symlinks, and common secret patterns.
+The dependency-free repository check validates both marketplaces, cross-platform
+metadata, the complete skill trees, MCP Registry metadata, public/private
+boundaries, symlinks, and common secret patterns.
 
 ## Publication boundary
 
-Only this repository is the public installation source. The private MemoStem
-application repository remains the source of the hosted service and owns all
-runtime behavior. A published manifest does not prove that the app, OAuth, or
-provider-specific connection is active; verify those separately.
+Only this repository is the public installation source. It contains manifests,
+instructions, static skills, and connection metadata—not the MemoStem web or
+mobile source, MCP implementation, authentication code, database schema,
+migrations, credentials, environment files, user data, or provider secrets.
