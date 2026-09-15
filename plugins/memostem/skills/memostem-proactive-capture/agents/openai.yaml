@@ -1,0 +1,6 @@
+interface:
+  display_name: MemoStem Proactive Capture
+  short_description: Offer consent-first saves for reusable conversation knowledge.
+  default_prompt: Notice reusable knowledge in this conversation and ask before creating a MemoStem draft.
+policy:
+  allow_implicit_invocation: true

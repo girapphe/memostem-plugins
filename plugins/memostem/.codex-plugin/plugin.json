@@ -1,7 +1,7 @@
 {
   "name": "memostem",
-  "version": "0.4.0",
-  "description": "Turn selected AI-conversation ideas into private, reviewable MemoStem knowledge and reuse confirmed context.",
+  "version": "0.5.0",
+  "description": "Proactively suggest reusable AI-conversation knowledge, create only consented private drafts, and reuse confirmed context.",
   "author": {
     "name": "Girapphe",
     "url": "https://github.com/girapphe"
@@ -16,6 +16,7 @@
     "claude",
     "codex",
     "knowledge-management",
+    "proactive-capture",
     "private-knowledge",
     "second-brain"
   ],
@@ -23,18 +24,19 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "MemoStem",
-    "shortDescription": "Save selected AI ideas as private drafts.",
-    "longDescription": "Select ideas from the current AI conversation, send them to MemoStem as private pending drafts, review them before saving, and reuse bounded confirmed knowledge later. Includes guarded repository skills for authorized maintainers.",
+    "shortDescription": "Suggest useful knowledge, ask, then draft.",
+    "longDescription": "Notice reusable knowledge in the current AI conversation, ask before creating private pending MemoStem drafts, and reuse bounded confirmed knowledge later. Includes guarded repository skills for authorized maintainers.",
     "developerName": "Girapphe",
     "category": "Productivity",
     "capabilities": [
+      "Consent-first proactive capture suggestions",
       "Private pending knowledge drafts",
       "Bounded confirmed knowledge recall",
       "Repository maintenance and release validation"
     ],
     "websiteURL": "https://www.memostem.com",
     "defaultPrompt": [
-      "Turn only the ideas I select from this conversation into private MemoStem drafts for review.",
+      "Notice reusable knowledge in this conversation and ask before creating a MemoStem draft.",
       "Create a structured MemoStem decision draft from these options and tradeoffs.",
       "Recall a bounded selection of my confirmed MemoStem knowledge about this topic."
     ]

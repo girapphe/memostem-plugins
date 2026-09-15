@@ -1,9 +1,10 @@
 # MemoStem MCP connection guide
 
-MemoStem is a review-first memory layer for AI conversations. It accepts only
-the concise material a person deliberately selects from the current
-conversation, saves it as private pending drafts, and keeps approval inside
-MemoStem. It does not ingest a full conversation archive.
+MemoStem is a review-first memory layer for AI conversations. A connected
+client can suggest one reusable idea at a natural stopping point, but MemoStem
+accepts only the concise material a person clearly agrees to select from the
+current conversation. It saves that material as private pending drafts and
+keeps approval inside MemoStem. It does not ingest a full conversation archive.
 
 ## Endpoint and tools
 
@@ -22,6 +23,27 @@ It currently exposes:
 Creation tools save only private pending drafts. They do not auto-approve
 knowledge or write to the public graph. Context reuse requires a separate read
 scope and an explicit or bounded selection.
+
+## Proactive suggestion and consent
+
+Draft-authorized MCP initialization tells the client to make one brief,
+benefit-focused offer when the current exchange produces a reusable decision
+with rationale, explanation, procedure, corrected misconception, open
+question, or durable preference. The client should name the material instead
+of expecting the person to remember MemoStem, card, or tool terminology.
+
+The offer itself sends nothing. A creation tool may run only after a clear
+affirmative reply to that specific proposal or a direct request identifying
+the material. Silence, continued discussion, an unrelated affirmative, or a
+standing request to remember useful things is not write consent. Declined
+topics must not be offered again in the same conversation.
+
+Clients must not suggest or send casual one-off, secret, credential, sensitive,
+or do-not-retain material. After consent they should prefer one coherent typed
+bundle, add more only when the person selected multiple independently reusable
+items, and never include transcripts, older conversations, hidden content, or
+ambient files. The remote AI host controls whether it surfaces server
+instructions, so proactive suggestions remain client-dependent.
 
 ## ChatGPT and OpenAI API
 

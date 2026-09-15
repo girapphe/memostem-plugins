@@ -21,6 +21,9 @@ for rotation.
 ## MCP safety
 
 The remote endpoint is a trust boundary. Clients should require approval for
-write-capable calls, send only explicitly selected conversation content, and
-keep authentication values outside tracked files. Installing this plugin does
-not grant access to any MemoStem account or infrastructure.
+write-capable calls, treat an assistant suggestion as non-consent, wait for a
+clear affirmative reply to the specifically named material, send only that
+current-conversation selection, and keep authentication values outside tracked
+files. They must not propose or send secrets, credentials, sensitive personal
+material, full transcripts, or older conversation history. Installing this
+plugin does not grant access to any MemoStem account or infrastructure.

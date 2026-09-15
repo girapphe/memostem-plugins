@@ -10,8 +10,8 @@
     {
       "name": "memostem",
       "source": "./plugins/memostem",
-      "description": "Turn selected AI-conversation ideas into private, reviewable MemoStem knowledge and reuse confirmed context.",
-      "version": "0.4.0"
+      "description": "Proactively suggest reusable AI-conversation knowledge, create only consented private drafts, and reuse confirmed context.",
+      "version": "0.5.0"
     }
   ]
 }
