@@ -146,21 +146,10 @@ and [the complete connection and capture guide](docs/mcp.md).
 
 ## Included skills
 
-The user-facing `memostem-proactive-capture` skill provides consent-first save
-suggestions when the packaged MCP connection is available.
-
-The Git plugin also includes five guarded skills for authorized MemoStem source
-maintainers:
-
-- `memostem-card-hygiene`
-- `memostem-db-sync`
-- `memostem-knowledge-graph`
-- `memostem-protected-release`
-- `memostem-validation`
-
-The five maintenance skills require an authorized MemoStem source checkout and
-its separately configured dependencies and credentials. Installing this public
-plugin grants no GitHub, Cloudflare, Clerk, Neon, database, or app-store access.
+The plugin includes only `memostem-proactive-capture`, which provides
+consent-first save suggestions when the packaged MCP connection is available.
+Developer maintenance skills belong in the private application repository and
+are excluded from every public plugin package.
 
 ## Directory publication
 

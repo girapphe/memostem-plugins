@@ -124,18 +124,12 @@ assert.match(submissionKit, /three|3 negative|Negative review cases/iu);
 assert.doesNotMatch(submissionKit, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
 
 const expectedSkills = [
-  'memostem-card-hygiene',
-  'memostem-db-sync',
-  'memostem-knowledge-graph',
   'memostem-proactive-capture',
-  'memostem-protected-release',
-  'memostem-validation',
 ];
-const skillDirectories = (await readdir(skillsRoot, { withFileTypes: true }))
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort();
-assert.deepEqual(skillDirectories, expectedSkills);
+// Reject files and unknown skill directories as well as known maintenance
+// skills: adding a new developer workflow must never expand the public package.
+const skillEntries = (await readdir(skillsRoot)).sort();
+assert.deepEqual(skillEntries, expectedSkills, 'public plugin may contain only memostem-proactive-capture');
 
 for (const skill of expectedSkills) {
   const source = await readFile(path.join(skillsRoot, skill, 'SKILL.md'), 'utf8');

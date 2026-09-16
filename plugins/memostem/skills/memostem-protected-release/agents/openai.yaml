@@ -1,4 +1,0 @@
-interface:
-  display_name: "MemoStem Protected Release"
-  short_description: "Verify MemoStem PRs through production release"
-  default_prompt: "Use $memostem-protected-release to deliver this MemoStem change through PR checks, merge, deployment, and rendered smoke verification."
