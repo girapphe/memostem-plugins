@@ -1,7 +1,7 @@
 {
   "name": "memostem",
-  "version": "0.5.2",
-  "description": "Proactively suggest reusable AI-conversation knowledge, create only consented private drafts, and reuse confirmed context.",
+  "version": "0.5.3",
+  "description": "Find reusable knowledge as conversations unfold, suggest it at the right moment, and create private review drafts only after consent.",
   "author": {
     "name": "Girapphe",
     "url": "https://github.com/girapphe"
