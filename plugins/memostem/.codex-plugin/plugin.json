@@ -1,6 +1,6 @@
 {
   "name": "memostem",
-  "version": "0.5.1",
+  "version": "0.5.1+codex.20260916030326",
   "description": "Proactively suggest reusable AI-conversation knowledge, create only consented private drafts, and reuse confirmed context.",
   "author": {
     "name": "Girapphe",
@@ -24,21 +24,21 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "MemoStem",
-    "shortDescription": "Suggest useful knowledge, ask, then draft.",
-    "longDescription": "Notice reusable knowledge in the current AI conversation, ask before creating private pending MemoStem drafts, and reuse bounded confirmed knowledge later. Includes guarded repository skills for authorized maintainers.",
+    "shortDescription": "Create private atomic memo and Q&A drafts.",
+    "longDescription": "Save selected general knowledge from the current AI conversation as private pending atomic memo and question-and-answer drafts through OAuth MCP. Includes guarded repository skills for authorized maintainers.",
     "developerName": "Girapphe",
     "category": "Productivity",
     "capabilities": [
       "Consent-first proactive capture suggestions",
       "Private pending knowledge drafts",
-      "Bounded confirmed knowledge recall",
+      "Atomic memo and question-and-answer drafts",
       "Repository maintenance and release validation"
     ],
     "websiteURL": "https://www.memostem.com",
     "defaultPrompt": [
-      "Notice reusable knowledge in this conversation and ask before creating a MemoStem draft.",
-      "Create a structured MemoStem decision draft from these options and tradeoffs.",
-      "Recall a bounded selection of my confirmed MemoStem knowledge about this topic."
+      "Notice independently teachable general knowledge in this conversation and ask before creating a MemoStem draft.",
+      "Check my MemoStem connection, then save the lesson I selected as concise atomic memo and question-and-answer drafts.",
+      "Verify my MemoStem connection and help complete OAuth if the draft permission is missing."
     ]
   }
 }

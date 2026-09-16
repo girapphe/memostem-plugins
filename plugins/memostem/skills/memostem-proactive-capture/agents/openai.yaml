@@ -1,6 +1,6 @@
 interface:
   display_name: MemoStem Proactive Capture
-  short_description: Offer consent-first saves for reusable conversation knowledge.
-  default_prompt: Notice reusable knowledge in this conversation and ask before creating a MemoStem draft.
+  short_description: Save selected general knowledge as private memo or Q&A drafts.
+  default_prompt: Use MemoStem MCP to save the general knowledge I selected as concise atomic memo and question-and-answer drafts. Verify the connection, complete OAuth if needed, and report the returned pending drafts and review link.
 policy:
   allow_implicit_invocation: true

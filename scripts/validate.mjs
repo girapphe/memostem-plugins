@@ -48,11 +48,14 @@ assert.equal(claudeMarketplace.plugins.length, 1);
 assert.equal(claudeMarketplace.plugins[0].source, './plugins/memostem');
 
 assert.equal(codexManifest.name, 'memostem');
-assert.equal(packageManifest.version, codexManifest.version);
-assert.equal(registryManifest.version, codexManifest.version);
+// Local Codex iteration adds build metadata to refresh the installed snapshot.
+// Keep the actual release version aligned with Claude and MCP Registry metadata.
+const releaseVersion = codexManifest.version.replace(/\+codex\.[a-z0-9-]+$/u, '');
+assert.equal(packageManifest.version, releaseVersion);
+assert.equal(registryManifest.version, releaseVersion);
 assert.equal(codexManifest.skills, './skills/');
 assert.equal(codexManifest.mcpServers, './.mcp.json');
-assert.match(codexManifest.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/u);
+assert.match(codexManifest.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:\+codex\.[a-z0-9-]+)?$/u);
 assert.equal(codexManifest.repository, 'https://github.com/girapphe/memostem-plugins');
 assert.equal(codexManifest.homepage, codexManifest.repository);
 assert.equal(codexManifest.interface.websiteURL, 'https://www.memostem.com');
@@ -68,9 +71,9 @@ for (const field of [
   'repository',
   'keywords',
 ]) {
-  assert.deepEqual(claudeManifest[field], codexManifest[field], `manifest drift: ${field}`);
+  assert.deepEqual(claudeManifest[field], field === 'version' ? releaseVersion : codexManifest[field], `manifest drift: ${field}`);
 }
-assert.equal(claudeMarketplace.plugins[0].version, codexManifest.version);
+assert.equal(claudeMarketplace.plugins[0].version, releaseVersion);
 assert.equal(claudeMarketplace.plugins[0].description, codexManifest.description);
 
 assert.deepEqual(mcp, {
@@ -101,6 +104,11 @@ assert.equal('packages' in registryManifest, false);
 
 const readme = await readFile(path.join(root, 'README.md'), 'utf8');
 const submissionKit = await readFile(path.join(root, 'docs', 'directory-submissions.md'), 'utf8');
+const connectionGuide = await readFile(path.join(root, 'docs', 'mcp.md'), 'utf8');
+for (const [label, source] of [['README', readme], ['connection guide', connectionGuide]]) {
+  assert.ok(source.includes('codex mcp login memostem --scopes knowledge:drafts:create'), `${label} must document Codex OAuth`);
+  assert.ok(source.includes('check_memostem_connection'), `${label} must document the live connection check`);
+}
 for (const requiredUrl of [
   'https://www.memostem.com/plugins',
   'https://www.memostem.com/privacy',
@@ -145,6 +153,24 @@ assert.match(proactiveCaptureSkill, /offer itself is not consent/iu);
 assert.match(proactiveCaptureSkill, /clear affirmative reply to that specific offer/iu);
 assert.match(proactiveCaptureSkill, /at most one offer per topic/iu);
 assert.match(proactiveCaptureSkill, /private and pending/iu);
+for (const requiredContract of [
+  'check_memostem_connection',
+  'knowledge:drafts:create',
+  'knowledge_scope: "general_knowledge"',
+  'request_id',
+  'bundle_count',
+  'answer_summary',
+  'references/atomic-memo-flashcard.json',
+]) {
+  assert.ok(proactiveCaptureSkill.includes(requiredContract), `capture skill must describe ${requiredContract}`);
+}
+const captureExample = await readJson('plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json');
+assert.deepEqual(captureExample.bundles.map((bundle) => bundle.knowledge_type), ['concept', 'question']);
+// The actual application schema validates this public fixture in the app's
+// contract tests; this repository checks packaging without copying that schema.
+assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('atomic memo')));
+assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('connection')));
+assert.ok(codexManifest.interface.defaultPrompt.every((prompt) => !/decision draft|recall.*confirmed/iu.test(prompt)));
 const proactiveCaptureAgent = await readFile(
   path.join(skillsRoot, 'memostem-proactive-capture', 'agents', 'openai.yaml'),
   'utf8',
