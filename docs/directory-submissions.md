@@ -9,7 +9,8 @@ access tokens, private application source, or provider submission identifiers.
 - **Name:** MemoStem
 - **Developer:** Girapphe
 - **Category:** Productivity
-- **Tagline:** Let AI suggest what is worth keeping, then review it privately.
+- **Tagline:** Turn useful conversations into reviewed knowledge.
+- **OpenAI subtitle:** Find knowledge worth keeping
 - **Website:** https://www.memostem.com/plugins
 - **Documentation:** https://github.com/girapphe/memostem-plugins/blob/main/docs/mcp.md
 - **Support:** https://www.memostem.com/support
@@ -22,16 +23,16 @@ access tokens, private application source, or provider submission identifiers.
 
 ### Short description
 
-Receive a timely suggestion for reusable AI-conversation knowledge, clearly
-consent before creating a private MemoStem draft, and review it before reuse.
+Let your AI notice knowledge worth keeping during a conversation, confirm one
+specific suggestion, and review the resulting private MemoStem draft.
 
 ### Long description
 
-MemoStem guides a connected AI client to notice independently teachable general
-knowledge at a natural
-stopping point and ask whether the person wants to keep that specifically named
-material. The offer sends nothing; only a clear affirmative reply or a direct,
-specific save request can create a private structured draft. Nothing is
+MemoStem helps a connected AI notice independently teachable knowledge while a
+conversation unfolds. At a natural stopping point, the AI names one useful idea
+and asks whether the person wants to keep it. The suggestion sends nothing;
+only a clear affirmative reply or a direct, specific save request can create a
+private structured draft. Nothing is
 automatically approved or published. Each draft remains in the owner's
 Candidate Inbox until they edit, merge, save, or ignore it. Atomic memos teach
 one concept; question-and-answer drafts test one idea. The connector verifies
@@ -48,7 +49,7 @@ the proactive guidance.
    pending draft only after clear consent.
 2. Review and refine AI-assisted knowledge in MemoStem before it becomes part
    of the owner's canonical private knowledge.
-3. Turn explicitly selected general knowledge into concise atomic memos and
+3. Turn directly requested general knowledge into concise atomic memos and
    answered question drafts for later review.
 
 ### Starter prompts

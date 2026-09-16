@@ -4,9 +4,10 @@
 
 # MemoStem for ChatGPT, Claude, and Codex
 
-Let a connected AI client suggest one reusable idea at the right moment, then
-turn only what you clearly accept into private, reviewable knowledge—without
-uploading the whole conversation or auto-publishing anything.
+Let a connected AI notice knowledge worth keeping as the conversation unfolds,
+suggest one specific idea at the right moment, and turn it into a private draft
+only after you confirm—without uploading the whole conversation or publishing
+anything automatically.
 
 [Use MemoStem](https://www.memostem.com/plugins) ·
 [Connection guide](docs/mcp.md) ·
@@ -24,8 +25,9 @@ The MemoStem application and server implementation remain private.
 - **Get a timely suggestion.** In supported plugin clients, the assistant can
   name a reusable result and ask whether to keep it, so you do not need to
   remember a MemoStem or card command.
-- **Select, don't scrape.** Send only the concise ideas you deliberately choose
-  from the current conversation, never a transcript or hidden history.
+- **Confirm, don't scrape.** Nothing is transferred when the AI notices an idea.
+  Only the specific suggestion you confirm is sent, never a transcript or hidden
+  history.
 - **Review before saving.** New material stays in a private pending inbox until
   you edit, merge, save, or ignore it.
 - **Keep knowledge teachable.** Create an atomic memo for one concept or a
@@ -128,8 +130,9 @@ claude plugin marketplace remove memostem
 
 - `check_memostem_connection`: verify authentication and report granted scopes
   without reading or writing knowledge.
-- `create_knowledge_bundle_drafts`: create structured private drafts from an
-  explicitly selected part of the current conversation. Each bundle must use
+- `create_knowledge_bundle_drafts`: create structured private drafts from a
+  specific suggestion the user confirmed, or material they directly asked to
+  save from the current conversation. Each bundle must use
   `knowledge_scope: "general_knowledge"`.
 - `create_card_drafts`: compatible concept-card draft creation.
 

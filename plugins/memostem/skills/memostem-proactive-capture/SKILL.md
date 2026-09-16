@@ -1,8 +1,8 @@
 ---
 name: memostem-proactive-capture
-description: Use when the user asks to save selected, independently teachable knowledge from this conversation to MemoStem as atomic memos, flashcards, or drafts, or when offering to capture such knowledge; verify the OAuth MCP connection, then create private pending drafts after clear consent.
+description: Use when the current conversation produces independently teachable knowledge worth keeping; notice it, offer one specific benefit-focused suggestion, and after clear consent verify OAuth MCP and create private pending drafts.
 metadata:
-  short-description: Offer consent-first MemoStem capture
+  short-description: Notice, suggest, then capture with consent
 ---
 
 # MemoStem proactive capture
