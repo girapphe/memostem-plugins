@@ -1,0 +1,50 @@
+{
+  "provider": "other",
+  "request_id": "example-save-001",
+  "provenance": {
+    "type": "current_conversation",
+    "conversation_ref": "example-conversation-001"
+  },
+  "bundles": [
+    {
+      "client_bundle_id": "game-loop-memo",
+      "knowledge_scope": "general_knowledge",
+      "title": "Authoritative game loop",
+      "central_question": "What does an authoritative game loop do?",
+      "knowledge_type": "concept",
+      "summary": "An authoritative game loop repeatedly processes player input and updates the server-owned world state.",
+      "structured_content": {
+        "type": "concept",
+        "definition": "An authoritative game loop is a repeated server simulation that processes player input, updates world state, and sends results to clients.",
+        "key_points": ["The server determines the accepted world state."],
+        "examples": [],
+        "non_examples": [],
+        "misconceptions": []
+      },
+      "bundle_schema_version": 1,
+      "topic": "Game server architecture",
+      "tags": ["game-server", "simulation"]
+    },
+    {
+      "client_bundle_id": "game-loop-question",
+      "knowledge_scope": "general_knowledge",
+      "title": "Authoritative game loop recall",
+      "central_question": "What does an authoritative game loop do?",
+      "knowledge_type": "question",
+      "summary": "The server repeatedly processes input, simulates the world, and sends its accepted state to clients.",
+      "structured_content": {
+        "type": "question",
+        "question": "What does an authoritative game loop do?",
+        "context": "Real-time multiplayer game servers",
+        "known_facts": [],
+        "hypotheses": [],
+        "next_steps": [],
+        "answer_summary": "It repeatedly processes player input, updates the server-owned world state, and sends the results to clients.",
+        "status": "answered"
+      },
+      "bundle_schema_version": 1,
+      "topic": "Game server architecture",
+      "tags": ["game-server", "simulation"]
+    }
+  ]
+}

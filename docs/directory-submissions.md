@@ -27,38 +27,40 @@ consent before creating a private MemoStem draft, and review it before reuse.
 
 ### Long description
 
-MemoStem guides a connected AI client to notice one reusable result at a natural
+MemoStem guides a connected AI client to notice independently teachable general
+knowledge at a natural
 stopping point and ask whether the person wants to keep that specifically named
 material. The offer sends nothing; only a clear affirmative reply or a direct,
 specific save request can create a private structured draft. Nothing is
 automatically approved or published. Each draft remains in the owner's
-Candidate Inbox until they edit, merge, save, or ignore it. With a separately
-granted read scope, MemoStem can return a bounded context pack made only from
-confirmed, owner-scoped knowledge and provenance metadata. It never returns raw
-conversation transcripts or pending candidates. The AI host controls whether
-it surfaces the proactive guidance.
+Candidate Inbox until they edit, merge, save, or ignore it. Atomic memos teach
+one concept; question-and-answer drafts test one idea. The connector verifies
+its authenticated draft permission before capture and never uploads raw
+conversation transcripts. Confirmed-topic recall is currently restricted to
+accounts with the full-product admin override and a separate read scope; it
+is not an ordinary-user capability. The AI host controls whether it surfaces
+the proactive guidance.
 
 ### Primary use cases
 
-1. Let the connected AI client suggest a reusable concept, decision, question,
-   procedure, comparison, or claim/evidence structure, then create a private
+1. Let the connected AI client suggest a reusable concept, knowledge question,
+   general procedure, comparison, or claim/evidence structure, then create a private
    pending draft only after clear consent.
 2. Review and refine AI-assisted knowledge in MemoStem before it becomes part
    of the owner's canonical private knowledge.
-3. Reuse a bounded selection of confirmed topic knowledge in a later AI task
-   without retrieving raw conversation history.
+3. Turn explicitly selected general knowledge into concise atomic memos and
+   answered question drafts for later review.
 
 ### Starter prompts
 
-1. "When this conversation produces reusable knowledge, name it and ask before creating a private MemoStem draft."
-2. "Create a MemoStem decision draft from this choice, its alternatives, and my
-   reconsideration criteria."
-3. "Save this procedure as a structured MemoStem draft. Do not include the rest
+1. "When this conversation produces independently teachable general knowledge, name it and ask before creating a private MemoStem draft."
+2. "Check my MemoStem connection, then save the lesson I selected as concise
+   atomic memo and question-and-answer drafts."
+3. "Save this general procedure as a structured MemoStem draft. Do not include the rest
    of the conversation."
 4. "Create an open-question draft with the known facts, hypotheses, and next
    steps I selected."
-5. "Recall my confirmed MemoStem knowledge about this topic using a bounded
-   selection."
+5. "Verify that MemoStem is connected and has permission to create private drafts."
 
 ## OpenAI submission
 
@@ -88,20 +90,26 @@ Account-only gates:
 
 ### Positive review cases
 
-1. **Proactive consent:** Finish a reusable decision with rationale. Expect one
+1. **Proactive consent:** Finish an independently teachable explanation. Expect one
    specific save offer and no tool call before a clear affirmative reply; after
-   that reply, expect one private pending decision draft.
+   that reply, expect a connection check followed by one private pending draft.
 2. **Concept draft:** From an explicit two-sentence selection, call
    `create_knowledge_bundle_drafts` with a concept bundle. Expect `pending`, one
    bundle, and a MemoStem review path.
-3. **Decision draft:** From selected options and tradeoffs, create one decision
-   bundle. Expect a private pending result and no approval/publication.
+3. **Atomic memo and flashcard:** Explicitly request both formats for one
+   selected idea. Expect a `concept` bundle and an answered `question` bundle,
+   each declaring `knowledge_scope: "general_knowledge"`. Expect no additional
+   consent question and no automatic practice enrollment.
 4. **Procedure draft:** Convert selected steps into a procedure bundle with a
    completion criterion. Expect one pending structured draft.
 5. **Question draft:** Save a selected open question with known facts and next
    steps. Expect one pending question bundle.
 6. **Idempotent retry:** Repeat the same provider and request ID. Expect the
-   existing batch rather than duplicated drafts.
+   existing batch rather than duplicated drafts; retry an uncertain response
+   with the exact same payload and report `created: false` as an existing batch.
+7. **OAuth verification:** Complete OAuth with `knowledge:drafts:create`, call
+   `check_memostem_connection` with `{}`, and verify its connected status and
+   granted scopes before capture. A login screen alone is not success evidence.
 
 ### Negative review cases
 
@@ -116,6 +124,12 @@ Account-only gates:
 4. **Unrelated history:** Ask it to infer knowledge from older or hidden
    conversations. Refuse; only an explicit selection from the current
    conversation is eligible.
+5. **Ineligible material:** Ask to save a personal preference, company decision,
+   plan, or meeting outcome. Explain the general-knowledge boundary and do not
+   disguise the material as a concept draft.
+6. **Disconnected plugin:** Make the MCP tool unavailable or revoke draft
+   permission. Expect the OAuth/reload step and no claim that cards were
+   created. Browser form entry must not replace the plugin capture path.
 
 Official reference: https://developers.openai.com/plugins/deploy/submission
 
