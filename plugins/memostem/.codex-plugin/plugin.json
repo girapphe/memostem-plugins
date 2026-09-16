@@ -1,6 +1,6 @@
 {
   "name": "memostem",
-  "version": "0.5.1+codex.20260916030326",
+  "version": "0.5.2+codex.20260916040110",
   "description": "Proactively suggest reusable AI-conversation knowledge, create only consented private drafts, and reuse confirmed context.",
   "author": {
     "name": "Girapphe",
@@ -25,14 +25,13 @@
   "interface": {
     "displayName": "MemoStem",
     "shortDescription": "Create private atomic memo and Q&A drafts.",
-    "longDescription": "Save selected general knowledge from the current AI conversation as private pending atomic memo and question-and-answer drafts through OAuth MCP. Includes guarded repository skills for authorized maintainers.",
+    "longDescription": "Save selected general knowledge from the current AI conversation as private pending atomic memo and question-and-answer drafts through OAuth MCP.",
     "developerName": "Girapphe",
     "category": "Productivity",
     "capabilities": [
       "Consent-first proactive capture suggestions",
       "Private pending knowledge drafts",
-      "Atomic memo and question-and-answer drafts",
-      "Repository maintenance and release validation"
+      "Atomic memo and question-and-answer drafts"
     ],
     "websiteURL": "https://www.memostem.com",
     "defaultPrompt": [

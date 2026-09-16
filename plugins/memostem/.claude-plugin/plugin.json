@@ -1,6 +1,6 @@
 {
   "name": "memostem",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Proactively suggest reusable AI-conversation knowledge, create only consented private drafts, and reuse confirmed context.",
   "author": {
     "name": "Girapphe",
