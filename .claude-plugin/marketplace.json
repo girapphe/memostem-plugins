@@ -4,14 +4,14 @@
     "name": "Girapphe"
   },
   "metadata": {
-    "description": "Private, review-first knowledge capture and reuse for AI conversations."
+    "description": "Owner-scoped knowledge reuse and review-first capture for AI conversations."
   },
   "plugins": [
     {
       "name": "memostem",
       "source": "./plugins/memostem",
-      "description": "Find reusable knowledge as conversations unfold, suggest it at the right moment, and create private review drafts only after consent.",
-      "version": "0.5.3"
+      "description": "Reuse private owner-scoped knowledge and create reviewable drafts after consent.",
+      "version": "0.5.4"
     }
   ]
 }

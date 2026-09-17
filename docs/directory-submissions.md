@@ -37,10 +37,10 @@ automatically approved or published. Each draft remains in the owner's
 Candidate Inbox until they edit, merge, save, or ignore it. Atomic memos teach
 one concept; question-and-answer drafts test one idea. The connector verifies
 its authenticated draft permission before capture and never uploads raw
-conversation transcripts. Confirmed-topic recall is currently restricted to
-accounts with the full-product admin override and a separate read scope; it
-is not an ordinary-user capability. The AI host controls whether it surfaces
-the proactive guidance.
+conversation transcripts. With separate read consent, every signed-in owner
+can also retrieve their own active confirmed knowledge or explicitly inspect
+pending, archived, superseded, and recoverable trashed states. The AI host
+controls whether it surfaces the proactive guidance.
 
 ### Primary use cases
 
@@ -51,6 +51,9 @@ the proactive guidance.
    of the owner's canonical private knowledge.
 3. Turn directly requested general knowledge into concise atomic memos and
    answered question drafts for later review.
+4. Reuse the signed-in owner's active confirmed knowledge, or inspect an
+   explicitly requested lifecycle state, without exposing another owner's data
+   or raw conversation history.
 
 ### Starter prompts
 
@@ -62,6 +65,8 @@ the proactive guidance.
 4. "Create an open-question draft with the known facts, hypotheses, and next
    steps I selected."
 5. "Verify that MemoStem is connected and has permission to create private drafts."
+6. "Use my active MemoStem knowledge about this topic, and include archived or
+   superseded items only if I explicitly ask for them."
 
 ## OpenAI submission
 
@@ -75,6 +80,10 @@ Repository-prepared fields:
 - The server publishes accurate tool titles, schemas, and safety annotations.
 - The endpoint supports public OAuth discovery and returns an authentication
   challenge to unauthenticated requests.
+- New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
+  `knowledge:context:read`. Existing grants require reconnect or reconsent for
+  newly added read access; `profile`, `email`, metadata, and `offline_access`
+  are not requested by default.
 - The plugin contains no custom UI, payment action, advertising action, or
   destructive tool.
 
@@ -108,9 +117,18 @@ Account-only gates:
 6. **Idempotent retry:** Repeat the same provider and request ID. Expect the
    existing batch rather than duplicated drafts; retry an uncertain response
    with the exact same payload and report `created: false` as an existing batch.
-7. **OAuth verification:** Complete OAuth with `knowledge:drafts:create`, call
-   `check_memostem_connection` with `{}`, and verify its connected status and
-   granted scopes before capture. A login screen alone is not success evidence.
+7. **Default active context:** Complete OAuth with
+   `knowledge:context:read`, call `get_topic_context` without
+   `lifecycle_states`, and expect a schema-version-2 `confirmed_context` pack
+   containing only that owner's active confirmed items.
+8. **Lifecycle inspection:** Request `active`, `pending`, `archived`,
+   `superseded`, and `trashed` explicitly. Expect `lifecycle_context`, per-item
+   lifecycle and verification status, current pending candidates, and only
+   trash still inside the 14-day recovery window.
+9. **OAuth verification:** Complete OAuth with the three ChatGPT defaults, call
+   `check_memostem_connection` with `{}`, and verify connected status plus the
+   two `knowledge:*` grants before capture or retrieval. A login screen alone
+   is not success evidence.
 
 ### Negative review cases
 
@@ -131,6 +149,9 @@ Account-only gates:
 6. **Disconnected plugin:** Make the MCP tool unavailable or revoke draft
    permission. Expect the OAuth/reload step and no claim that cards were
    created. Browser form entry must not replace the plugin capture path.
+7. **Invalid explicit context selection:** Mix an unknown, wrong-owner,
+   permanently deleted, or unrequested-state ID into an explicit selection.
+   Expect one non-leaky error and no partial context.
 
 Official reference: https://developers.openai.com/plugins/deploy/submission
 

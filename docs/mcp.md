@@ -14,17 +14,49 @@ The production Streamable HTTP endpoint is:
 https://www.memostem.com/api/mcp
 ```
 
-An ordinary connection with `knowledge:drafts:create` exposes:
+Tools are exposed from the scopes the signed-in owner grants:
 
 - `check_memostem_connection`
-- `create_knowledge_bundle_drafts`
-- `create_card_drafts` for compatibility
+- `create_knowledge_bundle_drafts` and compatible `create_card_drafts` with
+  `knowledge:drafts:create`
+- `get_topic_context` with `knowledge:context:read`
 
 Creation tools save only private pending drafts. They do not auto-approve
-knowledge or write to the public graph. `get_topic_context` is currently
-restricted to accounts with the full-product admin override and the separate
-`knowledge:context:read` scope. Do not advertise recall as an ordinary-user
-feature or request a read scope merely to create drafts.
+knowledge or write to the public graph. Every logged-in owner may grant the
+separate context scope; no administrator override is required. A draft-only
+client does not receive the read tool, and a context-only client does not
+receive creation tools.
+
+## Owner-scoped context and lifecycle filters
+
+`get_topic_context` returns only the authenticated owner's knowledge. Omitting
+`lifecycle_states` is equivalent to `lifecycle_states: ["active"]` and keeps
+the compatible `status: "confirmed_context"`. A request containing any
+non-active state returns `status: "lifecycle_context"`. The accepted,
+duplicate-free lifecycle values are:
+
+- `active`: current, confirmed canonical knowledge
+- `pending`: current, unconfirmed pending candidates only
+- `archived`: confirmed knowledge the owner archived
+- `superseded`: confirmed knowledge replaced by a newer canonical item
+- `trashed`: soft-deleted knowledge still inside the 14-day recovery window
+
+The reference pack uses schema version 2. Every item includes
+`lifecycle_state` and `verification_status`. Pending items are
+`unconfirmed_pending_candidate`; every returned canonical item is
+`user_confirmed_not_independently_fact_checked`. Learning state is attached
+only to requested active confirmed items. Relations include only canonical
+items returned together in the same pack, and pending candidates never expose
+suggested relations.
+
+A `recent_topic` request applies one limit across all selected states and caps
+the result at 50 items. Explicit item selection accepts up to 100 IDs across
+canonical item IDs and pending draft IDs. Explicit selection is all-or-nothing:
+an ID owned by someone else, outside the requested states, expired or purged
+from trash, or permanently deleted produces the same non-leaky error without a
+partial result. Ignored, rejected, or discarded candidates, purged data, and
+raw conversation transcripts are never returned. Only active confirmed reads
+record a `reused` lifecycle event; other lifecycle reads are inspection.
 
 ## Proactive suggestion and consent
 
@@ -117,6 +149,18 @@ ChatGPT's browser settings. The public
 [MemoStem connection page](https://www.memostem.com/plugins) links a signed-in
 person to the detailed setup guide.
 
+Configure new ChatGPT connections to request exactly these default scopes:
+
+- `openid` for Clerk identity
+- `knowledge:drafts:create` for private pending draft creation
+- `knowledge:context:read` for owner-scoped context retrieval
+
+Do not add `profile`, `email`, metadata scopes, or `offline_access` to the
+ChatGPT defaults. MemoStem's connection record and
+`check_memostem_connection` report only the two `knowledge:*` grants. Existing
+draft-only grants are not elevated automatically; the person must disconnect
+and reconnect or complete a new consent flow before the read tool appears.
+
 For a server-side Responses API integration, keep both tokens in environment
 variables and require approval for every MemoStem tool call:
 
@@ -127,16 +171,17 @@ const client = new OpenAI();
 
 const response = await client.responses.create({
   model: process.env.OPENAI_MODEL,
-  input: "Save the selected ideas to MemoStem as pending drafts.",
+  input: "Use my active MemoStem context, then save only the ideas I explicitly select as pending drafts.",
   tools: [
     {
       type: "mcp",
       server_label: "memostem",
-      server_description: "Verify a MemoStem connection and create reviewable private general-knowledge drafts.",
+      server_description: "Retrieve owner-scoped private knowledge and create reviewable general-knowledge drafts.",
       server_url: "https://www.memostem.com/api/mcp",
       authorization: process.env.MEMOSTEM_MCP_TOKEN,
       allowed_tools: [
         "check_memostem_connection",
+        "get_topic_context",
         "create_knowledge_bundle_drafts",
         "create_card_drafts"
       ],
@@ -149,7 +194,9 @@ console.log(response.output_text);
 ```
 
 `OPENAI_API_KEY`, `OPENAI_MODEL`, and `MEMOSTEM_MCP_TOKEN` must be supplied by
-the caller. Never commit their values.
+the caller. The PAT must explicitly include `knowledge:context:read` for the
+read tool; the Settings checkbox is intentionally unchecked by default. Never
+commit token values.
 
 ## Claude Code
 
@@ -181,6 +228,8 @@ listing are separate distribution states.
   conversation.
 - Never send a full transcript, archive, hidden system prompt, unrelated files,
   or ambient workspace context.
+- Treat context reads as owner-scoped retrieval, not permission to enumerate
+  another user's IDs or bypass lifecycle filters.
 - Draft creation is not approval. Review, edit, merge, update, ignore, or save
   every candidate in MemoStem.
 - The plugin repository contains only connection metadata and workflow

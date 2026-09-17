@@ -1,8 +1,8 @@
 {
   "name": "memostem-plugins",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "private": true,
-  "description": "Find reusable knowledge during AI conversations and create private MemoStem drafts only after consent.",
+  "description": "Reuse owner-scoped private knowledge and create reviewable MemoStem drafts after consent.",
   "scripts": {
     "check": "node scripts/validate.mjs && node --test scripts/validate.test.mjs"
   },

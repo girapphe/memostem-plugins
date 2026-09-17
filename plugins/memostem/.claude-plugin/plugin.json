@@ -1,7 +1,7 @@
 {
   "name": "memostem",
-  "version": "0.5.3",
-  "description": "Find reusable knowledge as conversations unfold, suggest it at the right moment, and create private review drafts only after consent.",
+  "version": "0.5.4",
+  "description": "Reuse private owner-scoped knowledge and create reviewable drafts after consent.",
   "author": {
     "name": "Girapphe",
     "url": "https://github.com/girapphe"

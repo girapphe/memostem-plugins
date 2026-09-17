@@ -4,8 +4,8 @@
 
 # MemoStem for ChatGPT, Claude, and Codex
 
-Let a connected AI notice knowledge worth keeping as the conversation unfolds,
-suggest one specific idea at the right moment, and turn it into a private draft
+Let a connected AI reuse your private, confirmed knowledge or notice knowledge
+worth keeping as the conversation unfolds. New material becomes a private draft
 only after you confirm—without uploading the whole conversation or publishing
 anything automatically.
 
@@ -32,6 +32,9 @@ The MemoStem application and server implementation remain private.
   you edit, merge, save, or ignore it.
 - **Keep knowledge teachable.** Create an atomic memo for one concept or a
   question-and-answer draft for one retrieval question.
+- **Reuse only your knowledge.** A read-authorized connection can retrieve the
+  signed-in owner's confirmed knowledge and, only when explicitly requested,
+  inspect its lifecycle state.
 
 ## Connect from an AI app
 
@@ -46,7 +49,12 @@ https://www.memostem.com/api/mcp
 Add MemoStem as an OAuth remote MCP app in a supported ChatGPT workspace. The
 public [MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
-GitHub publication alone does not list or activate a ChatGPT plugin.
+New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
+`knowledge:context:read` by default. Existing draft-only connections are not
+upgraded automatically; disconnect and reconnect, or consent again, to add
+read access. `openid` is used only for identity; the defaults exclude
+`profile`, `email`, metadata scopes, and `offline_access`. GitHub publication
+alone does not list or activate a ChatGPT plugin.
 
 ### Claude
 
@@ -130,16 +138,22 @@ claude plugin marketplace remove memostem
 
 - `check_memostem_connection`: verify authentication and report granted scopes
   without reading or writing knowledge.
+- `get_topic_context`: with `knowledge:context:read`, retrieve only the
+  authenticated owner's knowledge. It defaults to active confirmed items;
+  callers may explicitly request `active`, `pending`, `archived`, `superseded`,
+  or recoverable `trashed` lifecycle states.
 - `create_knowledge_bundle_drafts`: create structured private drafts from a
   specific suggestion the user confirmed, or material they directly asked to
   save from the current conversation. Each bundle must use
   `knowledge_scope: "general_knowledge"`.
 - `create_card_drafts`: compatible concept-card draft creation.
 
-`get_topic_context` is currently restricted to accounts with the full-product
-admin override and the separate `knowledge:context:read` scope. It is not part
-of the ordinary user's plugin flow; granting a read scope alone does not make
-it available.
+Context packs use schema version 2 and label each item with its lifecycle and
+verification status. Pending items remain unconfirmed candidates; non-pending
+items are user-confirmed but not independently fact-checked. Explicit item
+selection fails as one non-leaky request if any ID belongs to another owner,
+is outside the requested lifecycle states, has expired from trash recovery, or
+was permanently deleted. No context response contains raw conversation history.
 
 Draft creation cannot approve knowledge, publish to the public graph, or retain
 a conversation transcript. Question-and-answer cards use answered `question`
