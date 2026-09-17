@@ -109,6 +109,32 @@ for (const [label, source] of [['README', readme], ['connection guide', connecti
   assert.ok(source.includes('codex mcp login memostem --scopes knowledge:drafts:create'), `${label} must document Codex OAuth`);
   assert.ok(source.includes('check_memostem_connection'), `${label} must document the live connection check`);
 }
+for (const [label, source] of [
+  ['README', readme],
+  ['connection guide', connectionGuide],
+  ['submission kit', submissionKit],
+]) {
+  for (const requiredContract of [
+    'get_topic_context',
+    'knowledge:context:read',
+    'active',
+    'pending',
+    'archived',
+    'superseded',
+    'trashed',
+  ]) {
+    assert.ok(source.includes(requiredContract), `${label} must describe ${requiredContract}`);
+  }
+  for (const defaultScope of [
+    'openid',
+    'knowledge:drafts:create',
+    'knowledge:context:read',
+  ]) {
+    assert.ok(source.includes(defaultScope), `${label} must document the ${defaultScope} ChatGPT default`);
+  }
+  assert.match(source, /reconnect|reconsent|consent again/iu, `${label} must explain read-scope reconsent`);
+  assert.doesNotMatch(source, /full-product admin override/iu, `${label} must not advertise an admin-only read gate`);
+}
 for (const requiredUrl of [
   'https://www.memostem.com/plugins',
   'https://www.memostem.com/privacy',
@@ -164,6 +190,8 @@ assert.deepEqual(captureExample.bundles.map((bundle) => bundle.knowledge_type), 
 // contract tests; this repository checks packaging without copying that schema.
 assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('atomic memo')));
 assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('connection')));
+assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('active MemoStem knowledge')));
+assert.ok(codexManifest.interface.capabilities.includes('Owner-scoped lifecycle context retrieval'));
 assert.ok(codexManifest.interface.defaultPrompt.every((prompt) => !/decision draft|recall.*confirmed/iu.test(prompt)));
 const proactiveCaptureAgent = await readFile(
   path.join(skillsRoot, 'memostem-proactive-capture', 'agents', 'openai.yaml'),
