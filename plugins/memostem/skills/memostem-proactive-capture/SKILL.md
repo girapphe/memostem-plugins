@@ -77,6 +77,25 @@ user to narrow it before any write.
    entry, a direct database write, or an invented tool result. A browser may be
    used for OAuth or the returned review page.
 
+## Let the user choose among candidates
+
+When the user asks to see or choose among named current-conversation ideas,
+or accepts a specific proposal to review them, use
+`review_knowledge_bundle_candidates` if available after the authenticated
+connection check. It validates and previews candidates without saving them.
+Use the same typed-bundle rules below and begin with no selection.
+
+In an MCP Apps-capable host, the person checks candidates and clicks Add. That
+click is consent to create only the checked private pending drafts; do not ask
+for a second chat confirmation or call a creation tool again after the App
+saves. Read the actual result and direct them to the returned Inbox for review
+and approval. Previewing candidates alone is never a successful save.
+
+If the host does not render the App, show the returned numbered candidates,
+ask which to keep, and create only that selection after a clear reply. For a
+direct request to save already named material, proceed with the creation path
+below; an extra selection step is unnecessary.
+
 ## Create concise, independently teachable drafts
 
 After consent and a successful connection check, call

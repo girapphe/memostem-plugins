@@ -36,6 +36,23 @@ The MemoStem application and server implementation remain private.
   signed-in owner's confirmed knowledge and, only when explicitly requested,
   inspect its lifecycle state.
 
+## Ask for useful cards
+
+- Concept: “Save how rain forms as one concise concept card, with a definition
+  and an example.”
+- Retrieval question: “Make one question-and-answer card about why cooling air
+  forms water droplets, using what we just discussed.”
+- Selection first: “Show me candidates for the weather concepts we discussed
+  so I can choose which to keep.”
+
+In an MCP Apps-capable host with a connected account, check candidates and click
+Add. That click creates only the selected private pending drafts; no second chat
+confirmation is needed. If the host shows a text list instead, reply with the
+candidates to keep. Then open Candidate Inbox to read, edit, and approve them.
+Previewing or adding drafts does not approve knowledge or enroll it in practice.
+
+See [card examples and review steps](https://www.memostem.com/plugins#card-guide).
+
 ## Connect from an AI app
 
 The production Streamable HTTP MCP endpoint is:
