@@ -11,7 +11,7 @@
       "name": "memostem",
       "source": "./plugins/memostem",
       "description": "Reuse private owner-scoped knowledge and create reviewable drafts after consent.",
-      "version": "0.5.4"
+      "version": "0.5.6"
     }
   ]
 }
