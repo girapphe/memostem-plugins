@@ -19,6 +19,8 @@ anything automatically.
 This public repository is the official distribution source for MemoStem's
 Codex and Claude Code plugins and its hosted remote MCP connection metadata.
 The MemoStem application and server implementation remain private.
+Distributable manifests, skills, examples, and documentation have no mirrored
+authoring copy in that private repository.
 
 ## Why MemoStem
 
@@ -163,6 +165,9 @@ claude plugin marketplace remove memostem
   specific suggestion the user confirmed, or material they directly asked to
   save from the current conversation. Each bundle must use
   `knowledge_scope: "general_knowledge"`.
+- `review_knowledge_bundle_candidates`: present a bounded candidate selection
+  before creation; an MCP Apps Add action or an explicit text selection passes
+  only the chosen candidates to draft creation.
 - `create_card_drafts`: compatible concept-card draft creation.
 
 Context packs use schema version 2 and label each item with its lifecycle and
@@ -206,7 +211,17 @@ claude plugin validate plugins/memostem
 
 The dependency-free repository check validates both marketplaces, cross-platform
 metadata, the complete skill trees, MCP Registry metadata, public/private
-boundaries, symlinks, and common secret patterns.
+boundaries, symlinks, common secret patterns, and the versioned
+[`contracts/mcp-compatibility.json`](contracts/mcp-compatibility.json) contract.
+That contract names the endpoint, OAuth scopes, required tools, and public
+fixtures that the private application validates semantically against its real
+MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
+
+Before releasing a public branch that changes the contract or its fixtures, a
+MemoStem maintainer runs the private `Public plugin compatibility` workflow
+with this branch name as `public_plugin_ref`. The workflow checks out this
+repository temporarily; it does not copy plugin sources into the private Git
+history.
 
 For local Codex iteration, the plugin-creator cachebuster helper can append
 `+codex.<timestamp>` to the Codex manifest version before reinstalling from a
