@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "endpoint": "https://www.memostem.com/api/mcp",
+  "oauth_scopes": [
+    "openid",
+    "knowledge:drafts:create",
+    "knowledge:context:read"
+  ],
+  "required_tools": [
+    "check_memostem_connection",
+    "create_card_drafts",
+    "create_knowledge_bundle_drafts",
+    "get_topic_context",
+    "review_knowledge_bundle_candidates"
+  ],
+  "fixtures": {
+    "create_knowledge_bundle_drafts": "plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json"
+  }
+}

@@ -30,6 +30,7 @@ const claudeManifest = await readJson('plugins/memostem/.claude-plugin/plugin.js
 const mcp = await readJson('plugins/memostem/.mcp.json');
 const registryManifest = await readJson('server.json');
 const packageManifest = await readJson('package.json');
+const compatibilityContract = await readJson('contracts/mcp-compatibility.json');
 
 assert.equal(codexMarketplace.name, 'memostem');
 assert.equal(codexMarketplace.interface.displayName, 'MemoStem');
@@ -85,6 +86,32 @@ assert.deepEqual(mcp, {
   },
 });
 
+assert.deepEqual(compatibilityContract, {
+  schema_version: 1,
+  endpoint: mcp.mcpServers.memostem.url,
+  oauth_scopes: [
+    'openid',
+    'knowledge:drafts:create',
+    'knowledge:context:read',
+  ],
+  required_tools: [
+    'check_memostem_connection',
+    'create_card_drafts',
+    'create_knowledge_bundle_drafts',
+    'get_topic_context',
+    'review_knowledge_bundle_candidates',
+  ],
+  fixtures: {
+    create_knowledge_bundle_drafts: 'plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json',
+  },
+});
+for (const [toolName, fixturePath] of Object.entries(compatibilityContract.fixtures)) {
+  assert.ok(compatibilityContract.required_tools.includes(toolName), `${toolName} fixture must name a required tool`);
+  const fixtureMetadata = await lstat(path.join(root, fixturePath));
+  assert.equal(fixtureMetadata.isFile(), true, `${toolName} fixture must point to a file`);
+  assert.equal(fixtureMetadata.isSymbolicLink(), false, `${toolName} fixture must not be a symlink`);
+}
+
 assert.equal(registryManifest.name, 'io.github.girapphe/memostem');
 assert.equal(registryManifest.title, 'MemoStem');
 assert.equal(typeof registryManifest.description, 'string');
@@ -108,6 +135,9 @@ const connectionGuide = await readFile(path.join(root, 'docs', 'mcp.md'), 'utf8'
 for (const [label, source] of [['README', readme], ['connection guide', connectionGuide]]) {
   assert.ok(source.includes('codex mcp login memostem --scopes knowledge:drafts:create'), `${label} must document Codex OAuth`);
   assert.ok(source.includes('check_memostem_connection'), `${label} must document the live connection check`);
+}
+for (const toolName of compatibilityContract.required_tools) {
+  assert.ok(readme.includes(toolName), `README must describe required tool ${toolName}`);
 }
 for (const [label, source] of [
   ['README', readme],
