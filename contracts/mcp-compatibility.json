@@ -23,5 +23,12 @@
   },
   "examples": {
     "merge_resolution_proposal": "plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json"
+  },
+  "mcp_apps": {
+    "review_tool": "review_knowledge_bundle_candidates",
+    "resource_uri": "ui://memostem/knowledge-candidate-picker.html",
+    "mime_type": "text/html;profile=mcp-app",
+    "create_tool": "create_knowledge_bundle_drafts",
+    "fallback": "text_selection"
   }
 }

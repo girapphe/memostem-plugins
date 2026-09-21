@@ -23,6 +23,7 @@ Tools are exposed from the scopes the signed-in owner grants:
 - `list_knowledge_catalog`, `search_knowledge`, and `get_knowledge_context`
   with `knowledge:context:read`
 - `get_draft_batch_status` with `knowledge:drafts:status`
+- `review_knowledge_bundle_candidates` with `knowledge:drafts:create`
 
 Creation tools save only private pending drafts. They do not auto-approve
 knowledge or write to the public graph. Every logged-in owner may grant the
@@ -38,6 +39,39 @@ but the proposal does not mutate canonical knowledge. The owner completes the
 actual action in MemoStem after comparing the target, target version, sources,
 and change summary. Polling `get_draft_batch_status` reports that real state and
 does not perform a resolution.
+
+## Interactive candidate picker (MCP Apps)
+
+The picker is hosted by the MemoStem MCP server. Installing this public plugin
+connects to that server; the package does not ship a second UI bundle or private
+application source. Rendering requires an MCP Apps-capable host and a connected
+account with `knowledge:drafts:create`. A working tool list alone does not prove
+that a particular host renders the UI.
+
+The public [compatibility contract](../contracts/mcp-compatibility.json) records
+these bindings in its additive `mcp_apps` section:
+
+| Contract field | Hosted behavior |
+| --- | --- |
+| `review_tool` | `review_knowledge_bundle_candidates` previews identified candidates without saving. |
+| `resource_uri` | The tool's `_meta.ui.resourceUri` resolves to `ui://memostem/knowledge-candidate-picker.html`. |
+| `mime_type` | The resource is served as `text/html;profile=mcp-app`. |
+| `create_tool` | Clicking Add calls `create_knowledge_bundle_drafts` through the host's MCP Apps bridge with only selected candidates. |
+| `fallback` | `text_selection`: hosts without UI receive candidate text and wait for an explicit selection before creation. |
+
+Start with no selected items. Preview details, select the items to keep, then
+click Add. The click authorizes those private pending drafts; the assistant
+must not repeat creation or ask for another chat confirmation. The returned
+count and Candidate Inbox link describe the actual creation result. Reviewing
+candidates alone does not save them, and adding drafts does not approve
+knowledge or enroll it in practice. Host tool-approval controls still apply.
+
+The public validator rejects missing or changed UI bindings. The private
+application's compatibility check verifies the bindings against the MCP server;
+its browser tests exercise picker behavior. Neither check substitutes for an
+authenticated session in each supported host. Use H-05 in the
+[host acceptance protocol](channel-status.md#host-acceptance-protocol) to record
+actual rendering, selected-only creation, and text fallback separately.
 
 ## Owner-scoped context and lifecycle filters
 

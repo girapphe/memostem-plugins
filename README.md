@@ -69,6 +69,8 @@ Add. That click creates only the selected private pending drafts; no second chat
 confirmation is needed. If the host shows a text list instead, reply with the
 candidates to keep. Then open Candidate Inbox to read, edit, and approve them.
 Previewing or adding drafts does not approve knowledge or enroll it in practice.
+The picker UI is served by the hosted MCP server; see the
+[MCP Apps contract and host requirements](docs/mcp.md#interactive-candidate-picker-mcp-apps).
 
 See [card examples and review steps](https://www.memostem.com/plugins#card-guide).
 
@@ -277,9 +279,9 @@ The dependency-free repository check validates both marketplaces, cross-platform
 metadata, the complete skill trees, MCP Registry metadata, public/private
 boundaries, symlinks, common secret patterns, and the versioned
 [`contracts/mcp-compatibility.json`](contracts/mcp-compatibility.json) contract.
-That contract names the endpoint, OAuth scopes, required tools, and public
-fixtures that the private application validates semantically against its real
-MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
+That contract names the endpoint, OAuth scopes, required tools, MCP Apps
+resource and action bindings, text fallback, and public fixtures that the private
+application validates semantically against its real MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
 
 Before releasing a public branch that changes the contract or its fixtures, a
 MemoStem maintainer runs the private `Public plugin compatibility` workflow

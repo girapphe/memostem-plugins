@@ -39,6 +39,12 @@ test('public validation rejects maintenance skills and unknown skills', async (t
 
 test('public validation rejects compatibility contract drift', async (t) => {
   const mutations = [
+    ['missing MCP Apps contract', (contract) => { delete contract.mcp_apps; }],
+    ['UI resource drift', (contract) => { contract.mcp_apps.resource_uri = 'ui://memostem/missing.html'; }],
+    ['UI MIME drift', (contract) => { contract.mcp_apps.mime_type = 'text/html'; }],
+    ['review tool drift', (contract) => { contract.mcp_apps.review_tool = 'create_card_drafts'; }],
+    ['UI action drift', (contract) => { contract.mcp_apps.create_tool = 'create_card_drafts'; }],
+    ['missing text fallback', (contract) => { delete contract.mcp_apps.fallback; }],
     ['endpoint drift', (contract) => { contract.endpoint = 'https://example.com/api/mcp'; }],
     ['tool drift', (contract) => { contract.required_tools.pop(); }],
     ['fixture drift', (contract) => { contract.fixtures.create_knowledge_bundle_drafts = 'missing.json'; }],
