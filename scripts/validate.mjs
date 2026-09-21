@@ -86,6 +86,32 @@ assert.deepEqual(mcp, {
   },
 });
 
+// Agent Plugins 1.0 uses fixed root paths and streamable-http, while the
+// existing native adapters use .mcp.json and http. Validate our deliberately
+// minimal profile exactly: this also rejects inline MCP, path overrides,
+// credentials and unsupported extension data. This is not a general validator
+// for arbitrary third-party Agent Plugins packages.
+const portableManifest = await readJson('plugins/memostem/plugin.json');
+const portableMcp = await readJson('plugins/memostem/mcp.json');
+assert.deepEqual(portableManifest, {
+  $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
+  name: codexManifest.name,
+  version: releaseVersion,
+  description: codexManifest.description,
+  author: codexManifest.author,
+  homepage: codexManifest.homepage,
+  repository: codexManifest.repository,
+  keywords: codexManifest.keywords,
+}, 'portable manifest must match the shared metadata and fixed-path profile');
+assert.deepEqual(portableMcp, {
+  $schema: 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json',
+  mcpServers: {
+    memostem: { type: 'streamable-http', url: mcp.mcpServers.memostem.url },
+  },
+}, 'portable MCP must use the canonical endpoint and streamable-http');
+assert.equal(packageManifest.description, codexManifest.description);
+assert.equal(registryManifest.description, codexManifest.description);
+
 assert.deepEqual(compatibilityContract, {
   schema_version: 1,
   endpoint: mcp.mcpServers.memostem.url,

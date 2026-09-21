@@ -9,8 +9,8 @@ access tokens, private application source, or provider submission identifiers.
 - **Name:** MemoStem
 - **Developer:** Girapphe
 - **Category:** Productivity
-- **Tagline:** Turn useful conversations into reviewed knowledge.
-- **OpenAI subtitle:** Find knowledge worth keeping
+- **Tagline:** Your reviewed knowledge, across AI conversations.
+- **OpenAI subtitle:** Reviewed knowledge across AI chats
 - **Website:** https://www.memostem.com/plugins
 - **Documentation:** https://github.com/girapphe/memostem-plugins/blob/main/docs/mcp.md
 - **Support:** https://www.memostem.com/support
@@ -23,13 +23,16 @@ access tokens, private application source, or provider submission identifiers.
 
 ### Short description
 
-Let your AI notice knowledge worth keeping during a conversation, confirm one
-specific suggestion, and review the resulting private MemoStem draft.
+Your reviewed knowledge, across AI conversations. Save selected general knowledge
+as private pending drafts, review it in MemoStem, then retrieve your confirmed
+knowledge from another connected AI.
 
 ### Long description
 
-MemoStem helps a connected AI notice independently teachable knowledge while a
-conversation unfolds. At a natural stopping point, the AI names one useful idea
+MemoStem lets you save selected general knowledge in one AI conversation,
+review and approve it in MemoStem, then retrieve it from another AI connected to
+the same MemoStem account. It also helps a connected AI notice independently
+teachable knowledge while a conversation unfolds. At a natural stopping point, the AI names one useful idea
 and asks whether the person wants to keep it. The suggestion sends nothing;
 only a clear affirmative reply or a direct, specific save request can create a
 private structured draft. Nothing is
@@ -72,20 +75,25 @@ controls whether it surfaces the proactive guidance.
 
 Use the OpenAI Platform plugin submission portal and choose **With MCP**. Submit
 the production endpoint directly; do not submit an existing integration ID.
+Include the single `memostem-proactive-capture` skill from the release revision
+as an uploaded skill with the remote MCP. Record the exact source SHA and
+portal validation result in the channel Issue.
 
 Repository-prepared fields:
 
 - Listing, legal, support, documentation, and logo URLs are in the shared
   listing above.
 - The server publishes accurate tool titles, schemas, and safety annotations.
-- The endpoint supports public OAuth discovery and returns an authentication
-  challenge to unauthenticated requests.
+- Check public OAuth discovery and authentication challenges on protected
+  tools. Anonymous preview tools are not proof of an authenticated connection.
 - New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
   `knowledge:context:read`. Existing grants require reconnect or reconsent for
   newly added read access; `profile`, `email`, metadata, and `offline_access`
   are not requested by default.
-- The plugin contains no custom UI, payment action, advertising action, or
-  destructive tool.
+- The existing candidate-review MCP App may render a selection UI in capable
+  hosts and has a text fallback. Disclose it in review and verify current UI
+  metadata/CSP and requested screenshots. There is no new UI in this package
+  change; verify the live exposed tool list before making safety attestations.
 
 Account-only gates:
 
@@ -155,7 +163,7 @@ Account-only gates:
 
 Official reference: https://developers.openai.com/plugins/deploy/submission
 
-## Anthropic submission
+## Anthropic connector submission
 
 Submit the production endpoint as a **Remote MCP server** through the
 Connectors Directory portal in the Girapphe Claude organization.
@@ -177,11 +185,68 @@ Account-only gates:
 5. Confirm OAuth, data handling, use cases, compliance, and end-to-end tool
    behavior before submitting.
 
-The integration has no MCP App UI, so carousel screenshots are not part of this
-submission. If UI is added later, treat screenshots and CSP as a new review
-requirement.
+The candidate-review tool already has an MCP App selection UI with a text
+fallback. Review the live UI and CSP, provide screenshots when the portal
+requests them, and test both rendered selection and fallback. Never describe
+this integration as UI-free.
 
 Official reference: https://claude.com/docs/connectors/building/submission
+
+## Anthropic skill-bearing plugin submission
+
+The connector listing above and a skill-bearing plugin are separate artifacts.
+Use the public [plugin submission entry](https://claude.com/plugins) for the
+existing Claude manifest plus shared skill and remote MCP, using the same
+listing copy and test cases. The [unified directory](https://support.claude.com/en/articles/14328846-browse-skills-connectors-and-plugins-in-one-directory)
+describes installed plugin skills in chat and Cowork. Verify skill loading in
+Claude chat independently of Claude Code and independently of MCP-only setup.
+Record the exact package revision, requested reviewer materials and results in
+[#19](https://github.com/girapphe/memostem-plugins/issues/19).
+
+## Kimi submission
+
+1. In Kimi Work Plugin Builder, import this repository and select only the
+   `plugins/memostem` package from a recorded source revision. Install the
+   converted output from Personal.
+2. Inspect the generated `kimi.plugin.json`, shared skill and MCP connection.
+   Confirm the endpoint is `https://www.memostem.com/api/mcp`, there are no
+   extra tools/skills or credentials, and the capture provider remains `other`.
+   Format conversion alone is not OAuth or behavior verification.
+3. Run the shared positive/negative review cases and H-01–H-10 on a supported
+   Kimi chat surface. Record conversion provenance and sanitized outcomes in
+   [#20](https://github.com/girapphe/memostem-plugins/issues/20).
+4. Open the plugin details feedback button, choose **Apply for official
+   marketplace publication**, and provide the publisher contact email in the
+   private form. Use the shared listing, legal/support URLs, prompts and test
+   material above; supply additional reviewer information only through the
+   provider's private channel.
+5. Record submission, review response and public listing separately. Do not
+   infer web installation or marketplace acceptance from local import.
+
+Official references (checked 2026-09-21): [import](https://www.kimi.com/en/help/plugins-and-skills/create),
+[supported surfaces](https://www.kimi.com/en/help/plugins-and-skills/overview),
+[marketplace application](https://www.kimi.com/en/help/plugins-and-skills/publish).
+
+## Shared bilingual reviewer prompts
+
+| Intent | English | 한국어 |
+| --- | --- | --- |
+| Save | Save this explanation of EUV lithography as one atomic memo draft. | 방금 설명한 EUV 노광 원리를 메모 초안 하나로 저장해 줘. |
+| Retrieve | Find my approved MemoStem knowledge about EUV. | MemoStem에서 내가 승인한 EUV 지식을 찾아줘. |
+| Select | Show candidates from the concepts we just discussed. | 방금 이야기한 개념 중 저장할 후보를 보여줘. |
+
+Use only independently teachable general knowledge. Direct named saves are
+already consent; proactively offered saves require acceptance. Default retrieval
+uses active confirmed knowledge and does not create a new draft. Add a no-match
+query and missing/revoked read-scope case to reviewer testing.
+
+## Gemini and Grok connection readiness
+
+Prepare custom MCP setup and H-01–H-10 evidence using the
+[connection guide](mcp.md#primary-chat-channels). Gemini has account/region
+conditions; Grok has organization provisioning conditions. No public directory
+submission route is assumed for either. Track setup, submission discovery and
+approval independently in the [dated channel record](channel-status.md).
 
 ## MCP Registry publication
 
@@ -194,3 +259,11 @@ registry API. Registry publication is a metadata-discovery state and does not
 prove OAuth completion or provider-directory approval.
 
 Official reference: https://modelcontextprotocol.io/registry/remote-servers
+
+## Submission evidence and rollout
+
+The authoritative preparation/connection/submission/approval record is
+[channel-status.md](channel-status.md). Repository checks prepare material;
+portal scans, account testing, reviewer access, provider submission and public
+approval remain separate gates. Never place reviewer credentials or private
+knowledge in this repository. Refresh official requirements at submission time.
