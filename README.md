@@ -199,6 +199,12 @@ claude plugin marketplace remove memostem
   authenticated owner's knowledge. It defaults to active confirmed items;
   callers may explicitly request `active`, `pending`, `archived`, `superseded`,
   or recoverable `trashed` lifecycle states.
+- `list_knowledge_catalog`: page through the owner's stable topic and tag IDs,
+  canonical names, aliases, and active item counts without returning card bodies.
+- `search_knowledge`: search active approved, non-superseded owner knowledge;
+  exact matches rank before registered aliases and keyword matches.
+- `get_knowledge_context`: retrieve canonical content, taxonomy, version, and
+  selector-only provenance for exactly the selected item IDs across topics.
 - `create_knowledge_bundle_drafts`: create structured private drafts from a
   specific suggestion the user confirmed, or material they directly asked to
   save from the current conversation. Each bundle must use
@@ -207,6 +213,9 @@ claude plugin marketplace remove memostem
   before creation; an MCP Apps Add action or an explicit text selection passes
   only the chosen candidates to draft creation.
 - `create_card_drafts`: compatible concept-card draft creation.
+- `get_draft_batch_status`: with `knowledge:drafts:status`, read whether each
+  submitted draft is still pending or was approved, merged, updated, or ignored
+  by the owner. The tool cannot execute those actions.
 
 Context packs use schema version 2 and label each item with its lifecycle and
 verification status. Pending items remain unconfirmed candidates; non-pending
@@ -215,7 +224,9 @@ selection fails as one non-leaky request if any ID belongs to another owner,
 is outside the requested lifecycle states, has expired from trash recovery, or
 was permanently deleted. No context response contains raw conversation history.
 
-Draft creation cannot approve knowledge, publish to the public graph, or retain
+An optional `resolution_proposal` contains a complete proposed final card,
+target version, source item IDs, change summary, and reason. It is never a
+partial patch or a completed merge. Draft creation cannot approve knowledge, publish to the public graph, or retain
 a conversation transcript. Question-and-answer cards use answered `question`
 bundles; they do not automatically enroll in practice. See the
 [working payload example](plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json)

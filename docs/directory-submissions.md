@@ -87,13 +87,25 @@ Repository-prepared fields:
 - Check public OAuth discovery and authentication challenges on protected
   tools. Anonymous preview tools are not proof of an authenticated connection.
 - New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
-  `knowledge:context:read`. Existing grants require reconnect or reconsent for
+  `knowledge:context:read`. `knowledge:drafts:status` is requested when batch
+  polling is enabled. Existing grants require reconnect or reconsent for
   newly added read access; `profile`, `email`, metadata, and `offline_access`
   are not requested by default.
 - The existing candidate-review MCP App may render a selection UI in capable
   hosts and has a text fallback. Disclose it in review and verify current UI
   metadata/CSP and requested screenshots. There is no new UI in this package
   change; verify the live exposed tool list before making safety attestations.
+
+For reviewed knowledge reuse, `list_knowledge_catalog` returns stable owner
+topic/tag IDs without bodies, `search_knowledge` searches active approved
+non-superseded items, and `get_knowledge_context` returns only explicitly
+selected cross-topic items. A complete `resolution_proposal` may accompany a
+pending bundle with a target version, source IDs, change summary, and reason;
+it does not execute a merge or update. `get_draft_batch_status` uses
+`knowledge:drafts:status` to report the owner's later resolution without
+performing it. `get_topic_context` remains available for compatible Topic Hub
+lifecycle reads of `active`, `pending`, `archived`, `superseded`, and `trashed`
+items.
 
 Account-only gates:
 
@@ -137,6 +149,14 @@ Account-only gates:
    `check_memostem_connection` with `{}`, and verify connected status plus the
    two `knowledge:*` grants before capture or retrieval. A login screen alone
    is not success evidence.
+10. **Existing-knowledge proposal:** Call `list_knowledge_catalog`, then
+   `search_knowledge`, then `get_knowledge_context` for only the selected IDs.
+   Submit a complete merged final card with `resolution_proposal`; expect a
+   private `pending` draft and no canonical version change.
+11. **Resolution status:** With `knowledge:drafts:status`, call
+   `get_draft_batch_status` for the returned batch. Expect `pending` until the
+   reviewer acts in MemoStem; after review, expect the actual approved, merged,
+   updated, ignored, or partially resolved state.
 
 ### Negative review cases
 
