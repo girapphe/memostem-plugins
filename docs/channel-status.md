@@ -1,10 +1,12 @@
 # Channel readiness and evidence
 
-Record date: **2026-09-21**. Owner: **@OkYongChoi**, publisher/account operator.
+Record date: **2026-09-22**. Owner: **@OkYongChoi**, publisher/account operator.
 This record covers repository preparation. No authenticated host session or
 provider portal was exercised during implementation. Existing external listings
 were not audited; “not exercised” does not assert that none already exist.
 Official source checks appear in [the connection guide](mcp.md#primary-chat-channels).
+The submission operator checklist is in
+[the submission readiness runbook](submission-readiness.md).
 
 ## Independent channel states
 
@@ -43,6 +45,17 @@ failure was observed; these account-dependent tests have not been attempted.
 These checks do not prove model behavior, OAuth activation, host installation,
 store review, public listing or deployment. Versions are prepared for 0.6.0;
 no release or registry publication has been performed by this implementation.
+
+Live credential-free preflight on 2026-09-22 confirmed the public product,
+privacy, terms, support and logo URLs; production database health; MCP
+initialization; seven anonymous/reviewer-entry tools with titles and complete
+annotations; and the candidate-picker MCP App with an exact empty-domain CSP.
+The protected-resource metadata advertises `knowledge:drafts:status`, while the
+authorization-server metadata does not. Core draft-create/context-read
+submission preparation remains valid; status polling is not submission-ready
+until the provider metadata and a real OAuth grant both confirm the scope; that
+external activation is tracked in
+[MemoStem Issue #311](https://github.com/girapphe/memostem/issues/311).
 
 ## Host acceptance protocol
 

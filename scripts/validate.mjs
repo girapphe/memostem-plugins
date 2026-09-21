@@ -170,6 +170,7 @@ assert.equal('packages' in registryManifest, false);
 
 const readme = await readFile(path.join(root, 'README.md'), 'utf8');
 const submissionKit = await readFile(path.join(root, 'docs', 'directory-submissions.md'), 'utf8');
+const submissionReadiness = await readFile(path.join(root, 'docs', 'submission-readiness.md'), 'utf8');
 const connectionGuide = await readFile(path.join(root, 'docs', 'mcp.md'), 'utf8');
 for (const [label, source] of [['README', readme], ['connection guide', connectionGuide]]) {
   assert.ok(source.includes('codex mcp login memostem --scopes knowledge:drafts:create'), `${label} must document Codex OAuth`);
@@ -223,6 +224,22 @@ for (const requiredUrl of [
 assert.match(submissionKit, /five|5 positive|Positive review cases/iu);
 assert.match(submissionKit, /three|3 negative|Negative review cases/iu);
 assert.doesNotMatch(submissionKit, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
+for (const requiredSubmissionContract of [
+  'Apps Management write access',
+  'five submitted positive and three negative cases',
+  'readOnlyHint',
+  'destructiveHint',
+  'openWorldHint',
+  'reviewer account',
+  'knowledge:drafts:status',
+  'npm run check:submission',
+]) {
+  assert.ok(
+    submissionReadiness.includes(requiredSubmissionContract),
+    `submission readiness must describe ${requiredSubmissionContract}`,
+  );
+}
+assert.doesNotMatch(submissionReadiness, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
 
 const expectedSkills = [
   'memostem-proactive-capture',

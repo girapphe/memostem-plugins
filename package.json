@@ -4,7 +4,8 @@
   "private": true,
   "description": "Your reviewed knowledge, across AI conversations.",
   "scripts": {
-    "check": "node scripts/validate.mjs && node --test scripts/validate.test.mjs"
+    "check": "node scripts/validate.mjs && node --test scripts/validate.test.mjs",
+    "check:submission": "node scripts/check-submission-readiness.mjs"
   },
   "engines": {
     "node": ">=22"
