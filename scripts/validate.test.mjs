@@ -67,6 +67,19 @@ test('public validation rejects release version drift', async (t) => {
   assert.match(result.stderr, /9\.9\.9/u);
 });
 
+test('public validation rejects an incomplete submission readiness contract', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'submission-readiness');
+  const readinessPath = path.join(temporaryRoot, 'docs', 'submission-readiness.md');
+  const readiness = await readFile(readinessPath, 'utf8');
+  await writeFile(
+    readinessPath,
+    readiness.replace('Apps Management write access', 'provider portal access'),
+  );
+  const result = runValidation(temporaryRoot);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /submission readiness must describe Apps Management write access/u);
+});
+
 test('public validation rejects weakened consent instructions', async (t) => {
   const temporaryRoot = await copyRepository(t, 'consent-contract');
   const skillPath = path.join(temporaryRoot, 'plugins', 'memostem', 'skills', 'memostem-proactive-capture', 'SKILL.md');

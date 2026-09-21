@@ -27,7 +27,7 @@ No public listing, production release or host support claim without evidence.
 | CH-03 | Portable and existing native manifests share name, release, description, endpoint and skill tree | npm run check; Codex and Claude validators |
 | CH-04 | Wrong endpoint/transport/version/paths, secrets and maintenance skills are rejected | scripts/validate.test.mjs |
 | CH-05 | Existing MCP payload and scope contract still matches private server | Private check:public-plugin-compat with explicit public checkout |
-| CH-06 | Three submission kits and five dated channel records distinguish preparation, host testing, submission and approval | docs/directory-submissions.md and docs/channel-status.md; external activation issues |
+| CH-06 | Three submission kits and five dated channel records distinguish preparation, host testing, submission and approval | docs/directory-submissions.md, docs/submission-readiness.md and docs/channel-status.md; external activation issues |
 
 ## Delivery and rollout
 

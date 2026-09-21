@@ -4,6 +4,10 @@ This document contains public, paste-ready listing material for MemoStem's
 remote MCP integration. It deliberately contains no reviewer credentials,
 access tokens, private application source, or provider submission identifiers.
 
+Use the [submission readiness runbook](submission-readiness.md) to freeze the
+source SHA, run live preflight, prepare reviewer access and collect sanitized
+portal evidence before using the copy below.
+
 ## Shared listing
 
 - **Name:** MemoStem
