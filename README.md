@@ -233,8 +233,10 @@ are excluded from every public plugin package.
 
 - The remote server metadata is published from `server.json` to the official
   MCP Registry when a GitHub Release is published.
-- Paste-ready OpenAI and Anthropic listing copy, prompts, review cases, and
+- Paste-ready OpenAI, Anthropic and Kimi listing copy, prompts, review cases, and
   activation gates live in [docs/directory-submissions.md](docs/directory-submissions.md).
+- Five-channel evidence, account prerequisites and follow-up Issues are in
+  [the readiness record](docs/channel-status.md).
 - Provider review and approval are external states. A public GitHub repository
   or a successful MCP Registry workflow does not prove an OpenAI or Anthropic
   directory listing is live.
