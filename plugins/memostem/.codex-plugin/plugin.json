@@ -1,7 +1,7 @@
 {
   "name": "memostem",
   "version": "0.5.6",
-  "description": "Reuse private owner-scoped knowledge and create reviewable drafts after consent.",
+  "description": "Your reviewed knowledge, across AI conversations.",
   "author": {
     "name": "Girapphe",
     "url": "https://github.com/girapphe"
@@ -11,21 +11,21 @@
   "keywords": [
     "memostem",
     "mcp",
-    "mcp-server",
     "chatgpt",
     "claude",
-    "codex",
+    "kimi",
+    "gemini",
+    "grok",
     "knowledge-management",
-    "proactive-capture",
     "private-knowledge",
-    "second-brain"
+    "proactive-capture"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "MemoStem",
-    "shortDescription": "Reuse and grow private knowledge.",
-    "longDescription": "Retrieve the signed-in owner's private knowledge and, after clear consent, create reviewable pending atomic memo or question-and-answer drafts through OAuth MCP.",
+    "shortDescription": "Reviewed knowledge across AI chats",
+    "longDescription": "Your reviewed knowledge, across AI conversations. Save selected general knowledge as private pending drafts after consent, review it in MemoStem, and retrieve your confirmed knowledge from another connected AI.",
     "developerName": "Girapphe",
     "category": "Productivity",
     "capabilities": [
@@ -40,9 +40,9 @@
     "brandColor": "#21124D",
     "logo": "./assets/logo-mark.svg",
     "defaultPrompt": [
-      "Notice one reusable idea in this conversation, name it, and ask before creating a private MemoStem draft.",
-      "Use my active MemoStem knowledge for context, then after I confirm create a concise atomic memo or question-and-answer draft.",
-      "Verify my MemoStem connection and help me reconsent if either knowledge permission is missing."
+      "Use my active MemoStem knowledge about this topic and report what you found.",
+      "Check my MemoStem connection, then save the general knowledge I selected as an atomic memo draft.",
+      "Notice one teachable idea, name it, and ask before creating a private pending draft."
     ]
   }
 }

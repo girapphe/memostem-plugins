@@ -83,6 +83,95 @@ items, and never include transcripts, older conversations, hidden content, or
 ambient files. The remote AI host controls whether it surfaces server
 instructions, so proactive suggestions remain client-dependent.
 
+## Primary chat channels
+
+Official documentation checked on 2026-09-21. These setup paths are documented
+capabilities, not evidence that a MemoStem account was connected in each host.
+All hosts use `https://www.memostem.com/api/mcp` and the same MemoStem owner.
+Custom MCP loads tools/server instructions; only an installed skill-bearing
+plugin supplies the packaged SKILL.md. Do not promise proactive behavior from
+an MCP-only connection.
+
+### ChatGPT
+
+Use the OAuth remote MCP setup described below. The submission bundle includes
+both the remote MCP endpoint and the existing memostem-proactive-capture skill.
+Workspace policy and available app controls determine account access.
+[Official submission and testing entry point](https://developers.openai.com/plugins/deploy/submission).
+
+### Claude
+
+In Claude chat/web or Desktop, add the endpoint as a custom remote connector and
+complete OAuth. Alternatively install a reviewed MCP+Skills plugin through the
+unified directory when listed. Connector setup alone does not install the skill;
+Claude Code installation alone does not verify Claude chat behavior.
+[Custom connector requirements](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
+and [unified directory](https://support.claude.com/en/articles/14328846-browse-skills-connectors-and-plugins-in-one-directory).
+
+### Kimi
+
+In Kimi Work, invoke Plugin Builder and ask it to import
+`https://github.com/girapphe/memostem-plugins`, selecting only `plugins/memostem`.
+It can convert Codex/Claude manifests or a generic root manifest to
+`kimi.plugin.json`. Install the converted plugin from Personal, inspect that it
+contains only the shared skill and the canonical remote MCP endpoint, and
+complete OAuth. Do not add a second hand-maintained Kimi implementation.
+Use `provider: "other"` for writes; never invent a `kimi` provider value.
+
+The web experience supports MCP and Skills in supported K3/K3 Swarm and other
+listed scenarios; do not infer support in every Kimi conversation surface.
+Update by re-importing the chosen source revision and checking the converted
+output; uninstall/remove through Personal. Keep converted credentials local.
+[Import instructions](https://www.kimi.com/en/help/plugins-and-skills/create)
+and [supported surfaces](https://www.kimi.com/en/help/plugins-and-skills/overview).
+
+### Gemini
+
+In Gemini web, open Settings → Connected Apps (possibly under Personal
+Intelligence) → Custom apps. Enter the canonical MCP URL, then follow the
+account-linking flow. For a server without dynamic client registration, Google
+provides Advanced features; use only the service's actual registration details.
+Never paste user tokens into chat or commit them here. After linking, select the
+app with `@` to test a named topic; the connection is also usable on mobile.
+
+Current documented conditions: US, age 18+, personal Google Account, English,
+and Keep Activity on. Work/school accounts are not supported by this custom-app
+path. Gemini currently requires manual confirmation for writes; respect that
+host confirmation even when the chat request already selected the material.
+
+To disconnect, turn the app off in Connected Apps. To revoke the account link,
+use More details → Disconnect, or remove the app; reconnect by adding/linking
+it again and verifying both knowledge grants. Use `provider: "gemini"`.
+[Official setup, removal and access conditions](https://support.google.com/gemini/answer/17209137?co=GENIE.Platform%3DDesktop&hl=en-GA).
+
+### Grok
+
+Open grok.com/connectors → New Connector → Custom, enter the canonical MCP URL,
+and complete the required authentication. For Business/Enterprise, an admin
+must provision the connector before members can use it. Test in general chat,
+not Grok Build. Use `provider: "other"`; do not invent a `grok` enum value.
+Public catalog submission is a separate, currently unverified distribution path.
+[Official custom connector guide](https://docs.x.ai/grok/connectors).
+
+### Verify save and retrieve
+
+1. Call `check_memostem_connection`; use `knowledge:context:read` for retrieval
+   and `knowledge:drafts:create` for saving. Missing grants require reconnect
+   or reconsent, not wider permissions than the requested task needs.
+2. Ask "Find my approved MemoStem knowledge about EUV" / "MemoStem에서 내가
+   승인한 EUV 지식을 찾아줘." Use `get_topic_context` with its live schema;
+   omit lifecycle filters by default. Report an empty result honestly.
+3. Ask "Save this explanation of EUV as one atomic memo draft" / "방금 설명한
+   EUV 원리를 메모 초안 하나로 저장해 줘." Save only that selected general
+   knowledge, then report the actual pending count and review link.
+4. If choosing candidates, start with no selection. An MCP Apps Add click saves
+   only checked candidates; never create them again afterward. Without Apps,
+   show the numbered result and await explicit text selection.
+5. Review/approve in MemoStem, then connect another host to the same owner and
+   retrieve the approved item. No raw conversation crosses between hosts.
+
+## Secondary coding channels
+
 ## Codex OAuth and the first capture
 
 After installing the plugin as described in the [README](../README.md), run:
@@ -129,7 +218,7 @@ not a payload to submit automatically.
   `structured_content.type` matching `knowledge_type`. The remaining supported
   types are `procedure`, `comparison`, `mechanism`, `structure`,
   `claim_evidence`, `event`, and `expression`; use the live schema for those.
-- Set `provider` to `other` in Codex, or the actual `chatgpt`, `claude`, or
+- Set `provider` to `other` in Codex, Kimi or Grok, or the actual `chatgpt`, `claude`, or
   `gemini` host. Use opaque IDs and `provenance.type: "current_conversation"`.
   The current selection can include a lesson the user explicitly quoted into
   this conversation; do not upload the referenced conversation history.

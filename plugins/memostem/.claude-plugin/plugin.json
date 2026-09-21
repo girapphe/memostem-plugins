@@ -1,7 +1,7 @@
 {
   "name": "memostem",
   "version": "0.5.6",
-  "description": "Reuse private owner-scoped knowledge and create reviewable drafts after consent.",
+  "description": "Your reviewed knowledge, across AI conversations.",
   "author": {
     "name": "Girapphe",
     "url": "https://github.com/girapphe"
@@ -11,13 +11,13 @@
   "keywords": [
     "memostem",
     "mcp",
-    "mcp-server",
     "chatgpt",
     "claude",
-    "codex",
+    "kimi",
+    "gemini",
+    "grok",
     "knowledge-management",
-    "proactive-capture",
     "private-knowledge",
-    "second-brain"
+    "proactive-capture"
   ]
 }

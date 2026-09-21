@@ -206,6 +206,12 @@ assert.match(proactiveCaptureSkill, /private and pending/iu);
 for (const requiredContract of [
   'check_memostem_connection',
   'knowledge:drafts:create',
+  'get_topic_context',
+  'knowledge:context:read',
+  'lifecycle_states',
+  'active confirmed',
+  'Read-only requests',
+  'must not create drafts',
   'knowledge_scope: "general_knowledge"',
   'request_id',
   'bundle_count',

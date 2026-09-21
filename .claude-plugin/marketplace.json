@@ -10,7 +10,7 @@
     {
       "name": "memostem",
       "source": "./plugins/memostem",
-      "description": "Reuse private owner-scoped knowledge and create reviewable drafts after consent.",
+      "description": "Your reviewed knowledge, across AI conversations.",
       "version": "0.5.6"
     }
   ]
