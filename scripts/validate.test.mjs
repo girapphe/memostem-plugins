@@ -103,3 +103,17 @@ test('public validation rejects symlinks from the distributable tree', async (t)
   assert.equal(result.status, 1);
   assert.match(result.stderr, /symlinks are not allowed/u);
 });
+
+test('public validation rejects loss of retrieval permission or read-only boundary', async (t) => {
+  for (const phrase of ['knowledge:context:read', 'must not create drafts']) {
+    await t.test(phrase, async (subtest) => {
+      const temporaryRoot = await copyRepository(subtest, 'retrieval-contract');
+      const skillPath = path.join(temporaryRoot, 'plugins/memostem/skills/memostem-proactive-capture/SKILL.md');
+      const skill = await readFile(skillPath, 'utf8');
+      await writeFile(skillPath, skill.replaceAll(phrase, 'removed-boundary'));
+      const result = runValidation(temporaryRoot);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /capture skill must describe/u);
+    });
+  }
+});

@@ -2,7 +2,7 @@
   "name": "memostem-plugins",
   "version": "0.5.6",
   "private": true,
-  "description": "Reuse owner-scoped private knowledge and create reviewable MemoStem drafts after consent.",
+  "description": "Your reviewed knowledge, across AI conversations.",
   "scripts": {
     "check": "node scripts/validate.mjs && node --test scripts/validate.test.mjs"
   },

@@ -2,7 +2,9 @@
   <img src="assets/logo-mark.svg" alt="MemoStem logo" width="88" height="88">
 </p>
 
-# MemoStem for ChatGPT, Claude, and Codex
+# MemoStem across AI conversations
+
+**Your reviewed knowledge, across AI conversations.**
 
 Let a connected AI reuse your private, confirmed knowledge or notice knowledge
 worth keeping as the conversation unfolds. New material becomes a private draft
@@ -17,10 +19,25 @@ anything automatically.
 [Security](SECURITY.md)
 
 This public repository is the official distribution source for MemoStem's
-Codex and Claude Code plugins and its hosted remote MCP connection metadata.
+chat-host skills, plugin packages, and hosted remote MCP connection metadata.
+ChatGPT, Claude, Kimi, Gemini and Grok are the primary channels; Codex and
+Claude Code are compatible secondary channels.
 The MemoStem application and server implementation remain private.
 Distributable manifests, skills, examples, and documentation have no mirrored
 authoring copy in that private repository.
+
+## Save here, reuse in another AI conversation
+
+Select an explanation in ChatGPT, save it as a private pending draft, and review
+and approve it in MemoStem. Then ask Claude or another connected host to find
+that knowledge. Sign in to the same MemoStem account in each host; no host gets
+access to another host's conversation history.
+
+| Intent | English | 한국어 |
+| --- | --- | --- |
+| Save | Save this explanation of EUV lithography as one atomic memo draft. | 방금 설명한 EUV 노광 원리를 메모 초안 하나로 저장해 줘. |
+| Retrieve | Find my approved MemoStem knowledge about EUV. | MemoStem에서 내가 승인한 EUV 지식을 찾아줘. |
+| Select | Show candidates from the concepts we just discussed. | 방금 이야기한 개념 중 저장할 후보를 보여줘. |
 
 ## Why MemoStem
 
@@ -81,6 +98,27 @@ Add the same endpoint as a custom connector in Claude and complete MemoStem
 OAuth. Claude can also load the Git marketplace below for Claude Code and
 compatible plugin surfaces.
 
+### Kimi
+
+Import this repository with Kimi Work's Plugin Builder, install from Personal,
+and complete OAuth. Review the converted skill and MCP settings before use.
+See the [Kimi guide](docs/mcp.md#kimi). Marketplace approval is separate.
+
+### Gemini
+
+Use Gemini Apps → Connected Apps → Custom apps with the same MCP endpoint.
+Current access conditions include US location, age 18+, a personal account,
+English and Keep Activity enabled. See the [Gemini guide](docs/mcp.md#gemini).
+
+### Grok
+
+Use Grok's Connectors → New Connector → Custom and complete authentication.
+See the [Grok guide](docs/mcp.md#grok); this is the general-chat connector.
+
+A custom MCP connection exposes server tools and instructions; it does not
+install this repository's SKILL.md. Plugin loading and proactive suggestions
+depend on the host. Channel availability requires actual account verification.
+
 See [the MCP connection guide](docs/mcp.md) for provider-specific setup and
 server-side OpenAI API usage.
 
@@ -105,7 +143,7 @@ meeting outcomes, and autobiographical facts are outside this capture contract.
 A direct request to save named eligible material already provides consent;
 the assistant should verify the connection and create the requested drafts.
 
-## Install the Git plugin
+## Secondary channels: install the Git plugin
 
 ### Codex
 
@@ -185,8 +223,9 @@ and [the complete connection and capture guide](docs/mcp.md).
 
 ## Included skills
 
-The plugin includes only `memostem-proactive-capture`, which provides
-consent-first save suggestions when the packaged MCP connection is available.
+The plugin includes only `memostem-proactive-capture`, which handles
+explicit saves, consent-first suggestions and owner-scoped knowledge retrieval
+when the packaged MCP connection is available.
 Developer maintenance skills belong in the private application repository and
 are excluded from every public plugin package.
 
