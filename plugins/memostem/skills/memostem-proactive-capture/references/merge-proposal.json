@@ -1,0 +1,50 @@
+{
+  "provider": "other",
+  "request_id": "example-merge-proposal-001",
+  "provenance": {
+    "type": "current_conversation",
+    "conversation_ref": "example-conversation-merge-001",
+    "reported_model": "example-model",
+    "reported_agent": "example-agent",
+    "client_version": "1.0.0"
+  },
+  "bundles": [
+    {
+      "client_bundle_id": "llm-memory-merged-card",
+      "knowledge_scope": "general_knowledge",
+      "title": "LLM memory architecture",
+      "central_question": "How does an LLM memory architecture separate retrieval from canonical updates?",
+      "knowledge_type": "concept",
+      "summary": "Retrieval supplies selected owner context while a reviewed pending draft proposes any canonical update.",
+      "structured_content": {
+        "type": "concept",
+        "definition": "An LLM memory architecture retrieves explicitly selected owner knowledge as reference data, then submits a complete proposed final card as a private pending draft. Only the owner can approve, merge, or update canonical knowledge.",
+        "key_points": [
+          "Retrieval does not mutate canonical knowledge.",
+          "A merge proposal contains the complete proposed final card, not a partial patch."
+        ],
+        "examples": [],
+        "non_examples": [],
+        "misconceptions": []
+      },
+      "bundle_schema_version": 1,
+      "topic": "Machine learning",
+      "topic_id": "taxonomy_topic_example",
+      "tags": ["llm", "memory"],
+      "tag_ids": ["taxonomy_tag_llm_example"],
+      "resolution_proposal": {
+        "action": "merge",
+        "target_item_id": "item_example_existing",
+        "expected_target_version": 3,
+        "source_item_ids": ["item_example_existing"],
+        "change_summary": {
+          "preserved": ["The existing retrieval boundary"],
+          "added": ["The pending merge-proposal review boundary"],
+          "changed": [],
+          "conflicts": []
+        },
+        "reason": "The selected conversation adds a review boundary to the same existing concept."
+      }
+    }
+  ]
+}

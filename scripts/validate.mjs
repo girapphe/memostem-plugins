@@ -113,22 +113,30 @@ assert.equal(packageManifest.description, codexManifest.description);
 assert.equal(registryManifest.description, codexManifest.description);
 
 assert.deepEqual(compatibilityContract, {
-  schema_version: 1,
+  schema_version: 2,
   endpoint: mcp.mcpServers.memostem.url,
   oauth_scopes: [
     'openid',
     'knowledge:drafts:create',
     'knowledge:context:read',
+    'knowledge:drafts:status',
   ],
   required_tools: [
     'check_memostem_connection',
     'create_card_drafts',
     'create_knowledge_bundle_drafts',
+    'get_draft_batch_status',
+    'get_knowledge_context',
     'get_topic_context',
+    'list_knowledge_catalog',
+    'search_knowledge',
     'review_knowledge_bundle_candidates',
   ],
   fixtures: {
     create_knowledge_bundle_drafts: 'plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json',
+  },
+  examples: {
+    merge_resolution_proposal: 'plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json',
   },
 });
 for (const [toolName, fixturePath] of Object.entries(compatibilityContract.fixtures)) {
@@ -136,6 +144,11 @@ for (const [toolName, fixturePath] of Object.entries(compatibilityContract.fixtu
   const fixtureMetadata = await lstat(path.join(root, fixturePath));
   assert.equal(fixtureMetadata.isFile(), true, `${toolName} fixture must point to a file`);
   assert.equal(fixtureMetadata.isSymbolicLink(), false, `${toolName} fixture must not be a symlink`);
+}
+for (const [exampleName, examplePath] of Object.entries(compatibilityContract.examples)) {
+  const metadata = await lstat(path.join(root, examplePath));
+  assert.equal(metadata.isFile(), true, `${exampleName} example must point to a file`);
+  assert.equal(metadata.isSymbolicLink(), false, `${exampleName} example must not be a symlink`);
 }
 
 assert.equal(registryManifest.name, 'io.github.girapphe/memostem');
@@ -172,7 +185,13 @@ for (const [label, source] of [
 ]) {
   for (const requiredContract of [
     'get_topic_context',
-    'knowledge:context:read',
+  'knowledge:context:read',
+  'knowledge:drafts:status',
+  'list_knowledge_catalog',
+  'search_knowledge',
+  'get_knowledge_context',
+  'get_draft_batch_status',
+  'resolution_proposal',
     'active',
     'pending',
     'archived',
@@ -248,6 +267,12 @@ for (const requiredContract of [
 }
 const captureExample = await readJson('plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json');
 assert.deepEqual(captureExample.bundles.map((bundle) => bundle.knowledge_type), ['concept', 'question']);
+const mergeProposalExample = await readJson('plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json');
+assert.equal(mergeProposalExample.bundles[0].resolution_proposal.action, 'merge');
+assert.equal(mergeProposalExample.bundles[0].resolution_proposal.expected_target_version, 3);
+assert.ok(mergeProposalExample.bundles[0].resolution_proposal.source_item_ids.includes(
+  mergeProposalExample.bundles[0].resolution_proposal.target_item_id,
+));
 // The actual application schema validates this public fixture in the app's
 // contract tests; this repository checks packaging without copying that schema.
 assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('atomic memo')));

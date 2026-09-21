@@ -20,12 +20,24 @@ Tools are exposed from the scopes the signed-in owner grants:
 - `create_knowledge_bundle_drafts` and compatible `create_card_drafts` with
   `knowledge:drafts:create`
 - `get_topic_context` with `knowledge:context:read`
+- `list_knowledge_catalog`, `search_knowledge`, and `get_knowledge_context`
+  with `knowledge:context:read`
+- `get_draft_batch_status` with `knowledge:drafts:status`
 
 Creation tools save only private pending drafts. They do not auto-approve
 knowledge or write to the public graph. Every logged-in owner may grant the
 separate context scope; no administrator override is required. A draft-only
 client does not receive the read tool, and a context-only client does not
 receive creation tools.
+
+Catalog and search responses are bounded discovery data. Use
+`get_knowledge_context` only after choosing exact item IDs; it can combine
+items from different topics and never returns raw conversation text. A draft
+may carry a complete `resolution_proposal` for `save_new`, `merge`, or `update`,
+but the proposal does not mutate canonical knowledge. The owner completes the
+actual action in MemoStem after comparing the target, target version, sources,
+and change summary. Polling `get_draft_batch_status` reports that real state and
+does not perform a resolution.
 
 ## Owner-scoped context and lifecycle filters
 

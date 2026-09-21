@@ -1,19 +1,27 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "endpoint": "https://www.memostem.com/api/mcp",
   "oauth_scopes": [
     "openid",
     "knowledge:drafts:create",
-    "knowledge:context:read"
+    "knowledge:context:read",
+    "knowledge:drafts:status"
   ],
   "required_tools": [
     "check_memostem_connection",
     "create_card_drafts",
     "create_knowledge_bundle_drafts",
+    "get_draft_batch_status",
+    "get_knowledge_context",
     "get_topic_context",
+    "list_knowledge_catalog",
+    "search_knowledge",
     "review_knowledge_bundle_candidates"
   ],
   "fixtures": {
     "create_knowledge_bundle_drafts": "plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json"
+  },
+  "examples": {
+    "merge_resolution_proposal": "plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json"
   }
 }
