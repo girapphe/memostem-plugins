@@ -117,3 +117,64 @@ test('public validation rejects loss of retrieval permission or read-only bounda
     });
   }
 });
+
+test('portable manifests reject schema, metadata, transport and path drift', async (t) => {
+  const cases = [
+    ['plugin schema missing', 'plugin.json', d => { delete d.$schema; }],
+    ['plugin schema version', 'plugin.json', d => { d.$schema = 'https://agent-plugins.org/schemas/9.0.0/plugin.schema.json'; }],
+    ['name missing', 'plugin.json', d => { delete d.name; }],
+    ['name drift', 'plugin.json', d => { d.name = 'another-plugin'; }],
+    ['release drift', 'plugin.json', d => { d.version = '9.9.9'; }],
+    ['description drift', 'plugin.json', d => { d.description = 'Different product'; }],
+    ['external skills path', 'plugin.json', d => { d.skills = '../private/skills'; }],
+    ['external MCP path', 'plugin.json', d => { d.mcpServers = '../private/mcp.json'; }],
+    ['inline MCP', 'plugin.json', d => { d.mcpServers = { memostem: {} }; }],
+    ['MCP schema missing', 'mcp.json', d => { delete d.$schema; }],
+    ['MCP schema mismatch', 'mcp.json', d => { d.$schema = 'https://agent-plugins.org/schemas/9.0.0/mcp.schema.json'; }],
+    ['servers missing', 'mcp.json', d => { delete d.mcpServers; }],
+    ['endpoint drift', 'mcp.json', d => { d.mcpServers.memostem.url = 'https://example.com/mcp'; }],
+    ['native transport in portable config', 'mcp.json', d => { d.mcpServers.memostem.type = 'http'; }],
+    ['missing transport', 'mcp.json', d => { delete d.mcpServers.memostem.type; }],
+    ['credential header', 'mcp.json', d => { d.mcpServers.memostem.headers = { Authorization: 'Bearer example-only' }; }],
+    ['extra server', 'mcp.json', d => { d.mcpServers.other = { type: 'stdio', command: '../private/server' }; }],
+  ];
+  for (const [name, file, mutate] of cases) {
+    await t.test(name, async (subtest) => {
+      const temporaryRoot = await copyRepository(subtest, 'portable');
+      const filename = path.join(temporaryRoot, 'plugins/memostem', file);
+      const manifest = JSON.parse(await readFile(filename, 'utf8'));
+      mutate(manifest);
+      await writeFile(filename, JSON.stringify(manifest));
+      const result = runValidation(temporaryRoot);
+      assert.equal(result.status, 1, name);
+      assert.match(result.stderr, /portable manifest|portable MCP/u);
+    });
+  }
+});
+
+test('native adapter retains http transport', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'native-transport');
+  const filename = path.join(temporaryRoot, 'plugins/memostem/.mcp.json');
+  const config = JSON.parse(await readFile(filename, 'utf8'));
+  config.mcpServers.memostem.type = 'streamable-http';
+  await writeFile(filename, JSON.stringify(config));
+  assert.equal(runValidation(temporaryRoot).status, 1);
+});
+
+test('portable package rejects external symlink and embedded credentials', async (t) => {
+  await t.test('external symlink', async (subtest) => {
+    const temporaryRoot = await copyRepository(subtest, 'portable-link');
+    await symlink(root, path.join(temporaryRoot, 'plugins/memostem/external'));
+    const result = runValidation(temporaryRoot);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /symlinks are not allowed/u);
+  });
+  await t.test('credential in shared skill reference', async (subtest) => {
+    const temporaryRoot = await copyRepository(subtest, 'portable-secret');
+    const name = ['OPENAI', 'API', 'KEY'].join('_');
+    await writeFile(path.join(temporaryRoot, 'plugins/memostem/skills/memostem-proactive-capture/references/leak.txt'), `${name}=example-only`);
+    const result = runValidation(temporaryRoot);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /possible secret/u);
+  });
+});
