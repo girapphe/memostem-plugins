@@ -86,8 +86,12 @@ https://www.memostem.com/api/mcp
 
 ### ChatGPT
 
-Add MemoStem as an OAuth remote MCP app in a supported ChatGPT workspace. The
-public [MemoStem connection page](https://www.memostem.com/plugins) explains the
+For ChatGPT web, install **MemoStem for ChatGPT** (`memostem-chatgpt`) from this
+marketplace. It references the registered MemoStem App and deliberately has no
+`mcp.json` or `.mcp.json`, so it is not classified as Desktop only. The existing
+`memostem` package remains the direct-MCP package for Codex, Claude Code, and
+other compatible hosts. The public
+[MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
 New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
 `knowledge:context:read` by default. Existing draft-only connections are not
@@ -173,6 +177,15 @@ permission, then calls `create_knowledge_bundle_drafts`. A successful login or
 tool listing alone does not prove that any draft was created. The assistant
 must report the server's actual pending count and review link. Browser forms
 are not a substitute for this plugin path.
+
+### ChatGPT marketplace update
+
+Install the web-specific package as `memostem-chatgpt@memostem`. Select
+**MemoStem for ChatGPT** in a new conversation, then complete the MemoStem OAuth
+connection. It is separate from the direct-MCP `memostem` package, which
+ChatGPT correctly marks Desktop only. Installing a marketplace revision and
+completing OAuth are separate steps; a development App remains in development
+until its provider review and publishing process finishes.
 
 ### Claude Code
 
@@ -272,6 +285,9 @@ the client. No token or OAuth credential is packaged.
 Portable format validation does not establish support in any particular host.
 Kimi's documented import route converts a source package; Gemini and Grok use
 custom MCP connections. Existing Codex and Claude install names are unchanged.
+`plugins/memostem-chatgpt` is the ChatGPT web counterpart: it has root
+`plugin.json`, `.app.json`, and the same skill tree, but intentionally no
+direct MCP declaration.
 
 ## Validate locally
 

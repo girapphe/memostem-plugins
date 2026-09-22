@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "memostem-chatgpt",
+  "version": "0.6.2",
+  "description": "Your reviewed knowledge, across AI conversations.",
+  "author": {
+    "name": "Girapphe",
+    "url": "https://github.com/girapphe"
+  },
+  "homepage": "https://github.com/girapphe/memostem-plugins",
+  "repository": "https://github.com/girapphe/memostem-plugins",
+  "keywords": [
+    "memostem",
+    "chatgpt",
+    "knowledge-management",
+    "private-knowledge",
+    "proactive-capture"
+  ],
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "interface": {
+        "displayName": "MemoStem for ChatGPT",
+        "shortDescription": "Reviewed knowledge across AI chats",
+        "longDescription": "Save selected general knowledge as private pending drafts after consent, review it in MemoStem, and retrieve your confirmed knowledge from another connected AI.",
+        "developerName": "Girapphe",
+        "category": "Productivity",
+        "websiteURL": "https://www.memostem.com",
+        "privacyPolicyURL": "https://www.memostem.com/privacy",
+        "termsOfServiceURL": "https://www.memostem.com/terms",
+        "brandColor": "#21124D",
+        "logo": "./assets/logo-mark.svg"
+      }
+    }
+  }
+}

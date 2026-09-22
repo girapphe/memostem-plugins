@@ -148,9 +148,13 @@ an MCP-only connection.
 
 ### ChatGPT
 
-Use the OAuth remote MCP setup described below. The submission bundle includes
-both the remote MCP endpoint and the existing memostem-proactive-capture skill.
-Workspace policy and available app controls determine account access.
+Install the `memostem-chatgpt` marketplace package for ChatGPT web. It contains
+the existing `memostem-proactive-capture` skill and references the registered
+MemoStem App through `.app.json`; it intentionally declares no `mcp.json` or
+`.mcp.json`, which keeps the imported package from being classified Desktop
+only. The direct-MCP `memostem` package remains for Codex, Claude Code, and
+other compatible hosts. Workspace policy and available app controls determine
+account access.
 [Official submission and testing entry point](https://developers.openai.com/plugins/deploy/submission).
 
 ### Claude
@@ -286,9 +290,10 @@ response, or count mismatch accurately without claiming a confirmed save.
 
 ## ChatGPT and OpenAI API
 
-For a ChatGPT custom app, register the endpoint above as a remote MCP server and
-use the service's OAuth flow. Do not paste a MemoStem personal access token into
-ChatGPT's browser settings. The public
+The registered MemoStem App uses the endpoint above as a remote MCP server and
+the service's OAuth flow. The `memostem-chatgpt` marketplace package references
+that App; do not add a separate direct MCP declaration or paste a MemoStem
+personal access token into ChatGPT's browser settings. The public
 [MemoStem connection page](https://www.memostem.com/plugins) links a signed-in
 person to the detailed setup guide.
 
