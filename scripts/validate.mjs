@@ -138,7 +138,7 @@ assert.equal('mcpServers' in chatgptCodexManifest, false);
 assert.deepEqual(chatgptAppManifest, {
   apps: {
     memostem: {
-      id: 'asdk_app_6ab26a5a93b08191ac6f6f99fcd36420',
+      id: 'asdk_app_6ab2845a23b08191ae841f7bdf4f8011',
       required: true,
     },
   },
