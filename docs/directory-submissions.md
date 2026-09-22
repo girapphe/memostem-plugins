@@ -82,6 +82,13 @@ conversation language, falls back to the host locale when that language is
 unclear, then to English when neither is available. MCP App UI should
 independently localize from the host locale.
 
+When the server advertises `start_memostem`, the starter uses its localized
+onboarding App or text fallback. `connect_memostem` requests knowledge-read
+permission through the host OAuth flow and returns topic labels only. Deploy
+these additive server tools before distributing this skill; older servers keep
+the connection/catalog fallback. A real host OAuth round trip must be verified
+separately from package or browser bridge tests.
+
 ## OpenAI submission
 
 Use the OpenAI Platform plugin submission portal and choose **With MCP**. Submit

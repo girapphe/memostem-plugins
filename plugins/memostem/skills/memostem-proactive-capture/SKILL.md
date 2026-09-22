@@ -27,6 +27,16 @@ Respond in the user's current language. When the conversation language is
 unclear and the host supplies a locale, use that locale; otherwise fall back to
 English.
 
+For a general getting-started request with no named topic, prefer `start_memostem`
+when available, passing the user's conversation language as `locale` when known.
+This tool can show a localized onboarding App before account connection. Let the
+person use its Connect button; in a text-only host, use `connect_memostem` to
+continue the requested connection through the host OAuth flow. A challenge or
+cancelled flow is not a successful connection. Retry after connection completes.
+Show returned topic labels or empty-state guidance without fetching bodies or
+creating drafts. Starting or connecting never supplies capture consent.
+If these tools are unavailable, use the connection/catalog fallback below.
+
 For a request to find or reuse MemoStem knowledge, discover the installed tools
 and call `check_memostem_connection` with `{}` first. Require `status:
 "connected"` and `knowledge:context:read` in `granted_scopes`. Read-only requests
@@ -37,7 +47,7 @@ permission is absent, use the host's OAuth reconnect or reconsent flow. Never
 request credentials in chat or imply that an empty result proves no notes exist
 when authentication failed.
 
-For a general getting-started request with no named topic, call
+For a general getting-started fallback with no named topic, call
 `list_knowledge_catalog` after the successful connection check. Show the
 available topic labels without fetching knowledge bodies, then ask which topic
 the user wants to explore. If the catalog is empty, say so and briefly explain
