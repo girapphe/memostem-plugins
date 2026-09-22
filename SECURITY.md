@@ -23,7 +23,9 @@ for rotation.
 The remote endpoint is a trust boundary. Clients should require approval for
 write-capable calls, treat an assistant suggestion as non-consent, wait for a
 clear affirmative reply to the specifically named material, send only that
-current-conversation selection, and keep authentication values outside tracked
-files. They must not propose or send secrets, credentials, sensitive personal
-material, full transcripts, or older conversation history. Installing this
-plugin does not grant access to any MemoStem account or infrastructure.
+concise selection, and keep authentication values outside tracked files. A
+user-invoked fallback may inspect recent conversation context actually supplied
+by the host, but clients must not browse unavailable history or send source
+messages. They must not propose or send secrets, credentials, sensitive personal
+material, or full transcripts. Installing this plugin does not grant access to
+any MemoStem account or infrastructure.

@@ -46,7 +46,9 @@ access to another host's conversation history.
   remember a MemoStem or card command.
 - **Confirm, don't scrape.** Nothing is transferred when the AI notices an idea.
   Only the specific suggestion you confirm is sent, never a transcript or hidden
-  history.
+  history. If you invoke MemoStem without naming material and the current chat has
+  no eligible candidate, the same flow may use recent conversation context the
+  host explicitly provides; it cannot browse unavailable conversation history.
 - **Review before saving.** New material stays in a private pending inbox until
   you edit, merge, save, or ignore it.
 - **Keep knowledge teachable.** Create an atomic memo for one concept or a
@@ -144,6 +146,11 @@ Personal or company decisions, product policies, preferences, plans, tasks,
 meeting outcomes, and autobiographical facts are outside this capture contract.
 A direct request to save named eligible material already provides consent;
 the assistant should verify the connection and create the requested drafts.
+When MemoStem is explicitly invoked without named material and the current
+conversation has no eligible candidate, the installed skill may apply the same
+candidate, consent and draft flow to recent conversation context actually
+provided by the host. If that context is unavailable, it reports the limitation
+instead of fabricating a candidate. It never transfers the source transcript.
 
 ## Secondary channels: install the Git plugin
 

@@ -129,6 +129,14 @@ items, and never include transcripts, older conversations, hidden content, or
 ambient files. The remote AI host controls whether it surfaces server
 instructions, so proactive suggestions remain client-dependent.
 
+The installed skill has one bounded fallback: when the user explicitly invokes
+MemoStem without naming material and the current conversation has no eligible
+candidate, it may apply the same candidate, consent and draft workflow to recent
+conversation context the host actually supplies for that request. It does not
+browse unavailable history, and if the host supplies no such context it must say
+so. Only the selected concise candidate may reach a creation tool; the source
+conversation and message history remain excluded.
+
 ## Primary chat channels
 
 Official documentation checked on 2026-09-21. These setup paths are documented
