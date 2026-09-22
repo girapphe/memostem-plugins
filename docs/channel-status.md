@@ -29,7 +29,7 @@ failure was observed; these account-dependent tests have not been attempted.
 
 - CH-01/CH-02: README, bilingual guides and shared skill updated; retrieval
   permission/read-only instruction regressions included in public checks.
-- CH-03/CH-04: `npm run check` passed **37 tests, zero skips**, including portable
+- CH-03/CH-04: `npm run check` passed **48 tests, zero skips**, including portable
   schema/metadata/transport drift, path escapes, credential headers, extra
   servers, shared skill secrets, symlinks and maintenance-skill rejection.
 - Skill `quick_validate.py` passed.
@@ -44,7 +44,7 @@ failure was observed; these account-dependent tests have not been attempted.
   the PRs linked from [#15](https://github.com/girapphe/memostem-plugins/issues/15).
 
 These checks do not prove model behavior, host installation, store review,
-public listing or deployment. Versions are prepared for 0.6.1;
+public listing or deployment. Versions are prepared for 0.6.2;
 no release or registry publication has been performed by this implementation.
 
 Live credential-free preflight on 2026-09-22 confirmed the public product,

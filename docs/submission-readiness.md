@@ -13,15 +13,15 @@ listing copy, screenshots, and reviewer testing.
 ```bash
 git fetch origin main
 git rev-parse origin/main
-git diff --exit-code origin/main -- plugins/memostem docs/directory-submissions.md
+git diff --exit-code origin/main -- plugins/memostem plugins/memostem-chatgpt docs/directory-submissions.md
 npm run check
 npm run check:submission
 git diff --check
 ```
 
-The release metadata is `0.6.1` across the Codex, Claude, portable Agent
+The release metadata is `0.6.2` across the Codex, Claude, portable Agent
 Plugins, package, marketplace, and MCP Registry manifests. Do not tag or publish
-`0.6.1` until the final source SHA passes the private MemoStem compatibility
+`0.6.2` until the final source SHA passes the private MemoStem compatibility
 check and the publisher intentionally starts the release step.
 
 ## Prepared public material

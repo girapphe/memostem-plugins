@@ -180,6 +180,37 @@ test('native adapter retains http transport', async (t) => {
   assert.equal(runValidation(temporaryRoot).status, 1);
 });
 
+test('ChatGPT web package rejects direct MCP declarations and App-reference drift', async (t) => {
+  const cases = [
+    ['direct portable MCP', async (temporaryRoot) => {
+      await writeFile(
+        path.join(temporaryRoot, 'plugins/memostem-chatgpt/mcp.json'),
+        JSON.stringify({ mcpServers: { memostem: { type: 'streamable-http', url: 'https://www.memostem.com/api/mcp' } } }),
+      );
+    }],
+    ['direct native MCP', async (temporaryRoot) => {
+      await writeFile(
+        path.join(temporaryRoot, 'plugins/memostem-chatgpt/.mcp.json'),
+        JSON.stringify({ mcpServers: { memostem: { type: 'http', url: 'https://www.memostem.com/api/mcp' } } }),
+      );
+    }],
+    ['App identifier drift', async (temporaryRoot) => {
+      const filename = path.join(temporaryRoot, 'plugins/memostem-chatgpt/.app.json');
+      const manifest = JSON.parse(await readFile(filename, 'utf8'));
+      manifest.apps.memostem.id = 'plugin_not_an_app_id';
+      await writeFile(filename, JSON.stringify(manifest));
+    }],
+  ];
+  for (const [name, mutate] of cases) {
+    await t.test(name, async (subtest) => {
+      const temporaryRoot = await copyRepository(subtest, `chatgpt-web-${name.replaceAll(' ', '-')}`);
+      await mutate(temporaryRoot);
+      const result = runValidation(temporaryRoot);
+      assert.equal(result.status, 1, name);
+    });
+  }
+});
+
 test('portable package rejects external symlink and embedded credentials', async (t) => {
   await t.test('external symlink', async (subtest) => {
     const temporaryRoot = await copyRepository(subtest, 'portable-link');
