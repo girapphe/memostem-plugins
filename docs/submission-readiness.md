@@ -140,8 +140,9 @@ protected-resource and authorization-server metadata advertise
 displayed the status permission on Clerk's consent screen, returned the scope in
 the issued grant, created one private pending batch, replayed the same request
 without a duplicate, and polled the same pending result twice. The exact draft
-batch, refresh-token grant, and temporary OAuth application were removed after
-the test. Positive review case 11 is therefore part of the submission packet.
+batch, MemoStem connection evidence, and exact temporary OAuth application were
+removed after the test. Positive review case 11 is therefore part of the
+submission packet.
 Implementation and activation evidence is tracked in
 [MemoStem Issue #311](https://github.com/girapphe/memostem/issues/311).
 
