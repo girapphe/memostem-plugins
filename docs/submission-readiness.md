@@ -71,10 +71,9 @@ Before submitting, record each gate in [Issue #18](https://github.com/girapphe/m
 - [ ] Final skill file tree was tested after the last change.
 
 Use positive cases 1, 2, 7, 10, and 11 and negative cases 1, 2, and 5 from
-[the submission kit](directory-submissions.md#positive-review-cases). If
-`knowledge:drafts:status` is not available in the OAuth grant, omit case 11
-from the submitted five and use positive case 6 instead; do not claim polling
-support until the authorization-server metadata and a real OAuth grant confirm it.
+[the submission kit](directory-submissions.md#positive-review-cases). Positive
+case 11 is included because production authorization metadata and the dated
+PKCE OAuth evidence below both confirm the `knowledge:drafts:status` grant.
 
 Capture these screenshots without private knowledge or credentials:
 
@@ -135,12 +134,16 @@ the production pages, health revision, anonymous MCP initialization and tool
 annotations, MCP App resource/CSP, and OAuth discovery metadata without using
 credentials or changing data.
 
-As of 2026-09-22, the production endpoint and public pages passed. The protected
-resource advertises `knowledge:drafts:status`, but the authorization-server
-metadata did not advertise that scope. This does not block the core default
-draft-create/context-read submission, but status-polling claims and review case
-11 remain gated on provider configuration plus a real OAuth grant. Track that
-external activation in [MemoStem Issue #311](https://github.com/girapphe/memostem/issues/311).
+As of 2026-09-22, the production endpoint and public pages passed. Both the
+protected-resource and authorization-server metadata advertise
+`knowledge:drafts:status`. A production PKCE flow using a marked synthetic owner
+displayed the status permission on Clerk's consent screen, returned the scope in
+the issued grant, created one private pending batch, replayed the same request
+without a duplicate, and polled the same pending result twice. The exact draft
+batch, refresh-token grant, and temporary OAuth application were removed after
+the test. Positive review case 11 is therefore part of the submission packet.
+Implementation and activation evidence is tracked in
+[MemoStem Issue #311](https://github.com/girapphe/memostem/issues/311).
 
 ## Stop conditions
 
