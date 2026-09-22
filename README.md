@@ -306,6 +306,9 @@ That contract names the endpoint, OAuth scopes, required tools, MCP Apps
 resource and action bindings, text fallback, and public fixtures that the private
 application validates semantically against its real MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
 
+Pull-request validation, cancellation, billing triage, and release-publication
+boundaries are documented in [GitHub Actions operations](docs/operations/github-actions.md).
+
 Before releasing a public branch that changes the contract or its fixtures, a
 MemoStem maintainer runs the private `Public plugin compatibility` workflow
 with this branch name as `public_plugin_ref`. The workflow checks out this

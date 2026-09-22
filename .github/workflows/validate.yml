@@ -2,6 +2,7 @@ name: Validate
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches:
       - main
@@ -9,10 +10,17 @@ on:
 permissions:
   contents: read
 
+# Validation is stateless. Keep only the newest revision of a pull request or
+# branch while leaving the separate registry publication workflow untouched.
+concurrency:
+  group: validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   plugin:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
