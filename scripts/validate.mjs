@@ -114,6 +114,13 @@ assert.equal(registryManifest.description, codexManifest.description);
 
 assert.deepEqual(compatibilityContract, {
   schema_version: 2,
+  mcp_apps: {
+    review_tool: 'review_knowledge_bundle_candidates',
+    resource_uri: 'ui://memostem/knowledge-candidate-picker.html',
+    mime_type: 'text/html;profile=mcp-app',
+    create_tool: 'create_knowledge_bundle_drafts',
+    fallback: 'text_selection',
+  },
   endpoint: mcp.mcpServers.memostem.url,
   oauth_scopes: [
     'openid',
