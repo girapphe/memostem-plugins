@@ -1,8 +1,9 @@
 # Channel readiness and evidence
 
 Record date: **2026-09-22**. Owner: **@OkYongChoi**, publisher/account operator.
-This record covers repository preparation. No authenticated host session or
-provider portal was exercised during implementation. Existing external listings
+This record covers repository preparation plus the scoped production OAuth
+evidence described below. No provider host session or submission portal was
+exercised during implementation. Existing external listings
 were not audited; “not exercised” does not assert that none already exist.
 Official source checks appear in [the connection guide](mcp.md#primary-chat-channels).
 The submission operator checklist is in
@@ -42,20 +43,22 @@ failure was observed; these account-dependent tests have not been attempted.
 - `git diff --check` passed. Exact public revisions and CI runs are recorded in
   the PRs linked from [#15](https://github.com/girapphe/memostem-plugins/issues/15).
 
-These checks do not prove model behavior, OAuth activation, host installation,
-store review, public listing or deployment. Versions are prepared for 0.6.0;
+These checks do not prove model behavior, host installation, store review,
+public listing or deployment. Versions are prepared for 0.6.0;
 no release or registry publication has been performed by this implementation.
 
 Live credential-free preflight on 2026-09-22 confirmed the public product,
 privacy, terms, support and logo URLs; production database health; MCP
 initialization; seven anonymous/reviewer-entry tools with titles and complete
 annotations; and the candidate-picker MCP App with an exact empty-domain CSP.
-The protected-resource metadata advertises `knowledge:drafts:status`, while the
-authorization-server metadata does not. Core draft-create/context-read
-submission preparation remains valid; status polling is not submission-ready
-until the provider metadata and a real OAuth grant both confirm the scope; that
-external activation is tracked in
-[MemoStem Issue #311](https://github.com/girapphe/memostem/issues/311).
+Both the protected-resource and authorization-server metadata advertise
+`knowledge:drafts:status`. A production PKCE test with the marked synthetic
+owner confirmed the status permission on the Clerk consent screen and in the
+issued token, then created one private pending batch, replayed the exact request
+without duplication, and returned the same pending status twice. Exact fixture,
+grant, and temporary-client cleanup completed. This proves the MemoStem OAuth
+and MCP path, not a ChatGPT, Claude, or other host connection. Activation is
+tracked in [MemoStem Issue #311](https://github.com/girapphe/memostem/issues/311).
 
 ## Host acceptance protocol
 

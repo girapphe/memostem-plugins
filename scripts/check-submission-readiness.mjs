@@ -100,13 +100,14 @@ console.log('[OK] protected-resource metadata');
 const authorizationServer = await fetch(
   `${origin}/.well-known/oauth-authorization-server`,
 ).then((response) => response.json());
-for (const scope of ['openid', 'knowledge:drafts:create', 'knowledge:context:read']) {
+for (const scope of [
+  'openid',
+  'knowledge:drafts:create',
+  'knowledge:context:read',
+  'knowledge:drafts:status',
+]) {
   assert.ok(authorizationServer.scopes_supported.includes(scope), `authorization server must advertise ${scope}`);
 }
-if (!authorizationServer.scopes_supported.includes('knowledge:drafts:status')) {
-  console.warn('[WARN] authorization-server metadata does not advertise knowledge:drafts:status; keep status polling out of the submitted default grant until provider configuration is verified.');
-} else {
-  console.log('[OK] authorization server advertises knowledge:drafts:status');
-}
+console.log('[OK] authorization server advertises all submitted OAuth scopes');
 
 console.log('MemoStem live submission-readiness checks passed.');
