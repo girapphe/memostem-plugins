@@ -23,13 +23,26 @@ the existing selection and consent steps before creating any draft.
 
 ## Retrieve and reuse reviewed knowledge
 
+Respond in the user's current language. When the conversation language is
+unclear and the host supplies a locale, use that locale; otherwise fall back to
+English.
+
 For a request to find or reuse MemoStem knowledge, discover the installed tools
 and call `check_memostem_connection` with `{}` first. Require `status:
 "connected"` and `knowledge:context:read` in `granted_scopes`. Read-only requests
 do not require `knowledge:drafts:create` and must not create drafts.
-If read permission is absent, use the host's OAuth reconnect or reconsent flow;
-never request credentials in chat or imply that an empty result proves no notes
-exist when authentication failed.
+If the call produces an authorization challenge, let the host start its OAuth
+connection flow and retry the check after the person completes it. If read
+permission is absent, use the host's OAuth reconnect or reconsent flow. Never
+request credentials in chat or imply that an empty result proves no notes exist
+when authentication failed.
+
+For a general getting-started request with no named topic, call
+`list_knowledge_catalog` after the successful connection check. Show the
+available topic labels without fetching knowledge bodies, then ask which topic
+the user wants to explore. If the catalog is empty, say so and briefly explain
+how the user can save selected general knowledge as a private pending draft;
+do not invent a topic or create a draft without selected material and consent.
 
 Call `get_topic_context` using its live schema and the user's named topic or
 explicit item selection. Omit `lifecycle_states` by default: retrieve only the

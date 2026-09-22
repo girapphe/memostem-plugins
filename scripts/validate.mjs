@@ -62,6 +62,7 @@ assert.equal(codexManifest.homepage, codexManifest.repository);
 assert.equal(codexManifest.interface.websiteURL, 'https://www.memostem.com');
 assert.ok(Array.isArray(codexManifest.interface.defaultPrompt));
 assert.ok(codexManifest.interface.defaultPrompt.length <= 3);
+assert.ok(codexManifest.interface.defaultPrompt.every((prompt) => prompt.length <= 128));
 
 for (const field of [
   'name',
@@ -321,7 +322,8 @@ assert.ok(mergeProposalExample.bundles[0].resolution_proposal.source_item_ids.in
 // contract tests; this repository checks packaging without copying that schema.
 assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('atomic memo')));
 assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('connection')));
-assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('active MemoStem knowledge')));
+assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.startsWith('Start MemoStem.')));
+assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes('Connect if needed')));
 assert.ok(codexManifest.interface.capabilities.includes('Owner-scoped lifecycle context retrieval'));
 assert.ok(codexManifest.interface.defaultPrompt.every((prompt) => !/decision draft|recall.*confirmed/iu.test(prompt)));
 const proactiveCaptureAgent = await readFile(
@@ -329,6 +331,7 @@ const proactiveCaptureAgent = await readFile(
   'utf8',
 );
 assert.match(proactiveCaptureAgent, /allow_implicit_invocation:\s*true/u);
+assert.match(proactiveCaptureAgent, /Reply in the user's current language, or the host locale/u);
 
 const publicFiles = await walk(root);
 const trackedCandidates = publicFiles.filter((file) => !file.includes(`${path.sep}.git${path.sep}`));

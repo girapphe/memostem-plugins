@@ -72,8 +72,15 @@ controls whether it surfaces the proactive guidance.
 4. "Create an open-question draft with the known facts, hypotheses, and next
    steps I selected."
 5. "Verify that MemoStem is connected and has permission to create private drafts."
-6. "Use my active MemoStem knowledge about this topic, and include archived or
-   superseded items only if I explicitly ask for them."
+6. "Start MemoStem. Connect if needed, then show my topics or explain how to
+   save knowledge."
+
+The OpenAI plugin interface currently accepts one `defaultPrompt` string or a
+list of strings, not a locale-keyed prompt map. Keep the first prompt within
+the final directory's 128-character limit. The skill answers in the
+conversation language, falls back to the host locale when that language is
+unclear, then to English when neither is available. MCP App UI should
+independently localize from the host locale.
 
 ## OpenAI submission
 
