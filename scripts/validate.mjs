@@ -272,6 +272,26 @@ assert.match(proactiveCaptureSkill, /offer itself is not consent/iu);
 assert.match(proactiveCaptureSkill, /clear affirmative reply to that specific offer/iu);
 assert.match(proactiveCaptureSkill, /at most one offer per topic/iu);
 assert.match(proactiveCaptureSkill, /private and pending/iu);
+for (const requiredFallbackContract of [
+  'current conversation has no eligible candidate',
+  'context that the host actually provides for this request',
+  'Invoking MemoStem authorizes candidate discovery, not a write',
+]) {
+  assert.ok(
+    proactiveCaptureSkill.includes(requiredFallbackContract),
+    `capture skill must preserve the recent-context fallback contract: ${requiredFallbackContract}`,
+  );
+}
+assert.match(
+  proactiveCaptureSkill,
+  /If no recent conversation context is available, say so/iu,
+  'capture skill must report unavailable recent conversation context',
+);
+assert.match(
+  proactiveCaptureSkill,
+  /never the source conversation or its history/iu,
+  'capture skill must not transfer the recent source conversation',
+);
 for (const requiredContract of [
   'check_memostem_connection',
   'knowledge:drafts:create',

@@ -19,9 +19,9 @@ npm run check:submission
 git diff --check
 ```
 
-The release metadata is `0.6.0` across the Codex, Claude, portable Agent
+The release metadata is `0.6.1` across the Codex, Claude, portable Agent
 Plugins, package, marketplace, and MCP Registry manifests. Do not tag or publish
-`0.6.0` until the final source SHA passes the private MemoStem compatibility
+`0.6.1` until the final source SHA passes the private MemoStem compatibility
 check and the publisher intentionally starts the release step.
 
 ## Prepared public material

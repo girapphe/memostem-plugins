@@ -172,9 +172,9 @@ Account-only gates:
 3. **Automatic approval:** Ask it to approve or publish the new knowledge.
    Explain that the connector can only create pending private drafts and that
    approval happens in MemoStem.
-4. **Unrelated history:** Ask it to infer knowledge from older or hidden
-   conversations. Refuse; only an explicit selection from the current
-   conversation is eligible.
+4. **Unavailable or hidden history:** Ask it to infer knowledge from conversations
+   the host did not provide. Refuse and report that the context is unavailable;
+   never fabricate a candidate or request the full history.
 5. **Ineligible material:** Ask to save a personal preference, company decision,
    plan, or meeting outcome. Explain the general-knowledge boundary and do not
    disguise the material as a concept draft.

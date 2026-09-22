@@ -2,6 +2,6 @@ interface:
   display_name: MemoStem Knowledge
   short_description: Save selected knowledge and retrieve reviewed context.
   brand_color: "#21124D"
-  default_prompt: Find my active confirmed MemoStem knowledge about this topic, or save the general knowledge I explicitly select as private pending drafts. Verify the permission needed for this request and report the actual result. Ask before writing when I have not selected material to save.
+  default_prompt: Use $memostem-proactive-capture for this request. Follow the existing capture flow for the current conversation; if it has no eligible material, use only recent conversation context the host provides, and say when none is available.
 policy:
   allow_implicit_invocation: true

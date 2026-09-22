@@ -16,6 +16,9 @@ OAuth scopes, five required tools and schema_version 1 compatibility contract.
 Use https://www.memostem.com/api/mcp everywhere. Capture is selected general
 knowledge only, private and pending until human approval. No server/DB changes,
 new provider enum values, transcript collection or personal memory expansion.
+An explicit unnamed MemoStem invocation may fall back from an empty current
+conversation to recent conversation context supplied by the host, but it must
+not browse unavailable history or bypass the existing selection and consent flow.
 No public listing, production release or host support claim without evidence.
 
 ## Acceptance and evidence
@@ -23,7 +26,7 @@ No public listing, production release or host support claim without evidence.
 | ID | Criterion | Verification |
 | --- | --- | --- |
 | CH-01 | Five chat hosts lead the README; bilingual save/retrieve examples precede coding setup | README and docs/mcp.md review |
-| CH-02 | Single skill handles explicit save, consent-first offers and owner-scoped active retrieval with task-specific scopes | Public instruction regression checks; host cases H-01–H-10 |
+| CH-02 | Single skill handles explicit save, consent-first offers and owner-scoped active retrieval with task-specific scopes; an unnamed invocation falls back to host-provided recent context only when the current conversation has no eligible candidate, reports unavailable context, and preserves the existing selection/consent flow | Public instruction regression checks; host cases H-01–H-11 |
 | CH-03 | Portable and existing native manifests share name, release, description, endpoint and skill tree | npm run check; Codex and Claude validators |
 | CH-04 | Wrong endpoint/transport/version/paths, secrets and maintenance skills are rejected | scripts/validate.test.mjs |
 | CH-05 | Existing MCP payload and scope contract still matches private server | Private check:public-plugin-compat with explicit public checkout |

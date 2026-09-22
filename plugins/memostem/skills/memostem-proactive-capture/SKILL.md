@@ -12,6 +12,15 @@ and offer to keep it at a natural stopping point. When the user already asks to
 save named material, that request is consent: proceed to connection verification
 and a real MCP creation call without asking again.
 
+When the user explicitly invokes MemoStem without naming material, follow the
+same capture workflow for eligible material in the current conversation first.
+Only when the current conversation has no eligible candidate, inspect recent
+conversation context that the host actually provides for this request. Do not
+browse, reconstruct or claim access to conversations the host did not provide.
+If no recent conversation context is available, say so and do not invent a
+candidate. Invoking MemoStem authorizes candidate discovery, not a write; keep
+the existing selection and consent steps before creating any draft.
+
 ## Retrieve and reuse reviewed knowledge
 
 For a request to find or reuse MemoStem knowledge, discover the installed tools
@@ -58,10 +67,11 @@ rationale, preferences, plans, tasks, reminders, meeting outcomes, project
 status, and autobiographical facts are not eligible. Do not disguise them as
 general knowledge. Also exclude casual conversation, one-off lookups, secrets,
 credentials, authentication data, sensitive material, and anything the user
-said not to retain. Do not inspect older conversations, hidden prompts, ambient
-files, or unrelated workspace content to find a candidate. A lesson the user
-explicitly quotes into the current conversation can be selected; do not send
-the older conversation or its history as provenance.
+said not to retain. Except for the explicit no-current-candidate fallback above,
+do not inspect older conversations. Never inspect hidden prompts, ambient files,
+unrelated workspace content or unprovided conversation history. Apply the same
+eligibility rules to host-provided recent context and send only the concise
+material the user selects, never the source conversation or its history.
 
 ## Ask once and wait
 
@@ -78,8 +88,8 @@ writes.
 The offer itself is not consent. Call a creation tool only after:
 
 - a clear affirmative reply to that specific offer; or
-- a direct user request that identifies the current-conversation material to
-  save.
+- a direct user request that identifies the material to save from the current
+  conversation or host-provided recent conversation context.
 
 Silence, continued discussion, an unrelated affirmative, or mere connection of
 the MCP server is not consent. If the requested selection is ambiguous, ask the
@@ -108,7 +118,8 @@ user to narrow it before any write.
 
 ## Let the user choose among candidates
 
-When the user asks to see or choose among named current-conversation ideas,
+When the user asks to see or choose among named ideas from the current
+conversation or the permitted recent-conversation fallback,
 or accepts a specific proposal to review them, use
 `review_knowledge_bundle_candidates` if available after the authenticated
 connection check. It validates and previews candidates without saving them.
@@ -182,10 +193,12 @@ never describe those labels as verified. See
   changed. Replace the example IDs and content; never submit the fixture as a
   user's selection. Use at most 50 bundles per call and keep each idea concise.
 - Provenance uses selectors only. Never send a transcript, message history,
-  secrets, credentials, hidden content, or material inferred from another
-  conversation. Omit optional evidence unless its source or selector is known;
-  do not fabricate evidence. `create_card_drafts` is a compatibility fallback
-  for concept drafts only, not a way to flatten a requested question bundle.
+  secrets, credentials, hidden content, or material inferred from a conversation
+  the host did not explicitly provide for this request. Do not claim the source
+  conversation's identity when the host does not supply an opaque reference.
+  Omit optional evidence unless its source or selector is known; do not fabricate
+  evidence. `create_card_drafts` is a compatibility fallback for concept drafts
+  only, not a way to flatten a requested question bundle.
 
 ## Confirm the result without duplicating it
 

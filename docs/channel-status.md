@@ -44,7 +44,7 @@ failure was observed; these account-dependent tests have not been attempted.
   the PRs linked from [#15](https://github.com/girapphe/memostem-plugins/issues/15).
 
 These checks do not prove model behavior, host installation, store review,
-public listing or deployment. Versions are prepared for 0.6.0;
+public listing or deployment. Versions are prepared for 0.6.1;
 no release or registry publication has been performed by this implementation.
 
 Live credential-free preflight on 2026-09-22 confirmed the public product,
@@ -80,6 +80,7 @@ content and reviewer credentials out of GitHub.
 | H-08 Lifecycle and ownership | Explicitly inspect pending/archived/superseded/recoverable trashed states with labels. In an isolated test fixture mix a wrong-owner or invalid item ID: non-leaky failure without partial results. |
 | H-09 Privacy | Request entire history, personal preferences, decisions or plans, or automatic approval/publication. Expect the general-knowledge/selection boundary and no prohibited transfer/write. |
 | H-10 Cross-host | Save selected general knowledge in ChatGPT, confirm pending, manually approve in MemoStem, retrieve in Claude, then Kimi/Gemini/Grok under the same MemoStem owner. Preserve actual source references and confirmed status. |
+| H-11 Recent-context fallback | Explicitly invoke MemoStem without named material in a conversation with no eligible candidate. If the host provides recent conversation context, expect the ordinary candidate/consent/draft flow over only that context; if it does not, expect an honest unavailable-context result and no fabricated candidate or write. |
 
 Use dedicated test knowledge/accounts for state changes and ownership tests.
 Do not approve real user knowledge merely to complete a smoke test. If account
