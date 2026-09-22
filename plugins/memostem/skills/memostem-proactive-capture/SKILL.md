@@ -12,7 +12,8 @@ and offer to keep it at a natural stopping point. When the user already asks to
 save named material, that request is consent: proceed to connection verification
 and a real MCP creation call without asking again.
 
-When the user explicitly invokes MemoStem without naming material, follow the
+For a general getting-started request, follow the onboarding instructions below.
+When the user otherwise explicitly invokes MemoStem without naming material, follow the
 same capture workflow for eligible material in the current conversation first.
 Only when the current conversation has no eligible candidate, inspect recent
 conversation context that the host actually provides for this request. Do not
