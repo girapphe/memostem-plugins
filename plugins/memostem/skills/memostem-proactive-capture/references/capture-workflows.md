@@ -39,6 +39,33 @@ capture and not consent for a later write. Report the real creation response
 and point to the returned review page. Use [recovery](recovery-workflows.md)
 when a result is missing or uncertain.
 
+## Examples, boundaries, and corrections
+
+For a selected concept, consider all three learning aids. Prefer one concise,
+useful entry in each field when the selected material supports it:
+
+| Field | What to write |
+| --- | --- |
+| `examples` | A concrete instance and a short explanation of why the definition applies. |
+| `non_examples` | A nearby case that does not meet the definition, with the distinguishing boundary. This is not merely an unrelated opposite. |
+| `misconceptions` | Objects with `claim` (the mistaken interpretation) and `correction` (the accurate replacement and a short reason). |
+
+For an authoritative game loop, an example is a server processing player inputs
+and distributing its accepted world state. A client rendering received state is
+a non-example because rendering does not make that client authoritative. A
+misconception is that every client independently decides the accepted shared
+state; the correction is that the authoritative server decides it, even if
+clients predict locally. The [worked payload](atomic-memo-flashcard.json) shows
+these fields together.
+
+These are quality guidance, not a quota. Keep `[]` when a useful entry is absent,
+uncertain, or unsupported by the selected explanation. Do not invent empirical
+claims, sources, citations, or conversation history to fill a field. Never imply
+the user personally holds a misconception. Preserve uncertainty and selection
+scope; these fields enrich the same selected pending card and do not authorize
+extra cards or automatic approval. Other bundle types follow their own live
+schema; do not add concept-only fields to question bundles.
+
 ## Requests that work
 
 | English | 한국어 | Expected behavior |
