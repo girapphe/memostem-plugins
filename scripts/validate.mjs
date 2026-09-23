@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pluginRoot = path.join(root, 'plugins', 'memostem');
 const skillsRoot = path.join(pluginRoot, 'skills');
+const chatgptPluginRoot = path.join(root, 'plugins', 'memostem-chatgpt');
+const chatgptSkillsRoot = path.join(chatgptPluginRoot, 'skills');
 
 async function readJson(relativePath) {
   return JSON.parse(await readFile(path.join(root, relativePath), 'utf8'));
@@ -34,7 +36,7 @@ const compatibilityContract = await readJson('contracts/mcp-compatibility.json')
 
 assert.equal(codexMarketplace.name, 'memostem');
 assert.equal(codexMarketplace.interface.displayName, 'MemoStem');
-assert.equal(codexMarketplace.plugins.length, 1);
+assert.equal(codexMarketplace.plugins.length, 2);
 assert.deepEqual(codexMarketplace.plugins[0].source, {
   source: 'local',
   path: './plugins/memostem',
@@ -42,6 +44,18 @@ assert.deepEqual(codexMarketplace.plugins[0].source, {
 assert.deepEqual(codexMarketplace.plugins[0].policy, {
   installation: 'AVAILABLE',
   authentication: 'ON_INSTALL',
+});
+assert.deepEqual(codexMarketplace.plugins[1], {
+  name: 'memostem-chatgpt',
+  source: {
+    source: 'local',
+    path: './plugins/memostem-chatgpt',
+  },
+  policy: {
+    installation: 'AVAILABLE',
+    authentication: 'ON_INSTALL',
+  },
+  category: 'Productivity',
 });
 
 assert.equal(claudeMarketplace.name, 'memostem');
@@ -110,11 +124,61 @@ assert.deepEqual(portableMcp, {
     memostem: { type: 'streamable-http', url: mcp.mcpServers.memostem.url },
   },
 }, 'portable MCP must use the canonical endpoint and streamable-http');
+
+// ChatGPT web plugins must reference a registered App instead of declaring an
+// MCP file. Direct mcp.json/.mcp.json declarations make an imported plugin
+// Desktop only, so retain them only in the cross-host memostem package above.
+const chatgptCodexManifest = await readJson('plugins/memostem-chatgpt/.codex-plugin/plugin.json');
+const chatgptPortableManifest = await readJson('plugins/memostem-chatgpt/plugin.json');
+const chatgptAppManifest = await readJson('plugins/memostem-chatgpt/.app.json');
+assert.equal(chatgptCodexManifest.name, 'memostem-chatgpt');
+assert.equal(chatgptCodexManifest.version, releaseVersion);
+assert.equal(chatgptCodexManifest.skills, './skills/');
+assert.equal(chatgptCodexManifest.apps, './.app.json');
+assert.equal('mcpServers' in chatgptCodexManifest, false);
+assert.deepEqual(chatgptAppManifest, {
+  apps: {
+    memostem: {
+      id: 'asdk_app_6ab2845a23b08191ae841f7bdf4f8011',
+      required: true,
+    },
+  },
+});
+assert.deepEqual(chatgptPortableManifest, {
+  $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
+  name: chatgptCodexManifest.name,
+  version: releaseVersion,
+  description: codexManifest.description,
+  author: codexManifest.author,
+  homepage: codexManifest.homepage,
+  repository: codexManifest.repository,
+  keywords: chatgptCodexManifest.keywords,
+  extensions: {
+    'com.openai': {
+      apps: './.app.json',
+      interface: chatgptCodexManifest.interface,
+    },
+  },
+}, 'ChatGPT portable manifest must reference the registered App only');
+for (const forbiddenMcpFile of ['mcp.json', '.mcp.json']) {
+  const files = await readdir(chatgptPluginRoot);
+  assert.equal(files.includes(forbiddenMcpFile), false, `ChatGPT web plugin must not contain ${forbiddenMcpFile}`);
+}
 assert.equal(packageManifest.description, codexManifest.description);
 assert.equal(registryManifest.description, codexManifest.description);
 
 assert.deepEqual(compatibilityContract, {
   schema_version: 2,
+  authentication: 'mixed_lazy',
+  guest_shelf: {
+    save_tool: 'save_guest_knowledge_bundles',
+    refresh_link_tool: 'refresh_guest_knowledge_shelf_link',
+    claim_tool: 'claim_guest_knowledge_workspace',
+    card_limit: 10,
+    retention_days: 90,
+    workspace_token: 'opaque_continuation_credential_never_display',
+    review_url: 'short_lived_read_only_link',
+  },
   mcp_apps: {
     review_tool: 'review_knowledge_bundle_candidates',
     resource_uri: 'ui://memostem/knowledge-candidate-picker.html',
@@ -139,6 +203,19 @@ assert.deepEqual(compatibilityContract, {
     'list_knowledge_catalog',
     'search_knowledge',
     'review_knowledge_bundle_candidates',
+  ],
+  onboarding_resource_uri: 'ui://memostem/onboarding.html',
+  anonymous_tools: [
+    'check_memostem_connection',
+    'claim_guest_knowledge_workspace',
+    'connect_memostem',
+    'create_card_drafts',
+    'create_knowledge_bundle_drafts',
+    'preview_knowledge_bundle',
+    'refresh_guest_knowledge_shelf_link',
+    'save_guest_knowledge_bundles',
+    'start_memostem',
+    'validate_knowledge_bundle',
   ],
   fixtures: {
     create_knowledge_bundle_drafts: 'plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json',
@@ -256,6 +333,11 @@ const expectedSkills = [
 // skills: adding a new developer workflow must never expand the public package.
 const skillEntries = (await readdir(skillsRoot)).sort();
 assert.deepEqual(skillEntries, expectedSkills, 'public plugin may contain only memostem-proactive-capture');
+assert.deepEqual(
+  (await readdir(chatgptSkillsRoot)).sort(),
+  expectedSkills,
+  'ChatGPT web plugin may contain only memostem-proactive-capture',
+);
 
 for (const skill of expectedSkills) {
   const source = await readFile(path.join(skillsRoot, skill, 'SKILL.md'), 'utf8');
@@ -332,6 +414,11 @@ const proactiveCaptureAgent = await readFile(
 );
 assert.match(proactiveCaptureAgent, /allow_implicit_invocation:\s*true/u);
 assert.match(proactiveCaptureAgent, /Reply in the user's current language, or the host locale/u);
+assert.equal(
+  await readFile(path.join(chatgptSkillsRoot, 'memostem-proactive-capture', 'SKILL.md'), 'utf8'),
+  proactiveCaptureSkill,
+  'ChatGPT web plugin must ship the same consent-first capture skill',
+);
 
 const publicFiles = await walk(root);
 const trackedCandidates = publicFiles.filter((file) => !file.includes(`${path.sep}.git${path.sep}`));
@@ -364,6 +451,23 @@ for (const file of trackedCandidates) {
   for (const pattern of secretPatterns) {
     assert.equal(pattern.test(source), false, `possible secret in ${path.relative(root, file)}`);
   }
+}
+
+// Every guide and agent configuration must reach both distributions, not only SKILL.md.
+const directSkillFiles = await walk(skillsRoot);
+const webSkillFiles = await walk(chatgptSkillsRoot);
+const relativeSkillFiles = directSkillFiles.map((file) => path.relative(skillsRoot, file)).sort();
+assert.deepEqual(
+  webSkillFiles.map((file) => path.relative(chatgptSkillsRoot, file)).sort(),
+  relativeSkillFiles,
+  'skill file inventory must match across packages',
+);
+for (const relative of relativeSkillFiles) {
+  assert.deepEqual(
+    await readFile(path.join(skillsRoot, relative)),
+    await readFile(path.join(chatgptSkillsRoot, relative)),
+    `skill file drift: ${relative}`,
+  );
 }
 
 console.log('MemoStem public plugin boundary and manifests are valid.');

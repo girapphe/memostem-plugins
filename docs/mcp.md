@@ -14,7 +14,20 @@ The production Streamable HTTP endpoint is:
 https://www.memostem.com/api/mcp
 ```
 
-Tools are exposed from the scopes the signed-in owner grants:
+MemoStem uses mixed, lazy authentication. Without an account,
+`save_guest_knowledge_bundles` keeps up to ten specifically selected general
+knowledge cards in a private 90-day shelf. Reuse its opaque `workspace_token`
+only as a tool argument; never display, log, or put it in a URL. The separate
+short-lived `review_url` opens a read-only shelf. At the limit, the person can
+agree to connect; `claim_guest_knowledge_workspace` starts OAuth and then
+transfers those same cards into owner-scoped private pending review. A claim
+does not approve or publish knowledge. `validate_knowledge_bundle` and
+`preview_knowledge_bundle` inspect one selected bundle without saving it.
+`start_memostem` presents localized onboarding; `connect_memostem` starts
+read-scope OAuth and shows the owner's topic labels after connection. Neither
+creates knowledge.
+
+Protected tools are exposed from the scopes the signed-in owner grants:
 
 - `check_memostem_connection`
 - `create_knowledge_bundle_drafts` and compatible `create_card_drafts` with
@@ -148,9 +161,13 @@ an MCP-only connection.
 
 ### ChatGPT
 
-Use the OAuth remote MCP setup described below. The submission bundle includes
-both the remote MCP endpoint and the existing memostem-proactive-capture skill.
-Workspace policy and available app controls determine account access.
+Install the `memostem-chatgpt` marketplace package for ChatGPT web. It contains
+the existing `memostem-proactive-capture` skill and references the registered
+MemoStem App through `.app.json`; it intentionally declares no `mcp.json` or
+`.mcp.json`, which keeps the imported package from being classified Desktop
+only. The direct-MCP `memostem` package remains for Codex, Claude Code, and
+other compatible hosts. Workspace policy and available app controls determine
+account access.
 [Official submission and testing entry point](https://developers.openai.com/plugins/deploy/submission).
 
 ### Claude
@@ -286,9 +303,10 @@ response, or count mismatch accurately without claiming a confirmed save.
 
 ## ChatGPT and OpenAI API
 
-For a ChatGPT custom app, register the endpoint above as a remote MCP server and
-use the service's OAuth flow. Do not paste a MemoStem personal access token into
-ChatGPT's browser settings. The public
+The registered MemoStem App uses the endpoint above as a remote MCP server and
+the service's OAuth flow. The `memostem-chatgpt` marketplace package references
+that App; do not add a separate direct MCP declaration or paste a MemoStem
+personal access token into ChatGPT's browser settings. The public
 [MemoStem connection page](https://www.memostem.com/plugins) links a signed-in
 person to the detailed setup guide.
 
@@ -297,10 +315,11 @@ Configure new ChatGPT connections to request exactly these default scopes:
 - `openid` for Clerk identity
 - `knowledge:drafts:create` for private pending draft creation
 - `knowledge:context:read` for owner-scoped context retrieval
+- `knowledge:drafts:status` for owner-scoped pending draft status
 
 Do not add `profile`, `email`, metadata scopes, or `offline_access` to the
 ChatGPT defaults. MemoStem's connection record and
-`check_memostem_connection` report only the two `knowledge:*` grants. Existing
+`check_memostem_connection` report only the three `knowledge:*` grants. Existing
 draft-only grants are not elevated automatically; the person must disconnect
 and reconnect or complete a new consent flow before the read tool appears.
 

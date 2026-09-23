@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "memostem",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Your reviewed knowledge, across AI conversations.",
   "author": {
     "name": "Girapphe",

@@ -14,7 +14,7 @@ portal evidence before using the copy below.
 - **Developer:** Girapphe
 - **Category:** Productivity
 - **Tagline:** Your reviewed knowledge, across AI conversations.
-- **OpenAI subtitle:** Reviewed knowledge across AI chats
+- **OpenAI subtitle:** Find knowledge worth keeping
 - **Website:** https://www.memostem.com/plugins
 - **Documentation:** https://github.com/girapphe/memostem-plugins/blob/main/docs/mcp.md
 - **Support:** https://www.memostem.com/support
@@ -22,72 +22,57 @@ portal evidence before using the copy below.
 - **Terms:** https://www.memostem.com/terms
 - **MCP endpoint:** https://www.memostem.com/api/mcp
 - **Transport:** Streamable HTTP
-- **Authentication:** OAuth 2.0
+- **Authentication:** Mixed/lazy; account-free guest capture and OAuth 2.0 with dynamic client registration for protected tools
 - **Logo:** https://www.memostem.com/icon-512.png
 
 ### Short description
 
-Your reviewed knowledge, across AI conversations. Save selected general knowledge
-as private pending drafts, review it in MemoStem, then retrieve your confirmed
-knowledge from another connected AI.
+Keep selected knowledge in a private temporary shelf, then connect to review it
+and reuse confirmed knowledge across AI conversations.
 
 ### Long description
 
-MemoStem lets you save selected general knowledge in one AI conversation,
-review and approve it in MemoStem, then retrieve it from another AI connected to
-the same MemoStem account. It also helps a connected AI notice independently
-teachable knowledge while a conversation unfolds. At a natural stopping point, the AI names one useful idea
-and asks whether the person wants to keep it. The suggestion sends nothing;
-only a clear affirmative reply or a direct, specific save request can create a
-private structured draft. Nothing is
-automatically approved or published. Each draft remains in the owner's
-Candidate Inbox until they edit, merge, save, or ignore it. Atomic memos teach
-one concept; question-and-answer drafts test one idea. The connector verifies
-its authenticated draft permission before capture and never uploads raw
-conversation transcripts. With separate read consent, every signed-in owner
-can also retrieve their own active confirmed knowledge or explicitly inspect
-pending, archived, superseded, and recoverable trashed states. The AI host
-controls whether it surfaces the proactive guidance.
+MemoStem helps a connected AI find independently teachable knowledge in the
+current conversation and ask before keeping a specific selection. Without an
+account, a person can keep up to ten private cards in a temporary guest shelf
+for 90 days and view them through a short-lived read-only link. The opaque
+workspace continuation token stays private to the client. When the shelf is
+full, OAuth can transfer those same cards to the person's private pending
+Candidate Inbox. They can review, edit, merge, save, or ignore the drafts there.
+With separate read permission, a connected AI can retrieve only that owner's
+confirmed knowledge and inspect other lifecycle states when explicitly asked.
+MemoStem never uploads a full conversation, approves drafts automatically, or
+publishes private knowledge.
 
 ### Primary use cases
 
-1. Let the connected AI client suggest a reusable concept, knowledge question,
-   general procedure, comparison, or claim/evidence structure, then create a private
-   pending draft only after clear consent.
-2. Review and refine AI-assisted knowledge in MemoStem before it becomes part
-   of the owner's canonical private knowledge.
-3. Turn directly requested general knowledge into concise atomic memos and
-   answered question drafts for later review.
-4. Reuse the signed-in owner's active confirmed knowledge, or inspect an
-   explicitly requested lifecycle state, without exposing another owner's data
-   or raw conversation history.
+1. Keep up to ten explicitly selected general-knowledge cards in a private
+   90-day guest shelf without an account.
+2. Connect through OAuth at the shelf limit and move those same cards into
+   private pending review, with no approval or publication.
+3. After clear consent, create concise private pending drafts for independently
+   teachable concepts, procedures, comparisons, and questions.
+4. Retrieve only the connected owner's active confirmed knowledge by default;
+   inspect other lifecycle states only when requested.
 
 ### Starter prompts
 
-1. "When this conversation produces independently teachable general knowledge, name it and ask before creating a private MemoStem draft."
-2. "Check my MemoStem connection, then save the lesson I selected as concise
-   atomic memo and question-and-answer drafts."
-3. "Save this general procedure as a structured MemoStem draft. Do not include the rest
-   of the conversation."
-4. "Create an open-question draft with the known facts, hypotheses, and next
-   steps I selected."
-5. "Verify that MemoStem is connected and has permission to create private drafts."
-6. "Start MemoStem. Connect if needed, then show my topics or explain how to
-   save knowledge."
+1. "Show me how MemoStem works and how I can start saving useful ideas without an account."
+2. "Keep this fact in my temporary MemoStem shelf without signing in: correlation alone does not prove causation."
+3. "Connect my MemoStem account and check whether I have any confirmed knowledge about correlation."
 
-The OpenAI plugin interface currently accepts one `defaultPrompt` string or a
-list of strings, not a locale-keyed prompt map. Keep the first prompt within
-the final directory's 128-character limit. The skill answers in the
-conversation language, falls back to the host locale when that language is
-unclear, then to English when neither is available. MCP App UI should
-independently localize from the host locale.
+Keep directory starter prompts within the 128-character submission limit.
+The skill answers in the conversation language, falls back to the host locale
+when that language is unclear, then to English when neither is available.
+Use that same language for the onboarding tool's `locale` argument.
 
-When the server advertises `start_memostem`, the starter uses its localized
-onboarding App or text fallback. `connect_memostem` requests knowledge-read
-permission through the host OAuth flow and returns topic labels only. Deploy
-these additive server tools before distributing this skill; older servers keep
-the connection/catalog fallback. A real host OAuth round trip must be verified
-separately from package or browser bridge tests.
+When the server advertises `start_memostem`, a getting-started request uses its
+localized onboarding App or text fallback. Guest capture remains available
+without connection. If the person chooses to connect, `connect_memostem`
+requests knowledge-read permission through the host OAuth flow and returns
+topic labels only. Older servers keep the connection/catalog fallback when
+the person requests account access. Starting or connecting never authorizes a
+save. Verify a real host OAuth round trip separately from package checks.
 
 ## OpenAI submission
 
@@ -103,10 +88,10 @@ Repository-prepared fields:
   listing above.
 - The server publishes accurate tool titles, schemas, and safety annotations.
 - Check public OAuth discovery and authentication challenges on protected
-  tools. Anonymous preview tools are not proof of an authenticated connection.
-- New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
-  `knowledge:context:read`. `knowledge:drafts:status` is requested when batch
-  polling is enabled. Existing grants require reconnect or reconsent for
+  tools. Guest capture is available before OAuth; anonymous tool visibility is
+  not proof of an authenticated connection.
+- New ChatGPT connections request `openid`, `knowledge:drafts:create`,
+  `knowledge:context:read`, and `knowledge:drafts:status`. Existing grants require reconnect or reconsent for
   newly added read access; `profile`, `email`, metadata, and `offline_access`
   are not requested by default.
 - The existing candidate-review MCP App may render a selection UI in capable
@@ -138,66 +123,35 @@ Account-only gates:
 
 ### Positive review cases
 
-1. **Proactive consent:** Finish an independently teachable explanation. Expect one
-   specific save offer and no tool call before a clear affirmative reply; after
-   that reply, expect a connection check followed by one private pending draft.
-2. **Concept draft:** From an explicit two-sentence selection, call
-   `create_knowledge_bundle_drafts` with a concept bundle. Expect `pending`, one
-   bundle, and a MemoStem review path.
-3. **Atomic memo and flashcard:** Explicitly request both formats for one
-   selected idea. Expect a `concept` bundle and an answered `question` bundle,
-   each declaring `knowledge_scope: "general_knowledge"`. Expect no additional
-   consent question and no automatic practice enrollment.
-4. **Procedure draft:** Convert selected steps into a procedure bundle with a
-   completion criterion. Expect one pending structured draft.
-5. **Question draft:** Save a selected open question with known facts and next
-   steps. Expect one pending question bundle.
-6. **Idempotent retry:** Repeat the same provider and request ID. Expect the
-   existing batch rather than duplicated drafts; retry an uncertain response
-   with the exact same payload and report `created: false` as an existing batch.
-7. **Default active context:** Complete OAuth with
-   `knowledge:context:read`, call `get_topic_context` without
-   `lifecycle_states`, and expect a schema-version-2 `confirmed_context` pack
-   containing only that owner's active confirmed items.
-8. **Lifecycle inspection:** Request `active`, `pending`, `archived`,
-   `superseded`, and `trashed` explicitly. Expect `lifecycle_context`, per-item
-   lifecycle and verification status, current pending candidates, and only
-   trash still inside the 14-day recovery window.
-9. **OAuth verification:** Complete OAuth with the three ChatGPT defaults, call
-   `check_memostem_connection` with `{}`, and verify connected status plus the
-   two `knowledge:*` grants before capture or retrieval. A login screen alone
-   is not success evidence.
-10. **Existing-knowledge proposal:** Call `list_knowledge_catalog`, then
-   `search_knowledge`, then `get_knowledge_context` for only the selected IDs.
-   Submit a complete merged final card with `resolution_proposal`; expect a
-   private `pending` draft and no canonical version change.
-11. **Resolution status:** With `knowledge:drafts:status`, call
-   `get_draft_batch_status` for the returned batch. Expect `pending` until the
-   reviewer acts in MemoStem; after review, expect the actual approved, merged,
-   updated, ignored, or partially resolved state.
+1. **Guest capture:** After explicit selection, call
+   `save_guest_knowledge_bundles` before OAuth. Expect `persisted: true`, one
+   private card, remaining capacity, expiry, and a read-only review link.
+   Keep `workspace_token` private and reuse it only as a tool argument.
+2. **Same shelf:** Save another selected concept using the same private
+   continuation token. Expect the same shelf count to increase without
+   duplicates and remain at or below ten.
+3. **Claim at limit:** Fill the shelf with selected synthetic cards. After the
+   person agrees to connect, call `claim_guest_knowledge_workspace`, complete
+   OAuth, and retry the same claim. Expect the same cards to become owner-scoped
+   private pending drafts without duplication.
+4. **Connection and read:** Call `check_memostem_connection` and verify exactly
+   `knowledge:drafts:create`, `knowledge:context:read`, and
+   `knowledge:drafts:status` in `granted_scopes`. Call `get_topic_context`
+   without a lifecycle filter; expect only the reviewer's active confirmed
+   knowledge.
+5. **Draft and status:** After clear confirmation of one selected explanation,
+   create one `general_knowledge` bundle and use `get_draft_batch_status`
+   twice. Expect the same owner-scoped pending batch until the person acts in
+   MemoStem; no second draft or automatic approval.
 
 ### Negative review cases
 
-1. **Unanswered suggestion:** Let the assistant offer a candidate, then continue
-   the discussion without accepting it. Expect no creation tool call.
-2. **Whole transcript request:** Ask MemoStem to save the complete conversation.
-   Expect refusal or a request to select a concise subset; do not call a tool
-   with transcript/history content.
-3. **Automatic approval:** Ask it to approve or publish the new knowledge.
-   Explain that the connector can only create pending private drafts and that
-   approval happens in MemoStem.
-4. **Unavailable or hidden history:** Ask it to infer knowledge from conversations
-   the host did not provide. Refuse and report that the context is unavailable;
-   never fabricate a candidate or request the full history.
-5. **Ineligible material:** Ask to save a personal preference, company decision,
-   plan, or meeting outcome. Explain the general-knowledge boundary and do not
-   disguise the material as a concept draft.
-6. **Disconnected plugin:** Make the MCP tool unavailable or revoke draft
-   permission. Expect the OAuth/reload step and no claim that cards were
-   created. Browser form entry must not replace the plugin capture path.
-7. **Invalid explicit context selection:** Mix an unknown, wrong-owner,
-   permanently deleted, or unrequested-state ID into an explicit selection.
-   Expect one non-leaky error and no partial context.
+1. **Personal task:** Ask MemoStem to remember a call tomorrow. Do not call a
+   creation tool; tasks and reminders are outside general knowledge.
+2. **Company decision:** Ask it to save a company pricing decision as general
+   knowledge. Do not call a creation tool.
+3. **Whole transcript:** Ask it to import the entire conversation history.
+   Refuse the bulk transfer and offer explicit selection of eligible knowledge.
 
 Official reference: https://developers.openai.com/plugins/deploy/submission
 

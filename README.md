@@ -28,8 +28,9 @@ authoring copy in that private repository.
 
 ## Save here, reuse in another AI conversation
 
-Select an explanation in ChatGPT, save it as a private pending draft, and review
-and approve it in MemoStem. Then ask Claude or another connected host to find
+Select an explanation in ChatGPT and keep it in a private guest shelf. Connect
+your account to move it into private pending review, then review and approve it
+in MemoStem. Then ask Claude or another connected host to find
 that knowledge. Sign in to the same MemoStem account in each host; no host gets
 access to another host's conversation history.
 
@@ -49,13 +50,61 @@ access to another host's conversation history.
   history. If you invoke MemoStem without naming material and the current chat has
   no eligible candidate, the same flow may use recent conversation context the
   host explicitly provides; it cannot browse unavailable conversation history.
-- **Review before saving.** New material stays in a private pending inbox until
-  you edit, merge, save, or ignore it.
+- **Start without an account.** Keep up to ten selected cards in a private
+  guest shelf for 90 days. The shelf is read-only in MemoStem; connecting moves
+  its cards to your private pending Candidate Inbox for review.
 - **Keep knowledge teachable.** Create an atomic memo for one concept or a
   question-and-answer draft for one retrieval question.
 - **Reuse only your knowledge.** A read-authorized connection can retrieve the
   signed-in owner's confirmed knowledge and, only when explicitly requested,
   inspect its lifecycle state.
+
+## Everyday workflows
+
+Use ordinary requests in the host where MemoStem is installed. The skill routes
+by your intent; opening MemoStem alone does not save anything.
+
+| What you want | Try saying | What should happen |
+| --- | --- | --- |
+| Choose what to keep | “방금 설명한 개념 중 저장할 후보를 보여줘.” | Preview candidates, then save only your selection. |
+| Save a named idea | “삼투압 원리를 메모 초안 하나로 저장해 줘.” | Save the selected idea once; no repeated consent question. |
+| Reuse reviewed knowledge | “내가 승인한 EUV 지식으로 이번 질문에 답해 줘.” | Search your active confirmed knowledge and identify the sources used. |
+| Practice in this chat | “내가 승인한 EUV 지식으로 한 문제씩 퀴즈를 내 줘.” | Retrieve the selected knowledge, ask one question at a time, and keep the exercise in chat. |
+| Propose an improvement | “기존 삼투압 메모에 이 설명을 보완하는 초안을 만들어 줘.” | Prepare a complete pending proposal for your review. |
+| Check a previous save | “방금 만든 초안이 아직 검토 대기인지 확인해 줘.” | Check the known batch when status permission is available. |
+
+An in-chat quiz does not enroll knowledge in MemoStem practice or record a
+practice result. A proposed improvement takes effect only after you review it
+in MemoStem. On a failed or uncertain save, the skill preserves the original
+request identity so retrying does not intentionally create another copy.
+
+The packaged skill includes focused guides for
+[capture and selection](plugins/memostem/skills/memostem-proactive-capture/references/capture-workflows.md),
+[retrieval and study](plugins/memostem/skills/memostem-proactive-capture/references/retrieval-workflows.md),
+and [recovery and status](plugins/memostem/skills/memostem-proactive-capture/references/recovery-workflows.md).
+They are loaded when the request needs them. Both direct-MCP and ChatGPT web
+packages ship the same guides.
+
+### Session reminders in supported runtimes
+
+The direct-MCP package includes a static `SessionStart` hook at
+[`hooks/hooks.json`](plugins/memostem/hooks/hooks.json). In a compatible,
+trusted Codex or Claude Code runtime, it reminds the assistant to use the
+request-specific skill at startup, resume, clear, or compaction. It prints a
+fixed context message using the runtime shell's `printf`; it reads no input
+or files, calls no service, and saves no knowledge. It does not launch a tool
+call or force a save offer.
+
+Codex requires hook trust review before execution. The hook requires a shell
+with `printf`; hosts without that command can use the skill without the hook.
+The ChatGPT web package uses the skill guides and has no executable hook.
+A plugin import or successful local command is not proof that a host loaded
+or executed the hook. Proactive offers remain dependent on the host and the
+current conversation.
+
+See the official [OpenAI plugin package guide](https://developers.openai.com/plugins/build/plugins),
+[Codex hook reference](https://learn.chatgpt.com/docs/hooks), and
+[Claude Code hook reference](https://code.claude.com/docs/en/hooks).
 
 ## Ask for useful cards
 
@@ -86,11 +135,17 @@ https://www.memostem.com/api/mcp
 
 ### ChatGPT
 
-Add MemoStem as an OAuth remote MCP app in a supported ChatGPT workspace. The
-public [MemoStem connection page](https://www.memostem.com/plugins) explains the
+For ChatGPT web, install **MemoStem for ChatGPT** (`memostem-chatgpt`) from this
+marketplace. It references the registered MemoStem App and deliberately has no
+`mcp.json` or `.mcp.json`, so it is not classified as Desktop only. The existing
+`memostem` package remains the direct-MCP package for Codex, Claude Code, and
+other compatible hosts. The public
+[MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
-New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
-`knowledge:context:read` by default. Existing draft-only connections are not
+MemoStem uses mixed, lazy authentication. Guest capture needs no account;
+claiming the shelf or using protected tools starts OAuth. New ChatGPT
+connections request `openid`, `knowledge:drafts:create`,
+`knowledge:context:read`, and `knowledge:drafts:status`. Existing grants are not
 upgraded automatically; disconnect and reconnect, or consent again, to add
 read access. `openid` is used only for identity; the defaults exclude
 `profile`, `email`, metadata scopes, and `offline_access`. GitHub publication
@@ -128,7 +183,7 @@ server-side OpenAI API usage.
 
 ## Consent-first proactive capture
 
-Draft-authorized MCP clients receive guidance to make one brief save offer at a
+MCP clients receive guidance to make one brief save offer at a
 natural stopping point when the current conversation produces independently
 teachable general knowledge: a concept, mechanism, general procedure,
 comparison, evidence-backed claim, knowledge question, historical event, or
@@ -137,7 +192,9 @@ language expression. The installable plugin also includes an implicitly discover
 
 The offer sends nothing and is not consent. The client may call a creation tool
 only after a clear affirmative reply to that specific proposal or a direct
-request identifying the current-conversation material. It must not repeat a
+request identifying the current-conversation material. Before account
+connection, that selection goes to the private guest shelf; after OAuth it
+becomes an owner-scoped private pending draft. It must not repeat a
 declined topic or propose sensitive, secret, credential, or do-not-retain
 material. AI hosts decide whether and when to surface MCP instructions, so a
 connection cannot guarantee an offer in every client.
@@ -174,6 +231,15 @@ tool listing alone does not prove that any draft was created. The assistant
 must report the server's actual pending count and review link. Browser forms
 are not a substitute for this plugin path.
 
+### ChatGPT marketplace update
+
+Install the web-specific package as `memostem-chatgpt@memostem`. Select
+**MemoStem for ChatGPT** in a new conversation, then complete the MemoStem OAuth
+connection. It is separate from the direct-MCP `memostem` package, which
+ChatGPT correctly marks Desktop only. Installing a marketplace revision and
+completing OAuth are separate steps; a development App remains in development
+until its provider review and publishing process finishes.
+
 ### Claude Code
 
 ```bash
@@ -201,6 +267,17 @@ claude plugin marketplace remove memostem
 ```
 
 ## What the MCP exposes
+
+Without an account, `save_guest_knowledge_bundles` keeps only specifically
+selected current-conversation general knowledge in a private shelf of at most
+ten cards for 90 days. Its opaque `workspace_token` is a private continuation
+credential: clients reuse it as a tool argument and never display or log it.
+The separate short-lived `review_url` opens a read-only view. At capacity,
+`claim_guest_knowledge_workspace` starts OAuth and moves the same cards into
+private pending review after consent. `validate_knowledge_bundle` and
+`preview_knowledge_bundle` check one selected bundle without saving it.
+`start_memostem` displays localized onboarding or owner topic labels;
+`connect_memostem` starts read-scope OAuth when required. Neither creates a card.
 
 - `check_memostem_connection`: verify authentication and report granted scopes
   without reading or writing knowledge.
@@ -272,6 +349,9 @@ the client. No token or OAuth credential is packaged.
 Portable format validation does not establish support in any particular host.
 Kimi's documented import route converts a source package; Gemini and Grok use
 custom MCP connections. Existing Codex and Claude install names are unchanged.
+`plugins/memostem-chatgpt` is the ChatGPT web counterpart: it has root
+`plugin.json`, `.app.json`, and the same skill tree, but intentionally no
+direct MCP declaration.
 
 ## Validate locally
 
@@ -286,7 +366,8 @@ The dependency-free repository check validates both marketplaces, cross-platform
 metadata, the complete skill trees, MCP Registry metadata, public/private
 boundaries, symlinks, common secret patterns, and the versioned
 [`contracts/mcp-compatibility.json`](contracts/mcp-compatibility.json) contract.
-That contract names the endpoint, OAuth scopes, required tools, MCP Apps
+That contract names mixed authentication, guest shelf limits, the endpoint,
+OAuth scopes, required tools, MCP Apps
 resource and action bindings, text fallback, and public fixtures that the private
 application validates semantically against its real MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
 

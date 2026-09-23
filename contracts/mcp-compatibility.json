@@ -1,5 +1,15 @@
 {
   "schema_version": 2,
+  "authentication": "mixed_lazy",
+  "guest_shelf": {
+    "save_tool": "save_guest_knowledge_bundles",
+    "refresh_link_tool": "refresh_guest_knowledge_shelf_link",
+    "claim_tool": "claim_guest_knowledge_workspace",
+    "card_limit": 10,
+    "retention_days": 90,
+    "workspace_token": "opaque_continuation_credential_never_display",
+    "review_url": "short_lived_read_only_link"
+  },
   "endpoint": "https://www.memostem.com/api/mcp",
   "oauth_scopes": [
     "openid",
@@ -18,6 +28,18 @@
     "search_knowledge",
     "review_knowledge_bundle_candidates"
   ],
+  "anonymous_tools": [
+    "check_memostem_connection",
+    "claim_guest_knowledge_workspace",
+    "connect_memostem",
+    "create_card_drafts",
+    "create_knowledge_bundle_drafts",
+    "preview_knowledge_bundle",
+    "refresh_guest_knowledge_shelf_link",
+    "save_guest_knowledge_bundles",
+    "start_memostem",
+    "validate_knowledge_bundle"
+  ],
   "fixtures": {
     "create_knowledge_bundle_drafts": "plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json"
   },
@@ -30,5 +52,6 @@
     "mime_type": "text/html;profile=mcp-app",
     "create_tool": "create_knowledge_bundle_drafts",
     "fallback": "text_selection"
-  }
+  },
+  "onboarding_resource_uri": "ui://memostem/onboarding.html"
 }
