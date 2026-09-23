@@ -171,6 +171,7 @@ assert.deepEqual(compatibilityContract, {
   authentication: 'mixed_lazy',
   guest_shelf: {
     save_tool: 'save_guest_knowledge_bundles',
+    refresh_link_tool: 'refresh_guest_knowledge_shelf_link',
     claim_tool: 'claim_guest_knowledge_workspace',
     card_limit: 10,
     retention_days: 90,
@@ -210,6 +211,7 @@ assert.deepEqual(compatibilityContract, {
     'create_card_drafts',
     'create_knowledge_bundle_drafts',
     'preview_knowledge_bundle',
+    'refresh_guest_knowledge_shelf_link',
     'save_guest_knowledge_bundles',
     'start_memostem',
     'validate_knowledge_bundle',
