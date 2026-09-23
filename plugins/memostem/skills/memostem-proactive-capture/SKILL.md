@@ -145,12 +145,21 @@ and request ID unchanged. Never send a transcript, unrelated memory, sensitive
 content, or more cards than the ten-card shelf can hold.
 
 Keep the returned `workspace_token` solely as a private continuation credential
-for later `save_guest_knowledge_bundles` or `claim_guest_knowledge_workspace`
+for later `save_guest_knowledge_bundles`,
+`refresh_guest_knowledge_shelf_link`, or `claim_guest_knowledge_workspace`
 arguments. Never quote, summarize, log, display, or put it in a URL. Only the
-separate short-lived `review_url` is meant to be shared with the person; it
-opens a read-only shelf view. Report the actual `persisted`, `card_count`,
-`remaining_capacity`, and `expires_at`. Do not call a guest card approved or
-saved to an account.
+separate short-lived `review_url` is meant to be shared with the person. It
+opens a mobile or desktop web confirmation screen before the read-only shelf.
+Report the actual `persisted`, `card_count`, `remaining_capacity`, and
+`expires_at`. Do not call a guest card approved or saved to an account.
+
+If the person asks to reopen the shelf after its review link expires, call
+`refresh_guest_knowledge_shelf_link` with the same private `workspace_token`.
+Share only the fresh `review_url`; an earlier review link stops working. Link
+refresh creates no card, so do not call `save_guest_knowledge_bundles` again
+or report another save. If the workspace token or shelf has expired, explain
+that the link cannot be recovered. The web shelf is read-only; connecting an
+account moves the cards into the private pending Inbox for review and approval.
 
 When `account_required` is true, explain that the shelf is full. After the
 person agrees to connect, call `claim_guest_knowledge_workspace` with the same
