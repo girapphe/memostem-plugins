@@ -61,6 +61,19 @@ publishes private knowledge.
 2. "Keep this fact in my temporary MemoStem shelf without signing in: correlation alone does not prove causation."
 3. "Connect my MemoStem account and check whether I have any confirmed knowledge about correlation."
 
+Keep directory starter prompts within the 128-character submission limit.
+The skill answers in the conversation language, falls back to the host locale
+when that language is unclear, then to English when neither is available.
+Use that same language for the onboarding tool's `locale` argument.
+
+When the server advertises `start_memostem`, a getting-started request uses its
+localized onboarding App or text fallback. Guest capture remains available
+without connection. If the person chooses to connect, `connect_memostem`
+requests knowledge-read permission through the host OAuth flow and returns
+topic labels only. Older servers keep the connection/catalog fallback when
+the person requests account access. Starting or connecting never authorizes a
+save. Verify a real host OAuth round trip separately from package checks.
+
 ## OpenAI submission
 
 Use the OpenAI Platform plugin submission portal and choose **With MCP**. Submit

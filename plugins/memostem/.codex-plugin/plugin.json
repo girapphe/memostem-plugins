@@ -40,7 +40,7 @@
     "brandColor": "#21124D",
     "logo": "./assets/logo-mark.svg",
     "defaultPrompt": [
-      "Use my active MemoStem knowledge about this topic and report what you found.",
+      "Start MemoStem. Connect if needed, then show my topics or explain how to save knowledge.",
       "Check my MemoStem connection, then save the general knowledge I selected as an atomic memo draft.",
       "Notice one teachable idea, name it, and ask before creating a private pending draft."
     ]

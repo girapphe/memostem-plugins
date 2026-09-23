@@ -7,6 +7,10 @@ metadata:
 
 # MemoStem knowledge capture and retrieval
 
+Respond in the user's current language. When the conversation language is
+unclear and the host supplies a locale, use that locale; otherwise fall back to
+English.
+
 Notice independently teachable general knowledge in the current conversation
 and offer to keep it at a natural stopping point. When the user already asks to
 save named material, that request is consent: proceed to connection verification
@@ -19,8 +23,10 @@ after 90 days. An account connection is required to claim the shelf as private
 pending drafts, review and approve them, or retrieve owner knowledge. Do not
 tell the person that merely connecting saves or approves any card.
 
-When the user explicitly invokes MemoStem without naming material, follow the
-same capture workflow for eligible material in the current conversation first.
+For a general getting-started request, follow the onboarding instructions below.
+When the user otherwise explicitly invokes MemoStem without naming material,
+follow the same capture workflow for eligible material in the current
+conversation first.
 Only when the current conversation has no eligible candidate, inspect recent
 conversation context that the host actually provides for this request. Do not
 browse, reconstruct or claim access to conversations the host did not provide.
@@ -47,15 +53,39 @@ For a mixed request, perform the requested read first and obtain specific consen
 for any additional capture that the user has not already authorized. Never
 invent tools for approval, practice enrollment, scheduling, or background sync.
 
+## Get started in the user's language
+
+For a general getting-started request with no named topic, prefer `start_memostem`
+when available. Pass the conversation language as `locale`, then the host locale,
+then English when neither is available. The tool shows a localized welcome view
+before account connection or owner topic labels after read authorization.
+Explain guest capture without requiring OAuth. Let the person choose its Connect
+button; in a text-only host, call `connect_memostem` only when they ask to connect
+or grant read permission. A challenge or cancelled flow is not a successful
+connection. Retry after connection completes.
+
+Show returned topic labels or empty-state guidance without fetching knowledge
+bodies or creating drafts. Starting or connecting never supplies capture consent.
+Never treat a welcome view or topic list as proof of draft-creation permission.
+
+If these tools are unavailable, explain how to save selected general knowledge
+in the guest shelf. When the person requests account access, follow the connection
+check below, then call `list_knowledge_catalog` if available. Show returned topic
+labels and ask which topic to explore. If the catalog is empty, say so and explain
+how selected knowledge can become a private pending draft. Do not invent topics
+or require account access merely to explain getting started.
+
 ## Retrieve and reuse reviewed knowledge
 
 For a request to find or reuse MemoStem knowledge, discover the installed tools
 and call `check_memostem_connection` with `{}` first. Require `status:
 "connected"` and `knowledge:context:read` in `granted_scopes`. Read-only requests
 do not require `knowledge:drafts:create` and must not create drafts.
-If read permission is absent, use the host's OAuth reconnect or reconsent flow;
-never request credentials in chat or imply that an empty result proves no notes
-exist when authentication failed.
+If the call produces an authorization challenge, let the host start its OAuth
+connection flow and retry the check after the person completes it. If read
+permission is absent, use the host's OAuth reconnect or reconsent flow. Never
+request credentials in chat or imply that an empty result proves no notes exist
+when authentication failed.
 
 Prefer the bounded retrieval path: call `list_knowledge_catalog` when stable
 topic or tag IDs are needed, `search_knowledge` for the requested subject, and
@@ -80,13 +110,6 @@ For a study request, ask one question at a time in this chat using the returned
 approved knowledge, then explain feedback from that same source. This is a
 read-only conversation exercise, not practice enrollment or recorded progress.
 See [retrieval and reuse](references/retrieval-workflows.md) for examples.
-
-For an open-ended getting-started request with no named topic, call
-`start_memostem` with the conversation language as `locale`. It shows a welcome
-view before login or owner topic labels after read authorization. If the person
-chooses to connect or grant read permission, call `connect_memostem` and use the
-host OAuth flow. Neither tool creates knowledge. Never treat a welcome view or
-topic list as proof that draft-creation permission was granted.
 
 Examples: "Find my approved MemoStem knowledge about EUV" / "MemoStem에서 내가
 승인한 EUV 지식을 찾아줘." For capture: "Save this explanation as one atomic memo
