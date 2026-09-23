@@ -228,3 +228,12 @@ test('portable package rejects external symlink and embedded credentials', async
     assert.match(result.stderr, /possible secret/u);
   });
 });
+
+test('public validation rejects guide and agent drift between distributions', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'skill-guide-drift');
+  const guide = path.join(temporaryRoot, 'plugins', 'memostem-chatgpt', 'skills', 'memostem-proactive-capture', 'agents', 'openai.yaml');
+  await writeFile(guide, `${await readFile(guide, 'utf8')}\n# stale web package\n`);
+  const result = runValidation(temporaryRoot);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /skill file drift/u);
+});

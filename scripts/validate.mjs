@@ -450,4 +450,21 @@ for (const file of trackedCandidates) {
   }
 }
 
+// Every guide and agent configuration must reach both distributions, not only SKILL.md.
+const directSkillFiles = await walk(skillsRoot);
+const webSkillFiles = await walk(chatgptSkillsRoot);
+const relativeSkillFiles = directSkillFiles.map((file) => path.relative(skillsRoot, file)).sort();
+assert.deepEqual(
+  webSkillFiles.map((file) => path.relative(chatgptSkillsRoot, file)).sort(),
+  relativeSkillFiles,
+  'skill file inventory must match across packages',
+);
+for (const relative of relativeSkillFiles) {
+  assert.deepEqual(
+    await readFile(path.join(skillsRoot, relative)),
+    await readFile(path.join(chatgptSkillsRoot, relative)),
+    `skill file drift: ${relative}`,
+  );
+}
+
 console.log('MemoStem public plugin boundary and manifests are valid.');
