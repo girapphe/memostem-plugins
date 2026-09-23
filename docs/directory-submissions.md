@@ -57,9 +57,9 @@ publishes private knowledge.
 
 ### Starter prompts
 
-1. "Show me how MemoStem works and how I can start saving useful ideas without an account."
-2. "Keep this fact in my temporary MemoStem shelf without signing in: correlation alone does not prove causation."
-3. "Connect my MemoStem account and check whether I have any confirmed knowledge about correlation."
+1. "Preview a card explaining evaporation. Do not save it yet."
+2. "Save this to my guest shelf: correlation alone does not prove causation."
+3. "Connect MemoStem and find my confirmed knowledge about correlation."
 
 Keep directory starter prompts within the 128-character submission limit.
 The skill answers in the conversation language, falls back to the host locale
