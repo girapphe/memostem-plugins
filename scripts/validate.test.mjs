@@ -32,7 +32,7 @@ test('public validation rejects maintenance skills and unknown skills', async (t
     await mkdir(forbiddenDirectory);
     const result = runValidation(temporaryRoot);
     assert.equal(result.status, 1, `validation must reject ${skill}`);
-    assert.match(result.stderr, /public plugin may contain only memostem-proactive-capture/u);
+    assert.match(result.stderr, /public plugin may contain only memostem/u);
     await rm(forbiddenDirectory, { recursive: true });
   }
 });
@@ -88,7 +88,7 @@ test('public validation rejects an incomplete submission readiness contract', as
 
 test('public validation rejects weakened consent instructions', async (t) => {
   const temporaryRoot = await copyRepository(t, 'consent-contract');
-  const skillPath = path.join(temporaryRoot, 'plugins', 'memostem', 'skills', 'memostem-proactive-capture', 'SKILL.md');
+  const skillPath = path.join(temporaryRoot, 'plugins', 'memostem', 'skills', 'memostem', 'SKILL.md');
   const skill = await readFile(skillPath, 'utf8');
   await writeFile(skillPath, skill.replace('The offer itself is not consent.', 'The offer starts capture.'));
   const result = runValidation(temporaryRoot);
@@ -127,7 +127,7 @@ test('public validation rejects loss of retrieval permission or read-only bounda
   for (const phrase of ['knowledge:context:read', 'must not create drafts']) {
     await t.test(phrase, async (subtest) => {
       const temporaryRoot = await copyRepository(subtest, 'retrieval-contract');
-      const skillPath = path.join(temporaryRoot, 'plugins/memostem/skills/memostem-proactive-capture/SKILL.md');
+      const skillPath = path.join(temporaryRoot, 'plugins/memostem/skills/memostem/SKILL.md');
       const skill = await readFile(skillPath, 'utf8');
       await writeFile(skillPath, skill.replaceAll(phrase, 'removed-boundary'));
       const result = runValidation(temporaryRoot);
@@ -222,7 +222,7 @@ test('portable package rejects external symlink and embedded credentials', async
   await t.test('credential in shared skill reference', async (subtest) => {
     const temporaryRoot = await copyRepository(subtest, 'portable-secret');
     const name = ['OPENAI', 'API', 'KEY'].join('_');
-    await writeFile(path.join(temporaryRoot, 'plugins/memostem/skills/memostem-proactive-capture/references/leak.txt'), `${name}=example-only`);
+    await writeFile(path.join(temporaryRoot, 'plugins/memostem/skills/memostem/references/leak.txt'), `${name}=example-only`);
     const result = runValidation(temporaryRoot);
     assert.equal(result.status, 1);
     assert.match(result.stderr, /possible secret/u);
@@ -231,7 +231,7 @@ test('portable package rejects external symlink and embedded credentials', async
 
 test('public validation rejects guide and agent drift between distributions', async (t) => {
   const temporaryRoot = await copyRepository(t, 'skill-guide-drift');
-  const guide = path.join(temporaryRoot, 'plugins', 'memostem-chatgpt', 'skills', 'memostem-proactive-capture', 'agents', 'openai.yaml');
+  const guide = path.join(temporaryRoot, 'plugins', 'memostem-chatgpt', 'skills', 'memostem', 'agents', 'openai.yaml');
   await writeFile(guide, `${await readFile(guide, 'utf8')}\n# stale web package\n`);
   const result = runValidation(temporaryRoot);
   assert.equal(result.status, 1);

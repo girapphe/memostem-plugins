@@ -13,6 +13,10 @@ The public marketplace manifests, remote MCP registration, public/private
 boundary documentation, and standalone validation were then authored in this
 repository. No Git history was imported from the application repository.
 
+On 2026-09-23, the public skill was renamed to `memostem` in both plugin
+packages to reflect its getting-started, capture, retrieval, study, status, and
+recovery workflows. The rename preserves the existing consent and privacy rules.
+
 Future updates must copy only reviewed plugin assets into a fresh branch here.
 They must not automate broad access to the private application checkout or
 publish a patch generated from unrestricted repository paths.

@@ -78,7 +78,7 @@ save. Verify a real host OAuth round trip separately from package checks.
 
 Use the OpenAI Platform plugin submission portal and choose **With MCP**. Submit
 the production endpoint directly; do not submit an existing integration ID.
-Include the single `memostem-proactive-capture` skill from the release revision
+Include the single `memostem` skill from the release revision
 as an uploaded skill with the remote MCP. Record the exact source SHA and
 portal validation result in the channel Issue.
 

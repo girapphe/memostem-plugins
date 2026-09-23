@@ -1,7 +1,7 @@
 # Public plugin boundary
 
 This repository distributes the user-facing MemoStem plugin. The plugin's
-`skills/` directory must contain only `memostem-proactive-capture`.
+`skills/` directory must contain only `memostem`.
 
 Developer maintenance skills belong in the private application repository.
 Never copy or publish them in this repository, even with checkout requirements,

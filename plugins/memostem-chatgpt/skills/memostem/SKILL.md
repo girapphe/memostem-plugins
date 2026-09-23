@@ -1,11 +1,11 @@
 ---
-name: memostem-proactive-capture
-description: Use when the user asks to save selected general knowledge, find, reuse or study their MemoStem knowledge, check a submitted draft batch, or the current conversation produces a teachable idea worth offering to keep; use a private guest shelf before account connection or owner-scoped tools after OAuth, always with specific consent.
+name: "memostem"
+description: "Use when the user wants to get started with MemoStem, connect an account, save selected general knowledge, find, reuse or study their knowledge, check a submitted draft batch, recover an uncertain save, or the current conversation produces a teachable idea worth offering to keep; use a private guest shelf before account connection or owner-scoped tools after OAuth, always with specific consent."
 metadata:
-  short-description: Keep selected knowledge, then connect to review and reuse it
+  short-description: "Save, review, and reuse knowledge with MemoStem"
 ---
 
-# MemoStem knowledge capture and retrieval
+# MemoStem
 
 Respond in the user's current language. When the conversation language is
 unclear and the host supplies a locale, use that locale; otherwise fall back to

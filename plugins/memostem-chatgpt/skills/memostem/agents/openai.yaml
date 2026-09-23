@@ -1,0 +1,7 @@
+interface:
+  display_name: "MemoStem"
+  short_description: "Save, review, and reuse knowledge with MemoStem."
+  brand_color: "#21124D"
+  default_prompt: "Use $memostem for this request. Reply in the user's current language, or the host locale when the conversation language is unclear. Route by the user's actual intent: get started, retrieve or study approved knowledge, check a known draft batch, or capture specifically selected general knowledge. Use the matching reference guide and live tools, preserve consent and privacy, and report only confirmed results."
+policy:
+  allow_implicit_invocation: true

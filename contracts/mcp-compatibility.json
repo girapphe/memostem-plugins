@@ -41,10 +41,10 @@
     "validate_knowledge_bundle"
   ],
   "fixtures": {
-    "create_knowledge_bundle_drafts": "plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json"
+    "create_knowledge_bundle_drafts": "plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json"
   },
   "examples": {
-    "merge_resolution_proposal": "plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json"
+    "merge_resolution_proposal": "plugins/memostem/skills/memostem/references/merge-proposal.json"
   },
   "mcp_apps": {
     "review_tool": "review_knowledge_bundle_candidates",
