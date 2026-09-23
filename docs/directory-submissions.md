@@ -57,9 +57,9 @@ publishes private knowledge.
 
 ### Starter prompts
 
-1. "Keep this general-knowledge card in my temporary MemoStem shelf: correlation does not by itself establish causation."
-2. "Show me how MemoStem's guest shelf works before I connect an account."
-3. "Check that my MemoStem connection works and show the permissions it has."
+1. "Show me how MemoStem works and how I can start saving useful ideas without an account."
+2. "Keep this fact in my temporary MemoStem shelf without signing in: correlation alone does not prove causation."
+3. "Connect my MemoStem account and check whether I have any confirmed knowledge about correlation."
 
 ## OpenAI submission
 
