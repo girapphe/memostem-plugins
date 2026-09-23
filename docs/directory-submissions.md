@@ -184,16 +184,51 @@ this integration as UI-free.
 
 Official reference: https://claude.com/docs/connectors/building/submission
 
-## Anthropic skill-bearing plugin submission
+## Anthropic plugin directory submission (Cowork and Claude Code)
 
-The connector listing above and a skill-bearing plugin are separate artifacts.
-Use the public [plugin submission entry](https://claude.com/plugins) for the
-existing Claude manifest plus shared skill and remote MCP, using the same
-listing copy and test cases. The [unified directory](https://support.claude.com/en/articles/14328846-browse-skills-connectors-and-plugins-in-one-directory)
-describes installed plugin skills in chat and Cowork. Verify skill loading in
-Claude chat independently of Claude Code and independently of MCP-only setup.
-Record the exact package revision, requested reviewer materials and results in
+The connector listing above and the skill-bearing plugin are separate
+artifacts. The [plugin directory](https://claude.com/plugins-for/cowork) serves
+the complete `plugins/memostem` package (Claude manifest, shared `memostem`
+skill and remote MCP) to Cowork, installed-plugin chat, and Claude Code, where
+it appears in the built-in `claude-plugins-official` marketplace. Reuse the
+shared listing copy and test cases.
+
+Repository-prepared gates:
+
+1. The repository is public and the submitted revision is on `main`.
+2. `npm run check`, `claude plugin validate .`, and
+   `claude plugin validate plugins/memostem` pass on that revision.
+3. `.claude-plugin/marketplace.json` and
+   `plugins/memostem/.claude-plugin/plugin.json` declare the same release
+   version as the latest GitHub Release.
+4. The bundled MCP endpoint `https://www.memostem.com/api/mcp` is publicly
+   reachable; plugin connectors connect through Anthropic's cloud.
+
+Account-only gates:
+
+1. Submit the GitHub link through one in-app form:
+   - claude.ai (Team or Enterprise organization with Directory management
+     access): https://claude.ai/admin-settings/directory/submissions/plugins/new
+   - Console (Developer, Admin, or Owner role):
+     https://platform.claude.com/plugins/submit
+2. Track review status on the claude.ai **Directory** submissions page or in
+   Console. Anthropic runs automated review first; the "Anthropic Verified"
+   badge requires additional review and is not guaranteed. An approved
+   Connectors Directory listing for the same endpoint reduces install warnings.
+3. After publication, pushes to `main` are mirrored and re-screened
+   automatically. Do not re-submit the form for updates; treat every merge to
+   `main` as a release to all directory users.
+
+Before submission, verify installation from this repository in Cowork
+(**Customize → Plugins → + → Add marketplace → Add from a repository**) and
+check skill loading in Claude chat independently of Claude Code and of MCP-only
+setup. Record the exact package revision, submission route, requested reviewer
+materials, and results in
 [#19](https://github.com/girapphe/memostem-plugins/issues/19).
+
+Official references (checked 2026-09-23):
+[plugin submission](https://claude.com/docs/plugins/submit),
+[use plugins in Claude](https://support.claude.com/en/articles/13837440-use-plugins-in-claude).
 
 ## Kimi submission
 
