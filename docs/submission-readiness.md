@@ -30,10 +30,11 @@ check and the publisher intentionally starts the release step.
 - Developer/publisher: **Girapphe**
 - Category: **Productivity**
 - Tagline: **Your reviewed knowledge, across AI conversations.**
-- OpenAI subtitle: **Reviewed knowledge across AI chats**
+- OpenAI subtitle: **Find knowledge worth keeping**
 - Universal MCP URL: `https://www.memostem.com/api/mcp`
 - Transport: Streamable HTTP
-- Authentication: OAuth 2.0 with dynamic client registration
+- Authentication: Mixed/lazy; guest shelf before OAuth, then OAuth 2.0 with
+  dynamic client registration for protected tools
 - Website, documentation, support, privacy, terms, and logo: use the exact URLs
   in [the directory submission kit](directory-submissions.md#shared-listing).
 - Starter prompts, long description, use cases, and bilingual reviewer prompts:
@@ -59,6 +60,12 @@ Before submitting, record each gate in [Issue #18](https://github.com/girapphe/m
       `/.well-known/openai-apps-challenge` and the portal marks it verified.
 - [ ] Scan Tools discovers the expected tools, skill, titles, schemas, and all
       `readOnlyHint`, `destructiveHint`, and `openWorldHint` annotations.
+- [ ] The live anonymous list contains `check_memostem_connection`,
+      `claim_guest_knowledge_workspace`, `connect_memostem`,
+      `create_card_drafts`, `create_knowledge_bundle_drafts`,
+      `preview_knowledge_bundle`, `save_guest_knowledge_bundles`,
+      `start_memostem`, and `validate_knowledge_bundle`. Listed protected
+      tools still require OAuth before execution.
 - [ ] MCP App candidate picker loads; its CSP allows only the exact required
       domains. The current resource declares no external connect/resource/frame/base domains.
 - [ ] Reviewer account is fully populated and works without MFA, SMS, email
@@ -70,10 +77,10 @@ Before submitting, record each gate in [Issue #18](https://github.com/girapphe/m
 - [ ] Country availability and policy attestations match actual support.
 - [ ] Final skill file tree was tested after the last change.
 
-Use positive cases 1, 2, 7, 10, and 11 and negative cases 1, 2, and 5 from
-[the submission kit](directory-submissions.md#positive-review-cases). Positive
-case 11 is included because production authorization metadata and the dated
-PKCE OAuth evidence below both confirm the `knowledge:drafts:status` grant.
+Use all five positive and three negative cases from
+[the submission kit](directory-submissions.md#positive-review-cases). The
+positive cases include guest capture, claim, all three knowledge scopes, and
+owner-scoped draft-status polling.
 
 Capture these screenshots without private knowledge or credentials:
 
@@ -134,7 +141,10 @@ the production pages, health revision, anonymous MCP initialization and tool
 annotations, MCP App resource/CSP, and OAuth discovery metadata without using
 credentials or changing data.
 
-As of 2026-09-22, the production endpoint and public pages passed. Both the
+As of 2026-09-22, the production endpoint and public pages passed. On
+2026-09-23, health revision `7f0457097ab60c7080b70b3474407deaabea4d52`
+exposed the nine anonymous tools listed above, plus candidate-picker and
+onboarding MCP App resources. Both the
 protected-resource and authorization-server metadata advertise
 `knowledge:drafts:status`. A production PKCE flow using a marked synthetic owner
 displayed the status permission on Clerk's consent screen, returned the scope in

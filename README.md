@@ -28,8 +28,9 @@ authoring copy in that private repository.
 
 ## Save here, reuse in another AI conversation
 
-Select an explanation in ChatGPT, save it as a private pending draft, and review
-and approve it in MemoStem. Then ask Claude or another connected host to find
+Select an explanation in ChatGPT and keep it in a private guest shelf. Connect
+your account to move it into private pending review, then review and approve it
+in MemoStem. Then ask Claude or another connected host to find
 that knowledge. Sign in to the same MemoStem account in each host; no host gets
 access to another host's conversation history.
 
@@ -49,8 +50,9 @@ access to another host's conversation history.
   history. If you invoke MemoStem without naming material and the current chat has
   no eligible candidate, the same flow may use recent conversation context the
   host explicitly provides; it cannot browse unavailable conversation history.
-- **Review before saving.** New material stays in a private pending inbox until
-  you edit, merge, save, or ignore it.
+- **Start without an account.** Keep up to ten selected cards in a private
+  guest shelf for 90 days. The shelf is read-only in MemoStem; connecting moves
+  its cards to your private pending Candidate Inbox for review.
 - **Keep knowledge teachable.** Create an atomic memo for one concept or a
   question-and-answer draft for one retrieval question.
 - **Reuse only your knowledge.** A read-authorized connection can retrieve the
@@ -93,8 +95,10 @@ marketplace. It references the registered MemoStem App and deliberately has no
 other compatible hosts. The public
 [MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
-New ChatGPT connections request `openid`, `knowledge:drafts:create`, and
-`knowledge:context:read` by default. Existing draft-only connections are not
+MemoStem uses mixed, lazy authentication. Guest capture needs no account;
+claiming the shelf or using protected tools starts OAuth. New ChatGPT
+connections request `openid`, `knowledge:drafts:create`,
+`knowledge:context:read`, and `knowledge:drafts:status`. Existing grants are not
 upgraded automatically; disconnect and reconnect, or consent again, to add
 read access. `openid` is used only for identity; the defaults exclude
 `profile`, `email`, metadata scopes, and `offline_access`. GitHub publication
@@ -132,7 +136,7 @@ server-side OpenAI API usage.
 
 ## Consent-first proactive capture
 
-Draft-authorized MCP clients receive guidance to make one brief save offer at a
+MCP clients receive guidance to make one brief save offer at a
 natural stopping point when the current conversation produces independently
 teachable general knowledge: a concept, mechanism, general procedure,
 comparison, evidence-backed claim, knowledge question, historical event, or
@@ -141,7 +145,9 @@ language expression. The installable plugin also includes an implicitly discover
 
 The offer sends nothing and is not consent. The client may call a creation tool
 only after a clear affirmative reply to that specific proposal or a direct
-request identifying the current-conversation material. It must not repeat a
+request identifying the current-conversation material. Before account
+connection, that selection goes to the private guest shelf; after OAuth it
+becomes an owner-scoped private pending draft. It must not repeat a
 declined topic or propose sensitive, secret, credential, or do-not-retain
 material. AI hosts decide whether and when to surface MCP instructions, so a
 connection cannot guarantee an offer in every client.
@@ -214,6 +220,17 @@ claude plugin marketplace remove memostem
 ```
 
 ## What the MCP exposes
+
+Without an account, `save_guest_knowledge_bundles` keeps only specifically
+selected current-conversation general knowledge in a private shelf of at most
+ten cards for 90 days. Its opaque `workspace_token` is a private continuation
+credential: clients reuse it as a tool argument and never display or log it.
+The separate short-lived `review_url` opens a read-only view. At capacity,
+`claim_guest_knowledge_workspace` starts OAuth and moves the same cards into
+private pending review after consent. `validate_knowledge_bundle` and
+`preview_knowledge_bundle` check one selected bundle without saving it.
+`start_memostem` displays localized onboarding or owner topic labels;
+`connect_memostem` starts read-scope OAuth when required. Neither creates a card.
 
 - `check_memostem_connection`: verify authentication and report granted scopes
   without reading or writing knowledge.
@@ -302,7 +319,8 @@ The dependency-free repository check validates both marketplaces, cross-platform
 metadata, the complete skill trees, MCP Registry metadata, public/private
 boundaries, symlinks, common secret patterns, and the versioned
 [`contracts/mcp-compatibility.json`](contracts/mcp-compatibility.json) contract.
-That contract names the endpoint, OAuth scopes, required tools, MCP Apps
+That contract names mixed authentication, guest shelf limits, the endpoint,
+OAuth scopes, required tools, MCP Apps
 resource and action bindings, text fallback, and public fixtures that the private
 application validates semantically against its real MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
 

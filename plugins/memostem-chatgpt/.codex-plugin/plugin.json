@@ -19,8 +19,8 @@
   "apps": "./.app.json",
   "interface": {
     "displayName": "MemoStem for ChatGPT",
-    "shortDescription": "Reviewed knowledge across AI chats",
-    "longDescription": "Save selected general knowledge as private pending drafts after consent, review it in MemoStem, and retrieve your confirmed knowledge from another connected AI.",
+    "shortDescription": "Find knowledge worth keeping",
+    "longDescription": "Keep up to ten specifically selected knowledge cards in a private 90-day guest shelf without connecting an account. Connect through OAuth to move those cards into private pending review, then retrieve your confirmed knowledge across connected AI chats. Nothing is saved without your selection or approved automatically.",
     "developerName": "Girapphe",
     "category": "Productivity",
     "websiteURL": "https://www.memostem.com",

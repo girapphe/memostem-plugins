@@ -168,6 +168,15 @@ assert.equal(registryManifest.description, codexManifest.description);
 
 assert.deepEqual(compatibilityContract, {
   schema_version: 2,
+  authentication: 'mixed_lazy',
+  guest_shelf: {
+    save_tool: 'save_guest_knowledge_bundles',
+    claim_tool: 'claim_guest_knowledge_workspace',
+    card_limit: 10,
+    retention_days: 90,
+    workspace_token: 'opaque_continuation_credential_never_display',
+    review_url: 'short_lived_read_only_link',
+  },
   mcp_apps: {
     review_tool: 'review_knowledge_bundle_candidates',
     resource_uri: 'ui://memostem/knowledge-candidate-picker.html',
@@ -192,6 +201,18 @@ assert.deepEqual(compatibilityContract, {
     'list_knowledge_catalog',
     'search_knowledge',
     'review_knowledge_bundle_candidates',
+  ],
+  onboarding_resource_uri: 'ui://memostem/onboarding.html',
+  anonymous_tools: [
+    'check_memostem_connection',
+    'claim_guest_knowledge_workspace',
+    'connect_memostem',
+    'create_card_drafts',
+    'create_knowledge_bundle_drafts',
+    'preview_knowledge_bundle',
+    'save_guest_knowledge_bundles',
+    'start_memostem',
+    'validate_knowledge_bundle',
   ],
   fixtures: {
     create_knowledge_bundle_drafts: 'plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json',

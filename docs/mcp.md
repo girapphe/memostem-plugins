@@ -14,7 +14,20 @@ The production Streamable HTTP endpoint is:
 https://www.memostem.com/api/mcp
 ```
 
-Tools are exposed from the scopes the signed-in owner grants:
+MemoStem uses mixed, lazy authentication. Without an account,
+`save_guest_knowledge_bundles` keeps up to ten specifically selected general
+knowledge cards in a private 90-day shelf. Reuse its opaque `workspace_token`
+only as a tool argument; never display, log, or put it in a URL. The separate
+short-lived `review_url` opens a read-only shelf. At the limit, the person can
+agree to connect; `claim_guest_knowledge_workspace` starts OAuth and then
+transfers those same cards into owner-scoped private pending review. A claim
+does not approve or publish knowledge. `validate_knowledge_bundle` and
+`preview_knowledge_bundle` inspect one selected bundle without saving it.
+`start_memostem` presents localized onboarding; `connect_memostem` starts
+read-scope OAuth and shows the owner's topic labels after connection. Neither
+creates knowledge.
+
+Protected tools are exposed from the scopes the signed-in owner grants:
 
 - `check_memostem_connection`
 - `create_knowledge_bundle_drafts` and compatible `create_card_drafts` with
@@ -302,10 +315,11 @@ Configure new ChatGPT connections to request exactly these default scopes:
 - `openid` for Clerk identity
 - `knowledge:drafts:create` for private pending draft creation
 - `knowledge:context:read` for owner-scoped context retrieval
+- `knowledge:drafts:status` for owner-scoped pending draft status
 
 Do not add `profile`, `email`, metadata scopes, or `offline_access` to the
 ChatGPT defaults. MemoStem's connection record and
-`check_memostem_connection` report only the two `knowledge:*` grants. Existing
+`check_memostem_connection` report only the three `knowledge:*` grants. Existing
 draft-only grants are not elevated automatically; the person must disconnect
 and reconnect or complete a new consent flow before the read tool appears.
 

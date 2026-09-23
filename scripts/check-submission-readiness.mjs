@@ -63,10 +63,12 @@ const tools = (await mcpRequest(2, 'tools/list')).tools;
 assert.deepEqual(tools.map((tool) => tool.name).sort(), [
   'check_memostem_connection',
   'claim_guest_knowledge_workspace',
+  'connect_memostem',
   'create_card_drafts',
   'create_knowledge_bundle_drafts',
   'preview_knowledge_bundle',
   'save_guest_knowledge_bundles',
+  'start_memostem',
   'validate_knowledge_bundle',
 ]);
 for (const tool of tools) {
@@ -78,15 +80,18 @@ for (const tool of tools) {
 console.log(`[OK] ${tools.length} anonymous/reviewer-entry tools have titles and annotations`);
 
 const resources = (await mcpRequest(3, 'resources/list')).resources;
-assert.deepEqual(resources.map((resource) => resource.uri), [
+assert.deepEqual(resources.map((resource) => resource.uri).sort(), [
   'ui://memostem/knowledge-candidate-picker.html',
+  'ui://memostem/onboarding.html',
 ]);
-const resource = (await mcpRequest(4, 'resources/read', { uri: resources[0].uri })).contents[0];
-assert.equal(resource.mimeType, 'text/html;profile=mcp-app');
-assert.deepEqual(resource._meta?.ui?.csp, {
-  connectDomains: [], resourceDomains: [], frameDomains: [], baseUriDomains: [],
-});
-console.log('[OK] MCP App resource and exact empty-domain CSP');
+for (const [index, uri] of resources.map((entry) => entry.uri).sort().entries()) {
+  const resource = (await mcpRequest(4 + index, 'resources/read', { uri })).contents[0];
+  assert.equal(resource.mimeType, 'text/html;profile=mcp-app');
+  assert.deepEqual(resource._meta?.ui?.csp, {
+    connectDomains: [], resourceDomains: [], frameDomains: [], baseUriDomains: [],
+  });
+}
+console.log('[OK] MCP App resources and exact empty-domain CSP');
 
 const protectedResource = await fetch(
   `${origin}/.well-known/oauth-protected-resource/mcp`,
