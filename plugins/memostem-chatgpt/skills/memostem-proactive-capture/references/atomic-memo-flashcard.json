@@ -17,9 +17,12 @@
         "type": "concept",
         "definition": "An authoritative game loop is a repeated server simulation that processes player input, updates world state, and sends results to clients.",
         "key_points": ["The server determines the accepted world state."],
-        "examples": [],
-        "non_examples": [],
-        "misconceptions": []
+        "examples": ["A multiplayer server processes player inputs, updates the world, and sends its accepted state to clients; the server owns the simulation outcome."],
+        "non_examples": ["A client render loop drawing the received world state is not an authoritative server loop; rendering does not decide the accepted shared state."],
+        "misconceptions": [{
+          "claim": "Every client independently decides the accepted shared world state.",
+          "correction": "The authoritative server determines the accepted shared state. Clients may predict locally, but their predictions do not replace server authority."
+        }]
       },
       "bundle_schema_version": 1,
       "topic": "Game server architecture",

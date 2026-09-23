@@ -257,8 +257,12 @@ never describe those labels as verified. See
 [the merge proposal example](references/merge-proposal.json).
 
 - An atomic memo is one `knowledge_type: "concept"` bundle: a standalone title,
-  one central question, and a short definition. Add only necessary key points
-  or an example. Avoid references such as "as above" or "this platform" without
+  one central question, and a short definition. Add necessary key points and
+  consider `examples`, `non_examples`, and `misconceptions` as described in
+  [capture quality](references/capture-workflows.md#examples-boundaries-and-corrections).
+  Prefer a concise useful entry for each when supported by the selected material;
+  use empty arrays when not applicable or unsupported. Never fabricate evidence
+  or claim that the user holds a misconception. Avoid references such as "as above" or "this platform" without
   naming the subject.
 - A question-and-answer flashcard is one `knowledge_type: "question"` bundle.
   Put one retrieval question in `central_question` and
