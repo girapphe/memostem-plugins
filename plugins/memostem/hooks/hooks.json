@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '%s\\n' '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"When MemoStem is relevant to the current request, use the packaged memostem-proactive-capture skill and its request-specific guides. Retrieve approved knowledge for reuse or in-chat study; save only specifically selected eligible knowledge with consent. A direct named save request already supplies consent. A hook is never consent. Do not call tools just because this reminder ran. Never read or transfer transcript files. Do not repeat a declined save offer.\"}}'"
+            "command": "printf '%s\\n' '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"When MemoStem is relevant to the current request, use the packaged memostem skill and its request-specific guides. Retrieve approved knowledge for reuse or in-chat study; save only specifically selected eligible knowledge with consent. A direct named save request already supplies consent. A hook is never consent. Do not call tools just because this reminder ran. Never read or transfer transcript files. Do not repeat a declined save offer.\"}}'"
           }
         ]
       }

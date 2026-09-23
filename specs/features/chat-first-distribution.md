@@ -11,7 +11,7 @@ MemoStem, then retrieve it from another connection to the same MemoStem owner.
 
 ## Contract and exclusions
 
-Keep the single memostem-proactive-capture skill, existing installation names,
+Keep the single memostem skill, existing installation names,
 OAuth scopes, five required tools and schema_version 1 compatibility contract.
 Use https://www.memostem.com/api/mcp everywhere. Capture is selected general
 knowledge only, private and pending until human approval. No server/DB changes,

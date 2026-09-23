@@ -49,7 +49,7 @@ or this repository.
 
 Choose **With MCP** and **Universal**, then enter the production MCP URL. The
 portal submission is a new MCP-backed plugin; do not reference an existing
-integration ID. Upload the final `memostem-proactive-capture` skill from the
+integration ID. Upload the final `memostem` skill from the
 frozen source SHA or import the matching static skill discovered by Scan Tools.
 
 Before submitting, record each gate in [Issue #18](https://github.com/girapphe/memostem-plugins/issues/18):

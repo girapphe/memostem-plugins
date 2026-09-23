@@ -162,7 +162,7 @@ an MCP-only connection.
 ### ChatGPT
 
 Install the `memostem-chatgpt` marketplace package for ChatGPT web. It contains
-the existing `memostem-proactive-capture` skill and references the registered
+the existing `memostem` skill and references the registered
 MemoStem App through `.app.json`; it intentionally declares no `mcp.json` or
 `.mcp.json`, which keeps the imported package from being classified Desktop
 only. The direct-MCP `memostem` package remains for Codex, Claude Code, and
@@ -272,7 +272,7 @@ The browser is appropriate for OAuth and reviewing returned drafts.
 
 ## Atomic memo and flashcard payloads
 
-The packaged [atomic memo and flashcard example](../plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json)
+The packaged [atomic memo and flashcard example](../plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json)
 shows one `concept` bundle and one answered `question` bundle. Replace its
 sample IDs and content with the user's selected material. It is an example,
 not a payload to submit automatically.

@@ -79,9 +79,9 @@ in MemoStem. On a failed or uncertain save, the skill preserves the original
 request identity so retrying does not intentionally create another copy.
 
 The packaged skill includes focused guides for
-[capture and selection](plugins/memostem/skills/memostem-proactive-capture/references/capture-workflows.md),
-[retrieval and study](plugins/memostem/skills/memostem-proactive-capture/references/retrieval-workflows.md),
-and [recovery and status](plugins/memostem/skills/memostem-proactive-capture/references/recovery-workflows.md).
+[capture and selection](plugins/memostem/skills/memostem/references/capture-workflows.md),
+[retrieval and study](plugins/memostem/skills/memostem/references/retrieval-workflows.md),
+and [recovery and status](plugins/memostem/skills/memostem/references/recovery-workflows.md).
 They are loaded when the request needs them. Both direct-MCP and ChatGPT web
 packages ship the same guides.
 
@@ -188,7 +188,7 @@ natural stopping point when the current conversation produces independently
 teachable general knowledge: a concept, mechanism, general procedure,
 comparison, evidence-backed claim, knowledge question, historical event, or
 language expression. The installable plugin also includes an implicitly discoverable
-`memostem-proactive-capture` skill with the same behavior.
+`memostem` skill with the same behavior.
 
 The offer sends nothing and is not consent. The client may call a creation tool
 only after a clear affirmative reply to that specific proposal or a direct
@@ -315,14 +315,14 @@ target version, source item IDs, change summary, and reason. It is never a
 partial patch or a completed merge. Draft creation cannot approve knowledge, publish to the public graph, or retain
 a conversation transcript. Question-and-answer cards use answered `question`
 bundles; they do not automatically enroll in practice. See the
-[working payload example](plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json)
+[working payload example](plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json)
 and [the complete connection and capture guide](docs/mcp.md).
 
 ## Included skills
 
-The plugin includes only `memostem-proactive-capture`, which handles
-explicit saves, consent-first suggestions and owner-scoped knowledge retrieval
-when the packaged MCP connection is available.
+The plugin includes only `memostem`, which guides getting started and account
+connection, explicit saves, consent-first suggestions, owner-scoped retrieval and
+study, draft status, and save recovery through the available MemoStem tools.
 Developer maintenance skills belong in the private application repository and
 are excluded from every public plugin package.
 

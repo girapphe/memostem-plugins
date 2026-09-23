@@ -218,10 +218,10 @@ assert.deepEqual(compatibilityContract, {
     'validate_knowledge_bundle',
   ],
   fixtures: {
-    create_knowledge_bundle_drafts: 'plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json',
+    create_knowledge_bundle_drafts: 'plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json',
   },
   examples: {
-    merge_resolution_proposal: 'plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json',
+    merge_resolution_proposal: 'plugins/memostem/skills/memostem/references/merge-proposal.json',
   },
 });
 for (const [toolName, fixturePath] of Object.entries(compatibilityContract.fixtures)) {
@@ -327,27 +327,27 @@ for (const requiredSubmissionContract of [
 assert.doesNotMatch(submissionReadiness, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
 
 const expectedSkills = [
-  'memostem-proactive-capture',
+  'memostem',
 ];
 // Reject files and unknown skill directories as well as known maintenance
 // skills: adding a new developer workflow must never expand the public package.
 const skillEntries = (await readdir(skillsRoot)).sort();
-assert.deepEqual(skillEntries, expectedSkills, 'public plugin may contain only memostem-proactive-capture');
+assert.deepEqual(skillEntries, expectedSkills, 'public plugin may contain only memostem');
 assert.deepEqual(
   (await readdir(chatgptSkillsRoot)).sort(),
   expectedSkills,
-  'ChatGPT web plugin may contain only memostem-proactive-capture',
+  'ChatGPT web plugin may contain only memostem',
 );
 
 for (const skill of expectedSkills) {
   const source = await readFile(path.join(skillsRoot, skill, 'SKILL.md'), 'utf8');
   assert.match(source, /^---\n[\s\S]*?\n---\n/u, `${skill} must have YAML frontmatter`);
-  assert.match(source, new RegExp(`^name: ${skill}$`, 'mu'), `${skill} name must match its directory`);
+  assert.match(source, new RegExp(`^name: "${skill}"$`, 'mu'), `${skill} name must match its directory`);
   assert.match(source, /^description: .+$/mu, `${skill} must have a description`);
 }
 
 const proactiveCaptureSkill = await readFile(
-  path.join(skillsRoot, 'memostem-proactive-capture', 'SKILL.md'),
+  path.join(skillsRoot, 'memostem', 'SKILL.md'),
   'utf8',
 );
 assert.match(proactiveCaptureSkill, /natural\s+stopping\s+point/iu);
@@ -392,9 +392,9 @@ for (const requiredContract of [
 ]) {
   assert.ok(proactiveCaptureSkill.includes(requiredContract), `capture skill must describe ${requiredContract}`);
 }
-const captureExample = await readJson('plugins/memostem/skills/memostem-proactive-capture/references/atomic-memo-flashcard.json');
+const captureExample = await readJson('plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json');
 assert.deepEqual(captureExample.bundles.map((bundle) => bundle.knowledge_type), ['concept', 'question']);
-const mergeProposalExample = await readJson('plugins/memostem/skills/memostem-proactive-capture/references/merge-proposal.json');
+const mergeProposalExample = await readJson('plugins/memostem/skills/memostem/references/merge-proposal.json');
 assert.equal(mergeProposalExample.bundles[0].resolution_proposal.action, 'merge');
 assert.equal(mergeProposalExample.bundles[0].resolution_proposal.expected_target_version, 3);
 assert.ok(mergeProposalExample.bundles[0].resolution_proposal.source_item_ids.includes(
@@ -409,13 +409,13 @@ assert.ok(codexManifest.interface.defaultPrompt.some((prompt) => prompt.includes
 assert.ok(codexManifest.interface.capabilities.includes('Owner-scoped lifecycle context retrieval'));
 assert.ok(codexManifest.interface.defaultPrompt.every((prompt) => !/decision draft|recall.*confirmed/iu.test(prompt)));
 const proactiveCaptureAgent = await readFile(
-  path.join(skillsRoot, 'memostem-proactive-capture', 'agents', 'openai.yaml'),
+  path.join(skillsRoot, 'memostem', 'agents', 'openai.yaml'),
   'utf8',
 );
 assert.match(proactiveCaptureAgent, /allow_implicit_invocation:\s*true/u);
 assert.match(proactiveCaptureAgent, /Reply in the user's current language, or the host locale/u);
 assert.equal(
-  await readFile(path.join(chatgptSkillsRoot, 'memostem-proactive-capture', 'SKILL.md'), 'utf8'),
+  await readFile(path.join(chatgptSkillsRoot, 'memostem', 'SKILL.md'), 'utf8'),
   proactiveCaptureSkill,
   'ChatGPT web plugin must ship the same consent-first capture skill',
 );
