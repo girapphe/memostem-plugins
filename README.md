@@ -59,6 +59,53 @@ access to another host's conversation history.
   signed-in owner's confirmed knowledge and, only when explicitly requested,
   inspect its lifecycle state.
 
+## Everyday workflows
+
+Use ordinary requests in the host where MemoStem is installed. The skill routes
+by your intent; opening MemoStem alone does not save anything.
+
+| What you want | Try saying | What should happen |
+| --- | --- | --- |
+| Choose what to keep | “방금 설명한 개념 중 저장할 후보를 보여줘.” | Preview candidates, then save only your selection. |
+| Save a named idea | “삼투압 원리를 메모 초안 하나로 저장해 줘.” | Save the selected idea once; no repeated consent question. |
+| Reuse reviewed knowledge | “내가 승인한 EUV 지식으로 이번 질문에 답해 줘.” | Search your active confirmed knowledge and identify the sources used. |
+| Practice in this chat | “내가 승인한 EUV 지식으로 한 문제씩 퀴즈를 내 줘.” | Retrieve the selected knowledge, ask one question at a time, and keep the exercise in chat. |
+| Propose an improvement | “기존 삼투압 메모에 이 설명을 보완하는 초안을 만들어 줘.” | Prepare a complete pending proposal for your review. |
+| Check a previous save | “방금 만든 초안이 아직 검토 대기인지 확인해 줘.” | Check the known batch when status permission is available. |
+
+An in-chat quiz does not enroll knowledge in MemoStem practice or record a
+practice result. A proposed improvement takes effect only after you review it
+in MemoStem. On a failed or uncertain save, the skill preserves the original
+request identity so retrying does not intentionally create another copy.
+
+The packaged skill includes focused guides for
+[capture and selection](plugins/memostem/skills/memostem-proactive-capture/references/capture-workflows.md),
+[retrieval and study](plugins/memostem/skills/memostem-proactive-capture/references/retrieval-workflows.md),
+and [recovery and status](plugins/memostem/skills/memostem-proactive-capture/references/recovery-workflows.md).
+They are loaded when the request needs them. Both direct-MCP and ChatGPT web
+packages ship the same guides.
+
+### Session reminders in supported runtimes
+
+The direct-MCP package includes a static `SessionStart` hook at
+[`hooks/hooks.json`](plugins/memostem/hooks/hooks.json). In a compatible,
+trusted Codex or Claude Code runtime, it reminds the assistant to use the
+request-specific skill at startup, resume, clear, or compaction. It prints a
+fixed context message using the runtime shell's `printf`; it reads no input
+or files, calls no service, and saves no knowledge. It does not launch a tool
+call or force a save offer.
+
+Codex requires hook trust review before execution. The hook requires a shell
+with `printf`; hosts without that command can use the skill without the hook.
+The ChatGPT web package uses the skill guides and has no executable hook.
+A plugin import or successful local command is not proof that a host loaded
+or executed the hook. Proactive offers remain dependent on the host and the
+current conversation.
+
+See the official [OpenAI plugin package guide](https://developers.openai.com/plugins/build/plugins),
+[Codex hook reference](https://learn.chatgpt.com/docs/hooks), and
+[Claude Code hook reference](https://code.claude.com/docs/en/hooks).
+
 ## Ask for useful cards
 
 - Concept: “Save how rain forms as one concise concept card, with a definition
