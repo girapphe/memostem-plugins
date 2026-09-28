@@ -460,13 +460,13 @@ const relativeSkillFiles = directSkillFiles.map((file) => path.relative(skillsRo
 assert.deepEqual(
   webSkillFiles.map((file) => path.relative(chatgptSkillsRoot, file)).sort(),
   relativeSkillFiles,
-  'skill file inventory must match across packages',
+  'skill file inventory must match across packages; run npm run sync:skills',
 );
 for (const relative of relativeSkillFiles) {
   assert.deepEqual(
     await readFile(path.join(skillsRoot, relative)),
     await readFile(path.join(chatgptSkillsRoot, relative)),
-    `skill file drift: ${relative}`,
+    `skill file drift: ${relative}; run npm run sync:skills`,
   );
 }
 
