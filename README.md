@@ -352,6 +352,9 @@ custom MCP connections. Existing Codex and Claude install names are unchanged.
 `plugins/memostem-chatgpt` is the ChatGPT web counterpart: it has root
 `plugin.json`, `.app.json`, and the same skill tree, but intentionally no
 direct MCP declaration.
+Edit skills only under `plugins/memostem/skills`, then run
+`npm run sync:skills` to copy them into the ChatGPT web package; `npm run check`
+fails when the two skill trees differ.
 
 ## Validate locally
 

@@ -237,3 +237,14 @@ test('public validation rejects guide and agent drift between distributions', as
   assert.equal(result.status, 1);
   assert.match(result.stderr, /skill file drift/u);
 });
+
+test('skill sync restores the web package from the direct-MCP source', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'skill-sync');
+  const webSkill = path.join(temporaryRoot, 'plugins', 'memostem-chatgpt', 'skills', 'memostem');
+  await writeFile(path.join(webSkill, 'agents', 'openai.yaml'), '# stale web package\n');
+  await writeFile(path.join(webSkill, 'orphan.md'), 'removed by sync\n');
+  const sync = spawnSync(process.execPath, ['scripts/sync-skills.mjs'], { cwd: temporaryRoot, encoding: 'utf8' });
+  assert.equal(sync.status, 0, sync.stderr);
+  const result = runValidation(temporaryRoot);
+  assert.equal(result.status, 0, result.stderr);
+});
