@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo-mark.svg" alt="MemoStem logo" width="88" height="88">
+  <img src="assets/logo-mark.svg" alt="MemoStem Recall Sprout logo" width="88" height="88">
 </p>
 
 # MemoStem across AI conversations
