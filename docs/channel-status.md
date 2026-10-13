@@ -44,7 +44,7 @@ failure was observed; these account-dependent tests have not been attempted.
   the PRs linked from [#15](https://github.com/girapphe/memostem-plugins/issues/15).
 
 These checks do not prove model behavior, host installation, store review,
-public listing or deployment. Versions are prepared for 0.6.2;
+public listing or deployment. Versions are prepared for 0.6.3;
 no release or registry publication has been performed by this implementation.
 
 Live credential-free preflight on 2026-09-22 confirmed the public product,
