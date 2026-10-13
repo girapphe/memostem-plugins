@@ -47,7 +47,10 @@
       },
       "bundle_schema_version": 1,
       "topic": "Game server architecture",
-      "tags": ["game-server", "simulation"]
+      "tags": ["game-server", "simulation"],
+      "relations": [
+        { "target_kind": "draft", "target_id": "game-loop-memo", "type": "derived_from", "direction": "outgoing" }
+      ]
     }
   ]
 }
