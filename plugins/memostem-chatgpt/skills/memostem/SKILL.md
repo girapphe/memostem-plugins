@@ -292,6 +292,18 @@ never describe those labels as verified. See
   `structured_content.question`, its concise answer in `answer_summary`, and
   set `structured_content.status: "answered"`. This is a knowledge-question
   draft, not a separate `flashcard` schema or automatic practice enrollment.
+- Add `relations` only when the selected material itself states the link, and
+  never to raise a count. When a memo and its flashcard are created in the same
+  request, give the question bundle a `derived_from` relation with
+  `target_kind: "draft"` and the memo's `client_bundle_id` as `target_id`. Use
+  `prerequisite` when one selected item must be understood before another: the
+  prerequisite item is the source, so use `outgoing` on it or `incoming` on the
+  dependent item. A `draft` target must be in the same request; to link an item
+  that is already approved, use `target_kind: "private"` with the ID returned by
+  `search_knowledge` or `get_knowledge_context`. Never propose `supersedes`;
+  send a `resolution_proposal` with `merge` or `update` instead. Do not propose
+  causal relations from conversation text alone; they need selector evidence
+  and an explicit review.
 - For either format, include `knowledge_scope: "general_knowledge"`, `title`,
   `central_question`, `summary`, `topic`, `tags`, `bundle_schema_version: 1`,
   and `structured_content` with a `type` matching `knowledge_type`. Use distinct

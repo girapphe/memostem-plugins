@@ -284,6 +284,13 @@ not a payload to submit automatically.
   `answer_summary`, and sets `structured_content.status: "answered"`. There is
   no `flashcard` type or `front`/`back` contract. Draft creation does not enroll
   it in a practice queue.
+- A flashcard created with its memo in the same request may carry a
+  `derived_from` relation to the memo (`target_kind: "draft"`, the memo's
+  `client_bundle_id`). A `draft` target must be in the same request; use
+  `target_kind: "private"` with an approved item's ID otherwise. For
+  `prerequisite`, the item to know first is the source. `supersedes` is
+  rejected; use `resolution_proposal`. Relations are confirmed only when the
+  person approves the drafts.
 - Every bundle requires `knowledge_scope: "general_knowledge"`, a title,
   central question, summary, topic, tags, `bundle_schema_version: 1`, and a
   `structured_content.type` matching `knowledge_type`. The remaining supported
