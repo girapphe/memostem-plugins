@@ -77,6 +77,9 @@ offering, before listing candidates, and before any creation call.
 Keep the set small. Default to **at most 3 cards per conversation** unless the
 user asks for more. Most conversations need one or two. Fewer is better: one
 strong card beats three overlapping ones. Never add a card to reach a count.
+When more ideas qualify than that, keep the most important ones and leave the
+rest out. Never fold a separate idea into another card to stay within the
+count; a card that teaches two ideas is harder to review than either one.
 
 ### Delegation is not eligibility
 
@@ -144,8 +147,12 @@ slug.
 - Name the subject in the title and central question. Replace "the approach
   above", "this platform", "위의 방법", or "방금 말한" with the actual subject.
 - Keep one claim or mechanism per card, with only the conditions and example
-  needed to understand it. Retain uncertainty from the original explanation.
-- Keep the title under about 60 characters, the central question to one
+  needed to understand it. A side fact belongs on the card only when the main
+  point is not understandable without it; a list of options, settings, or
+  related rules is several ideas, not one. Retain uncertainty from the
+  original explanation.
+- Keep the title to 60 characters or fewer: a short subject name or a brief
+  claim, not a full sentence with qualifiers. Keep the central question to one
   sentence, the `summary` to one or two sentences (under about 280 characters),
   the definition under about 600 characters, and at most five key points.
 - For a concept, consider one supported example, a non-example that marks the
