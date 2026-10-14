@@ -78,8 +78,11 @@ practice result. A proposed improvement takes effect only after you review it
 in MemoStem. On a failed or uncertain save, the skill preserves the original
 request identity so retrying does not intentionally create another copy.
 
-The packaged skill includes focused guides for
+The packaged skill's main file covers what is worth keeping and how to write
+it, plus every consent rule. It includes focused guides for
 [capture and selection](plugins/memostem/skills/memostem/references/capture-workflows.md),
+[connection and onboarding](plugins/memostem/skills/memostem/references/connection-workflows.md),
+[the guest shelf](plugins/memostem/skills/memostem/references/guest-shelf-workflows.md),
 [retrieval and study](plugins/memostem/skills/memostem/references/retrieval-workflows.md),
 and [recovery and status](plugins/memostem/skills/memostem/references/recovery-workflows.md).
 They are loaded when the request needs them. Both direct-MCP and ChatGPT web
