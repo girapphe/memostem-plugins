@@ -90,7 +90,12 @@ keeping, so I didn't save anything." or "이 대화에는 남길 만한 일반 �
 to a direct "save what's worth keeping" request on the first turn: if nothing
 qualifies, say so instead of listing ineligible items as candidates. Never
 reframe a personal plan, preference, company decision, or task list as
-general knowledge to have something to save.
+general knowledge to have something to save. After saying nothing qualifies,
+do not offer to write new general explanations derived from that material
+(for example, turning a team's pricing decision into a card about pricing
+tactics); a later "yes" or "you choose" then still creates zero cards. Save
+such a general explanation only if the user explicitly names it and asks for
+it.
 
 ## How to write a card
 
