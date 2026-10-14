@@ -75,16 +75,18 @@ offering, before listing candidates, and before any creation call.
    in [Decide whether to offer](#decide-whether-to-offer).
 
 Keep the set small. Default to **at most 3 cards per conversation** unless the
-user asks for more. Fewer is better: one strong card beats three overlapping
-ones. Never add a card to reach a count.
+user asks for more. Most conversations need one or two. Fewer is better: one
+strong card beats three overlapping ones. Never add a card to reach a count.
 
 ### Delegation is not eligibility
 
 A reply such as "you choose", "save what's worth it", "알아서 골라서 저장해 줘",
 or "yes, whatever you think" delegates the choice among eligible candidates. It
 does not make ineligible material eligible. When nothing in the conversation
-passes the tests above, create zero cards and say so plainly, for example: "이
-대화에는 MemoStem에 남길 일반 지식이 없어서 저장하지 않았어요." The same applies
+passes the tests above, create zero cards and say so plainly in the
+conversation's language, for example "Nothing here is general knowledge worth
+keeping, so I didn't save anything." or "이 대화에는 남길 만한 일반 지식이 없어서
+저장하지 않았어요." The same applies
 to a direct "save what's worth keeping" request on the first turn: if nothing
 qualifies, say so instead of listing ineligible items as candidates. Never
 reframe a personal plan, preference, company decision, or task list as
@@ -111,20 +113,26 @@ central question or the same answer are duplicates. When the user does ask for
 both formats of one idea, link the question to the concept with `derived_from`.
 
 **The conversation's language.** Write `title`, `central_question`, `summary`,
-the definition, key points, examples, `topic`, and `tags` in the language of
-the conversation, unless the user asks for another language. This holds even
-though this skill, the tool schema, and the packaged examples are in English.
-A Korean conversation about English grammar or a Spanish verb gets Korean cards
-that quote the English or Spanish expressions. Keep established technical
-terms, code, and proper nouns in their usual form.
+the definition, key points, examples, `topic`, and `tags` in the language the
+user and assistant actually wrote the conversation in, unless the user asks for
+another language. Decide from the conversation's messages only, not from this
+skill, the tool schema, the packaged examples, or the host locale: an English
+conversation gets English cards and a Korean conversation gets Korean cards.
+The subject being studied does not change this: a Korean conversation about
+English grammar gets Korean cards that quote the English expressions, and an
+English conversation about Spanish verbs gets English cards that quote the
+Spanish. Keep established technical terms, code, and proper nouns in their
+usual form.
 
 **No format words in titles or tags.** A title names the subject, for example
-"TCP TIME_WAIT 상태가 필요한 이유" or "Why CAP forces a choice under partition".
+"Why CAP forces a choice under partition" in an English conversation or "TCP
+TIME_WAIT 상태가 필요한 이유" in a Korean one.
 Never prefix or suffix titles with format words such as memo, note, flashcard,
 recall, quiz, Q&A, summary, 메모, 플래시카드, 문답, 퀴즈, or 정리, and never use
-them as tags. Tags name subjects (`tcp`, `분산-시스템`), not formats. `topic`
-is a readable subject name such as "분산 시스템" or "Game server architecture",
-never a hyphenated conversation slug.
+them as tags. Tags name subjects (`tcp`, `distributed-systems`, `분산-시스템`),
+not formats. `topic` is a readable subject name in the conversation's language,
+such as "Distributed systems" or "분산 시스템", never a hyphenated conversation
+slug.
 
 **Standalone and concise.**
 
