@@ -67,6 +67,7 @@ assert.deepEqual(tools.map((tool) => tool.name).sort(), [
   'create_card_drafts',
   'create_knowledge_bundle_drafts',
   'preview_knowledge_bundle',
+  'refresh_guest_knowledge_shelf_link',
   'save_guest_knowledge_bundles',
   'start_memostem',
   'validate_knowledge_bundle',
