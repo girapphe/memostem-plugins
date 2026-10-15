@@ -6,6 +6,7 @@
   "scripts": {
     "check": "node scripts/validate.mjs && node --test scripts/validate.test.mjs scripts/hooks.test.mjs",
     "check:submission": "node scripts/check-submission-readiness.mjs",
+    "package:portal": "node scripts/package-portal.mjs",
     "sync:skills": "node scripts/sync-skills.mjs"
   },
   "engines": {

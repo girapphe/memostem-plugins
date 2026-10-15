@@ -161,14 +161,14 @@ an MCP-only connection.
 
 ### ChatGPT
 
-Install the `memostem-chatgpt` marketplace package for ChatGPT web. It contains
-the existing `memostem` skill and references the registered
-MemoStem App through `.app.json`; it intentionally declares no `mcp.json` or
-`.mcp.json`, which keeps the imported package from being classified Desktop
-only. The direct-MCP `memostem` package remains for Codex, Claude Code, and
-other compatible hosts. Workspace policy and available app controls determine
-account access.
-[Official submission and testing entry point](https://developers.openai.com/plugins/deploy/submission).
+Publish through the OpenAI plugin portal with a ZIP built by
+`npm run package:portal` (the `memostem` skill, assets and a root `plugin.json`;
+no hooks and no `.app.json`) and connect the MCP server separately with
+**With MCP** and **Universal**. The portal scans the connected server daily and
+on manual Rescan. Workspace policy and available app controls determine
+account access. Checked 2026-10-15:
+[Build plugins](https://developers.openai.com/plugins/build/plugins) and
+[submission and testing](https://developers.openai.com/plugins/deploy/submission).
 
 ### Claude
 
@@ -221,7 +221,10 @@ Open grok.com/connectors → New Connector → Custom, enter the canonical MCP U
 and complete the required authentication. For Business/Enterprise, an admin
 must provision the connector before members can use it. Test in general chat,
 not Grok Build. Use `provider: "other"`; do not invent a `grok` enum value.
-Public catalog submission is a separate, currently unverified distribution path.
+Public catalog submission is a separate distribution path (a PR to
+`xai-org/plugin-marketplace`; see the
+[submission kit](directory-submissions.md#gemini-and-grok-connection-readiness)),
+not yet exercised for MemoStem.
 [Official custom connector guide](https://docs.x.ai/grok/connectors).
 
 ### Verify save and retrieve
@@ -310,10 +313,9 @@ response, or count mismatch accurately without claiming a confirmed save.
 
 ## ChatGPT and OpenAI API
 
-The registered MemoStem App uses the endpoint above as a remote MCP server and
-the service's OAuth flow. The `memostem-chatgpt` marketplace package references
-that App; do not add a separate direct MCP declaration or paste a MemoStem
-personal access token into ChatGPT's browser settings. The public
+The MemoStem MCP server uses the endpoint above as a remote MCP server and
+the service's OAuth flow. Never paste a MemoStem personal access token into
+ChatGPT's browser settings. The public
 [MemoStem connection page](https://www.memostem.com/plugins) links a signed-in
 person to the detailed setup guide.
 

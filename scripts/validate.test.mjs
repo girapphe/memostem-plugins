@@ -5,13 +5,14 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { assertPortalManifest, assertPortalStage, stagePortalPackage } from './lib/portal-package.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 async function copyRepository(t, label) {
   const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), `memostem-${label}-`));
   t.after(() => rm(temporaryRoot, { recursive: true, force: true }));
-  await cp(root, temporaryRoot, { recursive: true, filter: (source) => !['.git', 'node_modules'].includes(path.basename(source)) });
+  await cp(root, temporaryRoot, { recursive: true, filter: (source) => !['.git', 'node_modules', 'dist'].includes(path.basename(source)) });
   return temporaryRoot;
 }
 
@@ -247,4 +248,140 @@ test('skill sync restores the web package from the direct-MCP source', async (t)
   assert.equal(sync.status, 0, sync.stderr);
   const result = runValidation(temporaryRoot);
   assert.equal(result.status, 0, result.stderr);
+});
+
+const packageVersion = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')).version;
+
+async function stagePortal(t, options) {
+  const stage = await mkdtemp(path.join(os.tmpdir(), 'memostem-portal-test-'));
+  t.after(() => rm(stage, { recursive: true, force: true }));
+  await stagePortalPackage(root, stage, options);
+  return stage;
+}
+
+test('portal package stages exactly the memostem skill, assets and manifest', async (t) => {
+  const stage = await stagePortal(t);
+  const files = await assertPortalStage(root, stage, packageVersion);
+  assert.ok(files.includes('plugin.json'));
+  assert.ok(files.includes('skills/memostem/SKILL.md'));
+  assert.equal(files.includes('mcp.json'), false);
+  const manifest = JSON.parse(await readFile(path.join(stage, 'plugin.json'), 'utf8'));
+  assert.equal('apps' in manifest.extensions['com.openai'], false);
+
+  const withMcp = await stagePortal(t, { withMcpJson: true });
+  assert.ok((await assertPortalStage(root, withMcp, packageVersion, { withMcpJson: true })).includes('mcp.json'));
+});
+
+test('portal package rejects forbidden entries, extra skills and skill drift', async (t) => {
+  const forbidden = [
+    ['hooks', async (stage) => { await mkdir(path.join(stage, 'hooks')); await writeFile(path.join(stage, 'hooks/hooks.json'), '{}'); }],
+    ['.app.json', async (stage) => writeFile(path.join(stage, '.app.json'), '{}')],
+    ['.claude-plugin', async (stage) => { await mkdir(path.join(stage, '.claude-plugin')); await writeFile(path.join(stage, '.claude-plugin/plugin.json'), '{}'); }],
+    ['.codex-plugin', async (stage) => { await mkdir(path.join(stage, '.codex-plugin')); await writeFile(path.join(stage, '.codex-plugin/plugin.json'), '{}'); }],
+    ['.mcp.json', async (stage) => writeFile(path.join(stage, '.mcp.json'), '{}')],
+    ['mcp.json without the flag', async (stage) => writeFile(path.join(stage, 'mcp.json'), '{}')],
+    ['hooks nested in a skill', async (stage) => { await mkdir(path.join(stage, 'skills/memostem/hooks')); await writeFile(path.join(stage, 'skills/memostem/hooks/a.json'), '{}'); }],
+  ];
+  for (const [name, mutate] of forbidden) {
+    await t.test(name, async (subtest) => {
+      const stage = await stagePortal(subtest);
+      await mutate(stage);
+      await assert.rejects(assertPortalStage(root, stage, packageVersion));
+    });
+  }
+  await t.test('second skill', async (subtest) => {
+    const stage = await stagePortal(subtest);
+    await mkdir(path.join(stage, 'skills/other'));
+    await assert.rejects(assertPortalStage(root, stage, packageVersion), /exactly one skill/u);
+  });
+  await t.test('skill byte drift', async (subtest) => {
+    const stage = await stagePortal(subtest);
+    const skill = path.join(stage, 'skills/memostem/SKILL.md');
+    await writeFile(skill, `${await readFile(skill, 'utf8')}\n`);
+    await assert.rejects(assertPortalStage(root, stage, packageVersion), /portal skill drift/u);
+  });
+  await t.test('symlink', async (subtest) => {
+    const stage = await stagePortal(subtest);
+    await symlink(path.join(root, 'README.md'), path.join(stage, 'assets/link.md'));
+    await assert.rejects(assertPortalStage(root, stage, packageVersion), /symlinks are not allowed/u);
+  });
+});
+
+test('portal manifest rejects version drift, apps, secrets and headers', async (t) => {
+  const cases = [
+    ['version drift', (m) => { m.version = '9.9.9'; }, /version must equal/u],
+    ['apps reference', (m) => { m.extensions['com.openai'].apps = './.app.json'; }, /no apps/u],
+    ['clientSecret', (m) => { m.clientSecret = 'x'; }, /clientSecret/u],
+    ['test_credentials', (m) => { m.test_credentials = {}; }, /test_credentials/u],
+    ['reviewer_instructions', (m) => { m.extensions['com.openai'].reviewer_instructions = 'x'; }, /reviewer_instructions/u],
+    ['headers', (m) => { m.mcpServers = { memostem: { headers: { Authorization: 'x' } } }; }, /headers/u],
+  ];
+  for (const [name, mutate, message] of cases) {
+    await t.test(name, async (subtest) => {
+      const stage = await stagePortal(subtest);
+      const file = path.join(stage, 'plugin.json');
+      const manifest = JSON.parse(await readFile(file, 'utf8'));
+      mutate(manifest);
+      assert.throws(() => assertPortalManifest(manifest, packageVersion), message);
+      await writeFile(file, JSON.stringify(manifest));
+      await assert.rejects(assertPortalStage(root, stage, packageVersion));
+    });
+  }
+});
+
+test('portal packager refuses a dirty tree', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'portal-dirty');
+  for (const args of [['init', '-q'], ['add', '-A'], ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'init']]) {
+    assert.equal(spawnSync('git', args, { cwd: temporaryRoot }).status, 0);
+  }
+  await writeFile(path.join(temporaryRoot, 'untracked.txt'), 'dirty\n');
+  const result = spawnSync(process.execPath, ['scripts/package-portal.mjs'], { cwd: temporaryRoot, encoding: 'utf8' });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /working tree must be clean/u);
+});
+
+test('portal packager builds a deterministic ZIP from a clean tree', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'portal-build');
+  for (const args of [['init', '-q'], ['add', '-A'], ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'init']]) {
+    assert.equal(spawnSync('git', args, { cwd: temporaryRoot }).status, 0);
+  }
+  const build = () => spawnSync(process.execPath, ['scripts/package-portal.mjs'], { cwd: temporaryRoot, encoding: 'utf8' });
+  const first = build();
+  assert.equal(first.status, 0, first.stderr);
+  const sha = first.stdout.match(/SHA-256: ([0-9a-f]{64})/u)?.[1];
+  assert.ok(sha, first.stdout);
+  assert.match(first.stdout, /dist\/memostem-\d+\.\d+\.\d+-[0-9a-f]{7}\.zip/u);
+  await new Promise((resolve) => setTimeout(resolve, 1100));
+  assert.match(build().stdout, new RegExp(sha, 'u'), 'same commit must give the same SHA-256');
+});
+
+test('public validation rejects a Team-or-Enterprise-only Claude submission claim', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'claude-plan');
+  const kitPath = path.join(temporaryRoot, 'docs', 'directory-submissions.md');
+  const kit = await readFile(kitPath, 'utf8');
+  await writeFile(kitPath, `${kit}\nUse a Claude Team or Enterprise organization.\n`);
+  const result = runValidation(temporaryRoot);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Team or Enterprise/u);
+});
+
+test('Gemini extension manifest rejects version, endpoint, header and transport drift', async (t) => {
+  const cases = [
+    ['version', (m) => { m.version = '9.9.9'; }],
+    ['endpoint', (m) => { m.mcpServers.memostem.httpUrl = 'https://example.com/mcp'; }],
+    ['SSE transport', (m) => { m.mcpServers.memostem.url = m.mcpServers.memostem.httpUrl; delete m.mcpServers.memostem.httpUrl; }],
+    ['credential header', (m) => { m.mcpServers.memostem.headers = { Authorization: 'Bearer example-only' }; }],
+  ];
+  for (const [name, mutate] of cases) {
+    await t.test(name, async (subtest) => {
+      const temporaryRoot = await copyRepository(subtest, 'gemini-extension');
+      const file = path.join(temporaryRoot, 'gemini-extension.json');
+      const manifest = JSON.parse(await readFile(file, 'utf8'));
+      mutate(manifest);
+      await writeFile(file, JSON.stringify(manifest));
+      const result = runValidation(temporaryRoot);
+      assert.equal(result.status, 1, name);
+      assert.match(result.stderr, /Gemini extension manifest/u);
+    });
+  }
 });

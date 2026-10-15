@@ -100,7 +100,7 @@ call or force a save offer.
 
 Codex requires hook trust review before execution. The hook requires a shell
 with `printf`; hosts without that command can use the skill without the hook.
-The ChatGPT web package uses the skill guides and has no executable hook.
+The portal ZIP omits `hooks/`; it carries the skill guides only.
 A plugin import or successful local command is not proof that a host loaded
 or executed the hook. Proactive offers remain dependent on the host and the
 current conversation.
@@ -138,11 +138,21 @@ https://www.memostem.com/api/mcp
 
 ### ChatGPT
 
-For ChatGPT web, install **MemoStem for ChatGPT** (`memostem-chatgpt`) from this
-marketplace. It references the registered MemoStem App and deliberately has no
-`mcp.json` or `.mcp.json`, so it is not classified as Desktop only. The existing
-`memostem` package remains the direct-MCP package for Codex, Claude Code, and
-other compatible hosts. The public
+The OpenAI plugin portal takes a plugin ZIP; the MCP server is connected
+separately (**With MCP**, **Universal**, URL above), not imported from the ZIP.
+Build the ZIP from the `memostem` package with `npm run package:portal`. It
+contains the single `memostem` skill, `assets/`, and a root `plugin.json` with
+the OpenAI interface metadata, and omits `hooks/`, `.app.json`, `.claude-plugin/`,
+`.codex-plugin/`, and `.mcp.json`. The portal rescans the connected MCP server
+daily and offers a manual Rescan. Plugins with lifecycle hooks and packages with
+`apps/.app.json` cannot currently be submitted, which is why the ZIP is staged
+from `plugins/memostem` without them. Sources checked 2026-10-15:
+[Build plugins](https://developers.openai.com/plugins/build/plugins) and
+[Submit a plugin](https://developers.openai.com/plugins/deploy/submission).
+Whether the portal needs a root `mcp.json` or shows a Desktop-only label for a
+ZIP is not yet confirmed; `--with-mcp-json` builds the variant that includes it.
+The `memostem-chatgpt` marketplace package is kept unchanged for Codex
+marketplace installs. The public
 [MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
 MemoStem uses mixed, lazy authentication. Guest capture needs no account;
@@ -236,12 +246,13 @@ are not a substitute for this plugin path.
 
 ### ChatGPT marketplace update
 
-Install the web-specific package as `memostem-chatgpt@memostem`. Select
-**MemoStem for ChatGPT** in a new conversation, then complete the MemoStem OAuth
-connection. It is separate from the direct-MCP `memostem` package, which
-ChatGPT correctly marks Desktop only. Installing a marketplace revision and
-completing OAuth are separate steps; a development App remains in development
-until its provider review and publishing process finishes.
+The `memostem-chatgpt@memostem` marketplace package is retained for Codex
+marketplace installs. For the OpenAI plugin portal, build the ZIP with
+`npm run package:portal` instead of uploading that package: it carries
+`.app.json`, which the portal cannot currently accept. The OpenAI docs describe
+Desktop-only labels for local MCP servers and hooks, not for a remote
+`mcp.json`; whether the portal labels a ZIP Desktop only is unverified until a
+draft is created. Installing a package and completing OAuth are separate steps.
 
 ### Claude Code
 
@@ -349,15 +360,22 @@ The portable MCP config uses `streamable-http`; existing Codex/Claude adapters
 keep `.mcp.json` with `http`. OAuth discovery and credential storage belong to
 the client. No token or OAuth credential is packaged.
 
+`gemini-extension.json` at the repository root is a remote-MCP-only Gemini CLI
+extension manifest (no skill, no credentials); `npm run check` keeps its
+version and endpoint aligned. It is not listed until the repository carries the
+`gemini-cli-extension` topic.
+
 Portable format validation does not establish support in any particular host.
 Kimi's documented import route converts a source package; Gemini and Grok use
 custom MCP connections. Existing Codex and Claude install names are unchanged.
-`plugins/memostem-chatgpt` is the ChatGPT web counterpart: it has root
-`plugin.json`, `.app.json`, and the same skill tree, but intentionally no
-direct MCP declaration.
-Edit skills only under `plugins/memostem/skills`, then run
-`npm run sync:skills` to copy them into the ChatGPT web package; `npm run check`
-fails when the two skill trees differ.
+`plugins/memostem-chatgpt` is a retained marketplace package with root
+`plugin.json`, `.app.json`, and the same skill tree; it is not the portal
+upload. The portal ZIP is built from `plugins/memostem` only
+(`npm run package:portal`, output `dist/memostem-<version>-<shortsha>.zip`,
+git-ignored; requires a clean tree). Edit skills only under
+`plugins/memostem/skills`, then run `npm run sync:skills` to copy them into the
+retained package; `npm run check` fails when the two skill trees differ and
+asserts the staged ZIP tree.
 
 ## Validate locally
 

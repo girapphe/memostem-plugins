@@ -1,6 +1,9 @@
 # Submission readiness runbook
 
-Checked against provider documentation on **2026-09-22**. This runbook prepares
+Checked against provider documentation on **2026-09-22**; the OpenAI portal
+packaging flow was rechecked on **2026-10-15** against
+[Build plugins](https://developers.openai.com/plugins/build/plugins) and
+[Submit a plugin](https://developers.openai.com/plugins/deploy/submission). This runbook prepares
 the repository and production MCP for submission; it does not authorize or
 perform a provider submission.
 
@@ -13,9 +16,10 @@ listing copy, screenshots, and reviewer testing.
 ```bash
 git fetch origin main
 git rev-parse origin/main
-git diff --exit-code origin/main -- plugins/memostem plugins/memostem-chatgpt docs/directory-submissions.md
+git diff --exit-code origin/main -- plugins/memostem docs/directory-submissions.md
 npm run check
 npm run check:submission
+npm run package:portal
 git diff --check
 ```
 
@@ -49,16 +53,35 @@ or this repository.
 
 Choose **With MCP** and **Universal**, then enter the production MCP URL. The
 portal submission is a new MCP-backed plugin; do not reference an existing
-integration ID. Upload the final `memostem` skill from the
-frozen source SHA or import the matching static skill discovered by Scan Tools.
+integration ID. Skills are not imported from the MCP server: upload the ZIP built
+by `npm run package:portal` from the frozen source SHA (it needs a clean tree and
+writes `dist/memostem-<version>-<shortsha>.zip` plus its SHA-256). It holds the
+single `memostem` skill, `assets/`, and a root `plugin.json`; it excludes
+`hooks/` (plugins with lifecycle hooks are not eligible for the public
+directory), `.app.json` (packages with apps cannot currently be submitted),
+`.claude-plugin/`, `.codex-plugin/` and `.mcp.json`. The MCP server is connected
+separately, and the portal rescans it daily or on manual **Rescan**. Record the
+ZIP name and SHA-256 in the channel Issue.
+
+The MCP server must be connected when the plugin is created (one server per
+plugin; adding MCP to an existing skills-only plugin is not currently
+supported), and the ZIP must hold no credentials.
+
+Unverified until a portal draft exists (create the draft from the ZIP, do not
+submit): whether the portal requires a root `mcp.json` (`--with-mcp-json`
+builds that variant), whether a Desktop-only label appears, and whether the
+Metadata & Skills scans pass.
 
 Before submitting, record each gate in [Issue #18](https://github.com/girapphe/memostem-plugins/issues/18):
 
-- [ ] Submitter has Apps Management write access in the publishing organization.
+- [ ] The submitting project has global data residency (EU data residency
+      projects cannot submit MCP plugins for review).
+- [ ] Submitter is an organization owner or has Apps Management write access in
+      the publishing organization.
 - [ ] Girapphe developer/business identity is verified and matches the public URLs.
 - [ ] Domain challenge from the current draft is served verbatim at
       `/.well-known/openai-apps-challenge` and the portal marks it verified.
-- [ ] Scan Tools discovers the expected tools, skill, titles, schemas, and all
+- [ ] The MCP scan (daily, or manual Rescan) discovers the expected tools, titles, schemas, and all
       `readOnlyHint`, `destructiveHint`, and `openWorldHint` annotations.
 - [ ] The live anonymous list contains `check_memostem_connection`,
       `claim_guest_knowledge_workspace`, `connect_memostem`,
@@ -76,7 +99,8 @@ Before submitting, record each gate in [Issue #18](https://github.com/girapphe/m
 - [ ] Tool responses were inspected for unnecessary personal data, auth data,
       debug payloads, request/trace/session IDs, and undisclosed identifiers.
 - [ ] Country availability and policy attestations match actual support.
-- [ ] Final skill file tree was tested after the last change.
+- [ ] The ZIP's skill file tree was tested after the last change, and the
+      portal's Metadata & Skills scan passes.
 
 Use all five positive and three negative cases from
 [the submission kit](directory-submissions.md#positive-review-cases). The
@@ -104,7 +128,9 @@ skill-bearing plugin submission separate from the connector listing.
 
 Record in [Issue #19](https://github.com/girapphe/memostem-plugins/issues/19):
 
-- [ ] Authorized Claude organization and directory-management access confirmed.
+- [ ] Paid-plan claude.ai account (Pro, Max, Team or Enterprise) in the owning
+      organization confirmed; on Team/Enterprise an Owner or a member with the
+      Directory permission submits at https://claude.ai/directory/manage.
 - [ ] Documentation, privacy, icon, support contact, permanent slug, one to five
       categories, and listing text entered.
 - [ ] Synced tools are classified correctly as read-only or write and none are
@@ -117,7 +143,8 @@ Record in [Issue #19](https://github.com/girapphe/memostem-plugins/issues/19):
 - [ ] Claude chat skill loading tested independently from connector-only and
       Claude Code installation.
 
-Official reference: [Claude Connectors Directory submission](https://claude.com/docs/connectors/building/submission).
+Official references (checked 2026-10-15): [publish to the directory](https://claude.com/docs/directory/publish),
+[Claude Connectors Directory submission](https://claude.com/docs/connectors/building/submission).
 
 ## Kimi packet
 
@@ -164,7 +191,7 @@ Do not submit when any of these is true:
 - package/manifest versions or source SHAs differ;
 - the live endpoint revision is older than the server change being reviewed;
 - a public/legal/support URL fails or mismatches the publisher;
-- Scan Tools or the host reports missing/misclassified tools;
+- the MCP scan or the host reports missing/misclassified tools;
 - reviewer login needs an out-of-band code or internal network;
 - a test creates duplicate drafts, exposes another owner's data, retains a
   transcript, auto-approves knowledge, or returns undisclosed identifiers;
