@@ -63,6 +63,10 @@ directory), `.app.json` (packages with apps cannot currently be submitted),
 separately, and the portal rescans it daily or on manual **Rescan**. Record the
 ZIP name and SHA-256 in the channel Issue.
 
+The MCP server must be connected when the plugin is created (one server per
+plugin; adding MCP to an existing skills-only plugin is not currently
+supported), and the ZIP must hold no credentials.
+
 Unverified until a portal draft exists (create the draft from the ZIP, do not
 submit): whether the portal requires a root `mcp.json` (`--with-mcp-json`
 builds that variant), whether a Desktop-only label appears, and whether the
@@ -70,7 +74,8 @@ Metadata & Skills scans pass.
 
 Before submitting, record each gate in [Issue #18](https://github.com/girapphe/memostem-plugins/issues/18):
 
-- [ ] Submitter has Apps Management write access in the publishing organization.
+- [ ] Submitter is an organization owner or has Apps Management write access in
+      the publishing organization.
 - [ ] Girapphe developer/business identity is verified and matches the public URLs.
 - [ ] Domain challenge from the current draft is served verbatim at
       `/.well-known/openai-apps-challenge` and the portal marks it verified.
@@ -121,7 +126,9 @@ skill-bearing plugin submission separate from the connector listing.
 
 Record in [Issue #19](https://github.com/girapphe/memostem-plugins/issues/19):
 
-- [ ] Authorized Claude organization and directory-management access confirmed.
+- [ ] Paid-plan claude.ai account (Pro, Max, Team or Enterprise) in the owning
+      organization confirmed; on Team/Enterprise an Owner or a member with the
+      Directory permission submits at https://claude.ai/directory/manage.
 - [ ] Documentation, privacy, icon, support contact, permanent slug, one to five
       categories, and listing text entered.
 - [ ] Synced tools are classified correctly as read-only or write and none are
@@ -134,7 +141,8 @@ Record in [Issue #19](https://github.com/girapphe/memostem-plugins/issues/19):
 - [ ] Claude chat skill loading tested independently from connector-only and
       Claude Code installation.
 
-Official reference: [Claude Connectors Directory submission](https://claude.com/docs/connectors/building/submission).
+Official references (checked 2026-10-15): [publish to the directory](https://claude.com/docs/directory/publish),
+[Claude Connectors Directory submission](https://claude.com/docs/connectors/building/submission).
 
 ## Kimi packet
 

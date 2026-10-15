@@ -221,7 +221,10 @@ Open grok.com/connectors → New Connector → Custom, enter the canonical MCP U
 and complete the required authentication. For Business/Enterprise, an admin
 must provision the connector before members can use it. Test in general chat,
 not Grok Build. Use `provider: "other"`; do not invent a `grok` enum value.
-Public catalog submission is a separate, currently unverified distribution path.
+Public catalog submission is a separate distribution path (a PR to
+`xai-org/plugin-marketplace`; see the
+[submission kit](directory-submissions.md#gemini-and-grok-connection-readiness)),
+not yet exercised for MemoStem.
 [Official custom connector guide](https://docs.x.ai/grok/connectors).
 
 ### Verify save and retrieve

@@ -175,26 +175,38 @@ Suggested categories:
 
 Account-only gates:
 
-1. Use a Claude Team or Enterprise organization and an Owner, Primary Owner, or
-   role with Directory management access.
-2. Create a remote connector draft with the shared listing above.
+1. Submit from a claude.ai account on a paid plan (Pro, Max, Team, or
+   Enterprise; free accounts cannot submit) in the organization that should own
+   the listing long term. Pro and Max submit from their own account with no role
+   check; on Team and Enterprise an Owner can submit, and on Enterprise an Owner
+   can grant the **Directory** permission through a custom role under
+   Organization settings > Roles.
+2. In the developer portal (https://claude.ai/directory/manage) select
+   **Submit new**, choose **MCP connector**, and create the draft with the
+   shared listing above.
 3. Let the portal sync all tools and confirm every title and annotation.
 4. Enter a fully populated reviewer account and credentials only in the private
    portal. Do not enable MFA, email confirmation, or SMS on that review path.
 5. Confirm OAuth, data handling, use cases, compliance, and end-to-end tool
-   behavior before submitting.
+   behavior before submitting. Connector submissions are scanned automatically
+   and listed as Community by default; Anthropic decides whether to escalate to
+   Verified review.
 
 The candidate-review tool already has an MCP App selection UI with a text
 fallback. Review the live UI and CSP, provide screenshots when the portal
 requests them, and test both rendered selection and fallback. Never describe
 this integration as UI-free.
 
-Official reference: https://claude.com/docs/connectors/building/submission
+Official references (checked 2026-10-15):
+[publish to the directory](https://claude.com/docs/directory/publish),
+[connector submission](https://claude.com/docs/connectors/building/submission).
 
 ## Anthropic plugin directory submission (Cowork and Claude Code)
 
 The connector listing above and the skill-bearing plugin are separate
-artifacts. The [plugin directory](https://claude.com/plugins-for/cowork) serves
+artifacts: submit the remote MCP server as the **MCP connector** first, then the
+plugin bundle from the same organization, and pair the two listings in the
+portal. Point the bundle's MCP configuration at the same URL. The [plugin directory](https://claude.com/plugins-for/cowork) serves
 the complete `plugins/memostem` package (Claude manifest, shared `memostem`
 skill and remote MCP) to Cowork, installed-plugin chat, and Claude Code, where
 it appears in the built-in `claude-plugins-official` marketplace. Reuse the
@@ -213,15 +225,17 @@ Repository-prepared gates:
 
 Account-only gates:
 
-1. Submit the GitHub link through one in-app form:
-   - claude.ai (Team or Enterprise organization with Directory management
-     access): https://claude.ai/admin-settings/directory/submissions/plugins/new
-   - Console (Developer, Admin, or Owner role):
-     https://platform.claude.com/plugins/submit
-2. Track review status on the claude.ai **Directory** submissions page or in
-   Console. Anthropic runs automated review first; the "Anthropic Verified"
-   badge requires additional review and is not guaranteed. An approved
-   Connectors Directory listing for the same endpoint reduces install warnings.
+1. Submit from a paid-plan claude.ai account (same plan and role conditions as
+   the connector above) in the developer portal at
+   https://claude.ai/directory/manage: **Submit new** > **Plugin bundle**, with
+   the public GitHub repository and the `plugins/memostem` folder. The first
+   organization to submit a repository folder holds that listing and the portal
+   refuses a second organization's submission of it. The earlier Claude Console
+   form is no longer supported.
+2. Track review status in the portal. Every version gets automated validation
+   and a security scan, and a person reviews a new listing before it goes live.
+   The "Verified" label is decided by Anthropic and is not guaranteed. An
+   approved connector listing for the same endpoint reduces install warnings.
 3. After publication, pushes to `main` are mirrored and re-screened
    automatically. Do not re-submit the form for updates; treat every merge to
    `main` as a release to all directory users.
@@ -233,7 +247,8 @@ setup. Record the exact package revision, submission route, requested reviewer
 materials, and results in
 [#19](https://github.com/girapphe/memostem-plugins/issues/19).
 
-Official references (checked 2026-09-23):
+Official references (checked 2026-10-15):
+[publish to the directory](https://claude.com/docs/directory/publish),
 [plugin submission](https://claude.com/docs/plugins/submit),
 [use plugins in Claude](https://support.claude.com/en/articles/13837440-use-plugins-in-claude).
 
@@ -249,13 +264,20 @@ Official references (checked 2026-09-23):
 3. Run the shared positive/negative review cases and H-01–H-10 on a supported
    Kimi chat surface. Record conversion provenance and sanitized outcomes in
    [#20](https://github.com/girapphe/memostem-plugins/issues/20).
-4. Open the plugin details feedback button, choose **Apply for official
+4. For Kimi Work, open the plugin details feedback button, choose **Apply for official
    marketplace publication**, and provide the publisher contact email in the
    private form. Use the shared listing, legal/support URLs, prompts and test
    material above; supply additional reviewer information only through the
    provider's private channel.
 5. Record submission, review response and public listing separately. Do not
    infer web installation or marketplace acceptance from local import.
+
+The Kimi Code CLI is a separate product: it reads `kimi.plugin.json` or
+`.kimi-plugin/plugin.json` and installs from a marketplace catalog, local path,
+zip URL or GitHub URL
+([plugins](https://www.kimi.com/code/docs/en/kimi-code-cli/customization/plugins.html),
+checked 2026-10-15). How a plugin becomes a curated entry there is not
+documented on that page, so no Kimi Code submission route is assumed.
 
 Official references (checked 2026-09-21): [import](https://www.kimi.com/en/help/plugins-and-skills/create),
 [supported surfaces](https://www.kimi.com/en/help/plugins-and-skills/overview),
@@ -278,15 +300,39 @@ query and missing/revoked read-scope case to reviewer testing.
 
 Prepare custom MCP setup and H-01–H-10 evidence using the
 [connection guide](mcp.md#primary-chat-channels). Gemini has account/region
-conditions; Grok has organization provisioning conditions. No public directory
-submission route is assumed for either. Track setup, submission discovery and
-approval independently in the [dated channel record](channel-status.md).
+conditions; Grok has organization provisioning conditions. Track setup,
+submission discovery and approval independently in the
+[dated channel record](channel-status.md).
+
+Separate distribution routes, checked 2026-10-15 and not yet exercised for
+MemoStem:
+
+- **Grok plugin catalog:** open a PR to
+  [xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace)
+  adding an entry to `.grok-plugin/marketplace.json`. A remote source pins a
+  full 40-character commit `sha`; run `scripts/generate-plugin-index.py` and
+  `scripts/validate-catalog.py` first. CI and code-owner review apply. The
+  [Grok Bot web form](https://x.ai/bot/marketplace/submit-a-plugin) is an
+  alternative. Neither is tested here, and this repository ships no
+  `.grok-plugin` file.
+- **Gemini CLI extension gallery:** no submission step. The gallery crawls
+  public GitHub repositories tagged with the `gemini-cli-extension` topic and
+  expects `gemini-extension.json` at the repository or release-archive root
+  ([releasing extensions](https://geminicli.com/docs/extensions/releasing/)).
+  This repository has no such manifest and no topic, so it is not listed there;
+  adding one is a separate decision. The Gemini app custom-connector path
+  in the connection guide is unrelated to this gallery.
 
 ## MCP Registry publication
 
 `server.json` uses the GitHub-owned namespace
 `io.github.girapphe/memostem`. Publishing a GitHub Release triggers the
-OIDC-authenticated registry workflow. It requires no dedicated registry secret.
+OIDC-authenticated registry workflow (the `mcp-publisher` flow). It requires no
+dedicated registry secret. The entry is a remote-only `server.json`
+(`remotes`, no `packages`), so no npm or Docker artifact is published first;
+that prerequisite applies to package-based servers. The registry is in preview,
+does not host artifacts, accepts no private servers, and has no documented
+delete or unpublish yet.
 
 After the workflow succeeds, verify the exact namespace through the official
 registry API. Registry publication is a metadata-discovery state and does not
