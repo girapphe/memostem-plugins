@@ -324,6 +324,8 @@ for (const requiredRoute of [
   'npm run package:portal',
   'xai-org/plugin-marketplace',
   'gemini-cli-extension',
+  'EU data residency',
+  'plugins/marketplace.json',
 ]) {
   assert.ok(submissionKit.includes(requiredRoute), `submission kit must describe ${requiredRoute}`);
 }

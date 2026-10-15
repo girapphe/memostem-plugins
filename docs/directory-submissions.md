@@ -89,6 +89,14 @@ result in the channel Issue. Sources, checked 2026-10-15:
 [Build plugins](https://developers.openai.com/plugins/build/plugins) and
 [Submit a plugin](https://developers.openai.com/plugins/deploy/submission).
 
+Project condition (checked 2026-10-15,
+[remote MCP review requirements](https://developers.openai.com/plugins/deploy/app-review)):
+"projects with EU data residency cannot submit plugins with MCP servers for
+review." Submit from a project with global data residency; create a new project
+in the organization if needed. The server must be on a publicly accessible
+domain (no local or testing endpoint), and every test case must pass on the
+supported ChatGPT and Codex surfaces.
+
 Repository-prepared fields:
 
 - Listing, legal, support, documentation, and logo URLs are in the shared
@@ -276,8 +284,15 @@ The Kimi Code CLI is a separate product: it reads `kimi.plugin.json` or
 `.kimi-plugin/plugin.json` and installs from a marketplace catalog, local path,
 zip URL or GitHub URL
 ([plugins](https://www.kimi.com/code/docs/en/kimi-code-cli/customization/plugins.html),
-checked 2026-10-15). How a plugin becomes a curated entry there is not
-documented on that page, so no Kimi Code submission route is assumed.
+checked 2026-10-15). That page does not document how a plugin becomes a
+curated entry. An example external addition
+([MoonshotAI/kimi-code#4149](https://github.com/MoonshotAI/kimi-code/pull/4149))
+shows the observed route, not a documented procedure: a PR adding an entry
+(`id`, `tier: "curated"`, `displayName`, `description`, `homepage`, `keywords`,
+`source`) to `plugins/marketplace.json` plus a changeset, gated on a linked issue
+that a maintainer `/approve`s. The source repository carries
+`.kimi-plugin/plugin.json`. This repository has no such file, and none has been
+opened or approved for MemoStem.
 
 Official references (checked 2026-09-21): [import](https://www.kimi.com/en/help/plugins-and-skills/create),
 [supported surfaces](https://www.kimi.com/en/help/plugins-and-skills/overview),
@@ -313,14 +328,20 @@ MemoStem:
   full 40-character commit `sha`; run `scripts/generate-plugin-index.py` and
   `scripts/validate-catalog.py` first. CI and code-owner review apply. The
   [Grok Bot web form](https://x.ai/bot/marketplace/submit-a-plugin) is an
-  alternative. Neither is tested here, and this repository ships no
+  alternative; it asks for organization name and lowercase handle, a 1:1 SVG or
+  PNG logo with a background plate, a work email, the MCP server URL or public
+  repository, testing instructions, a local-and-in-app test confirmation, and
+  agreement to the Publisher Terms. Neither is tested here, and this repository ships no
   `.grok-plugin` file.
 - **Gemini CLI extension gallery:** no submission step. The gallery crawls
   public GitHub repositories tagged with the `gemini-cli-extension` topic and
   expects `gemini-extension.json` at the repository or release-archive root
   ([releasing extensions](https://geminicli.com/docs/extensions/releasing/)).
   This repository has no such manifest and no topic, so it is not listed there;
-  adding one is a separate decision. The Gemini app custom-connector path
+  adding one is a separate decision. Skills go in a `skills/` directory and
+  `mcpServers` is a map of server settings, but the Gemini CLI reference does
+  not document the field for a remote HTTP server, so no manifest has been
+  written until that is confirmed against the MCP server documentation. The Gemini app custom-connector path
   in the connection guide is unrelated to this gallery.
 
 ## MCP Registry publication

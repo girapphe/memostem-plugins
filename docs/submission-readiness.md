@@ -74,6 +74,8 @@ Metadata & Skills scans pass.
 
 Before submitting, record each gate in [Issue #18](https://github.com/girapphe/memostem-plugins/issues/18):
 
+- [ ] The submitting project has global data residency (EU data residency
+      projects cannot submit MCP plugins for review).
 - [ ] Submitter is an organization owner or has Apps Management write access in
       the publishing organization.
 - [ ] Girapphe developer/business identity is verified and matches the public URLs.
