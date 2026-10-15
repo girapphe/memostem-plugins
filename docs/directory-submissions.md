@@ -78,9 +78,16 @@ save. Verify a real host OAuth round trip separately from package checks.
 
 Use the OpenAI Platform plugin submission portal and choose **With MCP**. Submit
 the production endpoint directly; do not submit an existing integration ID.
-Include the single `memostem` skill from the release revision
-as an uploaded skill with the remote MCP. Record the exact source SHA and
-portal validation result in the channel Issue.
+Upload the plugin ZIP built by `npm run package:portal` from the release
+revision: it carries the single `memostem` skill, `assets/` and a root
+`plugin.json`, and excludes `hooks/` and `.app.json` (hooked plugins are not
+eligible for the public directory; packages with apps cannot currently be
+submitted). Connect the remote MCP separately with **Universal**; skills are not
+imported from the server. The portal rescans the MCP server daily and offers
+**Rescan**. Record the ZIP name, SHA-256, source SHA and portal validation
+result in the channel Issue. Sources, checked 2026-10-15:
+[Build plugins](https://developers.openai.com/plugins/build/plugins) and
+[Submit a plugin](https://developers.openai.com/plugins/deploy/submission).
 
 Repository-prepared fields:
 
@@ -115,10 +122,10 @@ Account-only gates:
 1. Select the OpenAI organization that will publish MemoStem.
 2. Verify Girapphe as the business identity and grant the submitter Apps
    Management write access.
-3. Create the portal draft and complete its generated domain-verification
+3. Create the portal draft from the ZIP and complete its generated domain-verification
    challenge at `/.well-known/openai-apps-challenge`.
 4. Enter reviewer credentials only in the private portal. Never commit them.
-5. Run the portal scanner, fix every result, submit for review, and publish only
+5. Run the portal scans (MCP Rescan and Metadata & Skills), fix every result, submit for review, and publish only
    after approval.
 
 ### Positive review cases

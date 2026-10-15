@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
-import { lstat, readFile, readdir } from 'node:fs/promises';
+import { lstat, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import os from 'node:os';
+import { assertPortalStage, stagePortalPackage } from './lib/portal-package.mjs';
+import { secretPatterns } from './lib/secret-patterns.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pluginRoot = path.join(root, 'plugins', 'memostem');
@@ -19,7 +22,11 @@ async function walk(directory) {
     const absolute = path.join(directory, entry.name);
     const metadata = await lstat(absolute);
     assert.equal(metadata.isSymbolicLink(), false, `symlinks are not allowed: ${absolute}`);
-    if (entry.isDirectory()) files.push(...await walk(absolute));
+    if (entry.isDirectory()) {
+      // dist/ holds ignored, locally built portal ZIPs.
+      if (directory === root && entry.name === 'dist') continue;
+      files.push(...await walk(absolute));
+    }
     else if (entry.isFile()) files.push(absolute);
   }
   return files;
@@ -318,6 +325,7 @@ for (const requiredSubmissionContract of [
   'reviewer account',
   'knowledge:drafts:status',
   'npm run check:submission',
+  'npm run package:portal',
 ]) {
   assert.ok(
     submissionReadiness.includes(requiredSubmissionContract),
@@ -438,14 +446,6 @@ for (const file of trackedCandidates) {
   );
 }
 
-const secretPatterns = [
-  /-----BEGIN (?:RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----/u,
-  /\bgh[pousr]_[A-Za-z0-9]{20,}\b/u,
-  /\bsk-[A-Za-z0-9_-]{20,}\b/u,
-  /\bAKIA[0-9A-Z]{16}\b/u,
-  /\bmemostem_mcp_[A-Za-z0-9_-]{12,}\b/u,
-  /\b(?:DATABASE_URL|CLERK_SECRET_KEY|OPENAI_API_KEY)\s*=\s*[^$'"<\s][^\s]*/u,
-];
 for (const file of trackedCandidates) {
   const source = await readFile(file, 'utf8');
   for (const pattern of secretPatterns) {
@@ -468,6 +468,19 @@ for (const relative of relativeSkillFiles) {
     await readFile(path.join(chatgptSkillsRoot, relative)),
     `skill file drift: ${relative}; run npm run sync:skills`,
   );
+}
+
+// The OpenAI portal ZIP is staged from plugins/memostem only. Build it in a
+// temporary directory and assert its exact shape, with and without the
+// optional mcp.json, so a hook, App reference or credential cannot slip in.
+for (const withMcpJson of [false, true]) {
+  const stage = await mkdtemp(path.join(os.tmpdir(), 'memostem-portal-validate-'));
+  try {
+    await stagePortalPackage(root, stage, { withMcpJson });
+    await assertPortalStage(root, stage, packageManifest.version, { withMcpJson });
+  } finally {
+    await rm(stage, { recursive: true, force: true });
+  }
 }
 
 console.log('MemoStem public plugin boundary and manifests are valid.');

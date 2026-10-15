@@ -25,6 +25,11 @@ supported chat surface. Other hosts require an account with the applicable
 connector/plugin controls and any organization-admin provisioning. No access
 failure was observed; these account-dependent tests have not been attempted.
 
+> **Note (2026-10-15):** the OpenAI portal packaging flow changed in this
+> repository to a ZIP built from `plugins/memostem` (`npm run package:portal`).
+> This table is not updated: which ZIP, SHA or tag was submitted earlier, and
+> any review status, must come from the maintainer before it records facts.
+
 ## Repository evidence
 
 - CH-01/CH-02: README, bilingual guides and shared skill updated; retrieval
