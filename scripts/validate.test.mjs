@@ -354,3 +354,13 @@ test('portal packager builds a deterministic ZIP from a clean tree', async (t) =
   await new Promise((resolve) => setTimeout(resolve, 1100));
   assert.match(build().stdout, new RegExp(sha, 'u'), 'same commit must give the same SHA-256');
 });
+
+test('public validation rejects a Team-or-Enterprise-only Claude submission claim', async (t) => {
+  const temporaryRoot = await copyRepository(t, 'claude-plan');
+  const kitPath = path.join(temporaryRoot, 'docs', 'directory-submissions.md');
+  const kit = await readFile(kitPath, 'utf8');
+  await writeFile(kitPath, `${kit}\nUse a Claude Team or Enterprise organization.\n`);
+  const result = runValidation(temporaryRoot);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Team or Enterprise/u);
+});

@@ -316,6 +316,18 @@ for (const requiredUrl of [
 assert.match(submissionKit, /five|5 positive|Positive review cases/iu);
 assert.match(submissionKit, /three|3 negative|Negative review cases/iu);
 assert.doesNotMatch(submissionKit, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
+// Provider account conditions verified 2026-10-15: Anthropic accepts any paid
+// plan through the developer portal, and OpenAI takes a ZIP, not Scan Tools skills.
+for (const requiredRoute of [
+  'https://claude.ai/directory/manage',
+  'Pro, Max, Team, or',
+  'npm run package:portal',
+  'xai-org/plugin-marketplace',
+  'gemini-cli-extension',
+]) {
+  assert.ok(submissionKit.includes(requiredRoute), `submission kit must describe ${requiredRoute}`);
+}
+assert.doesNotMatch(submissionKit, /Claude Team or Enterprise organization/u, 'submission kit must not restrict Claude submission to Team or Enterprise');
 for (const requiredSubmissionContract of [
   'Apps Management write access',
   'five submitted positive and three negative cases',
