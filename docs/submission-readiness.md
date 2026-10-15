@@ -63,8 +63,9 @@ Before submitting, record each gate in [Issue #18](https://github.com/girapphe/m
 - [ ] The live anonymous list contains `check_memostem_connection`,
       `claim_guest_knowledge_workspace`, `connect_memostem`,
       `create_card_drafts`, `create_knowledge_bundle_drafts`,
-      `preview_knowledge_bundle`, `save_guest_knowledge_bundles`,
-      `start_memostem`, and `validate_knowledge_bundle`. Listed protected
+      `preview_knowledge_bundle`, `refresh_guest_knowledge_shelf_link`,
+      `save_guest_knowledge_bundles`, `start_memostem`, and
+      `validate_knowledge_bundle`. Listed protected
       tools still require OAuth before execution.
 - [ ] MCP App candidate picker loads; its CSP allows only the exact required
       domains. The current resource declares no external connect/resource/frame/base domains.
