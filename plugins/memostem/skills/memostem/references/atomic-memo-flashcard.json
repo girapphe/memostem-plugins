@@ -31,7 +31,7 @@
     {
       "client_bundle_id": "game-loop-question",
       "knowledge_scope": "general_knowledge",
-      "title": "Authoritative game loop recall",
+      "title": "Responsibilities of an authoritative game loop",
       "central_question": "What does an authoritative game loop do?",
       "knowledge_type": "question",
       "summary": "The server repeatedly processes input, simulates the world, and sends its accepted state to clients.",

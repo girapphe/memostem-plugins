@@ -12,10 +12,13 @@ save. Follow live tool schemas; do not invent an approval or recovery tool.
 2. Check the authenticated connection and require `knowledge:drafts:status`
    before calling `get_draft_batch_status`. Read status does not require a new
    creation call. Missing scope needs the host's reconsent flow.
-3. Report only returned counts and states. Pending means awaiting owner review.
+3. Report only returned counts and states. A successful bundle creation
+   response has `status: "pending"`, `batch_id`, `bundle_count`, `created`, and
+   `review_path`; `create_card_drafts` uses `draft_count` instead. Pending means awaiting owner review.
    Approved, merged, updated, or ignored report actions the person completed
    in MemoStem, not actions this skill performed. If only some results are
-   available, do not claim the whole batch is resolved.
+   available, do not claim the whole batch is resolved. Never use or invent an MCP
+   approve, merge, update, or ignore execution tool.
 
 ## Recover the original operation
 
@@ -28,7 +31,10 @@ save. Follow live tool schemas; do not invent an approval or recovery tool.
 | Count differs from the selected count or response has `isError` | Report the inconsistency and what is actually confirmed. Do not invent missing drafts or retry a modified selection automatically. |
 | A proposed merge target has a stale version | Refresh only the selected context and let the person review the revised proposal; do not guess a replacement target or claim a merge happened. |
 
-Do not use a new request ID to bypass an uncertain write. Status polling is for
+If the call has `isError`, authentication fails, the result is missing, or the
+count is inconsistent, explain exactly what was and was not confirmed. Never
+simulate successful capture or say cards were added merely because OAuth
+completed. Do not use a new request ID to bypass an error or an uncertain write. Status polling is for
 an already known batch; it cannot reconstruct a missing request identity. A
 new, intentionally changed selection is a separate operation and must be
 clearly authorized as such.
