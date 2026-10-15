@@ -104,8 +104,15 @@ it.
 
 **Takeaway first.** When a conversation yields more than one card, one card
 states the conversation's overall conclusion in its `summary`: the answer the
-person would want to remember if they kept only one card. Write it first. Other
-cards cover distinct supporting ideas. Link a supporting card to the takeaway
+person would want to remember if they kept only one card. Write it first. The
+takeaway ties the conversation's main points into one conclusion: for a
+problem that was diagnosed and solved, the cause and the fix together; for a
+comparison, the verdict; for a historical or scientific explanation, the
+overall account. A card about the first or most prominent sub-point is not the
+takeaway, even when it comes first. This matters most in long conversations,
+where each turn adds a sub-point: write the takeaway card before choosing
+which sub-points still deserve their own cards. Other cards cover distinct
+supporting ideas. Link a supporting card to the takeaway
 card only when the selected material supports that link: use `supports` from
 the supporting card to the takeaway, or `generalizes` from the takeaway to a
 narrower case, or `prerequisite` when one must be understood first. Do not add
