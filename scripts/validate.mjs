@@ -171,6 +171,16 @@ for (const forbiddenMcpFile of ['mcp.json', '.mcp.json']) {
   const files = await readdir(chatgptPluginRoot);
   assert.equal(files.includes(forbiddenMcpFile), false, `ChatGPT web plugin must not contain ${forbiddenMcpFile}`);
 }
+// Gemini CLI extension manifest: remote MCP only. It carries no credentials or
+// headers and no skills, because the single skill authoring copy stays under
+// plugins/memostem/skills.
+const geminiExtension = await readJson('gemini-extension.json');
+assert.deepEqual(geminiExtension, {
+  name: 'memostem',
+  version: releaseVersion,
+  description: codexManifest.description,
+  mcpServers: { memostem: { httpUrl: mcp.mcpServers.memostem.url } },
+}, 'Gemini extension manifest must match the release metadata and canonical endpoint');
 assert.equal(packageManifest.description, codexManifest.description);
 assert.equal(registryManifest.description, codexManifest.description);
 

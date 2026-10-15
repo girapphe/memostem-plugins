@@ -360,6 +360,11 @@ The portable MCP config uses `streamable-http`; existing Codex/Claude adapters
 keep `.mcp.json` with `http`. OAuth discovery and credential storage belong to
 the client. No token or OAuth credential is packaged.
 
+`gemini-extension.json` at the repository root is a remote-MCP-only Gemini CLI
+extension manifest (no skill, no credentials); `npm run check` keeps its
+version and endpoint aligned. It is not listed until the repository carries the
+`gemini-cli-extension` topic.
+
 Portable format validation does not establish support in any particular host.
 Kimi's documented import route converts a source package; Gemini and Grok use
 custom MCP connections. Existing Codex and Claude install names are unchanged.

@@ -337,11 +337,15 @@ MemoStem:
   public GitHub repositories tagged with the `gemini-cli-extension` topic and
   expects `gemini-extension.json` at the repository or release-archive root
   ([releasing extensions](https://geminicli.com/docs/extensions/releasing/)).
-  This repository has no such manifest and no topic, so it is not listed there;
-  adding one is a separate decision. Skills go in a `skills/` directory and
-  `mcpServers` is a map of server settings, but the Gemini CLI reference does
-  not document the field for a remote HTTP server, so no manifest has been
-  written until that is confirmed against the MCP server documentation. The Gemini app custom-connector path
+  The repository root now has a remote-MCP-only `gemini-extension.json`
+  (`httpUrl` is the Streamable HTTP field; `url` is SSE; OAuth is discovered
+  by the CLI, so no credentials or headers are stored). It ships no skill: the
+  single skill lives under `plugins/memostem/skills` and is not copied to the
+  root, so Gemini CLI users get the tools and server instructions but not the
+  skill guides. The repository still lacks the `gemini-cli-extension` topic, so
+  it is not crawled until the maintainer adds that topic. Gemini asks that the
+  manifest `name` match the extension directory name; the repository directory
+  is `memostem-plugins`, so check install behavior before relying on it. The Gemini app custom-connector path
   in the connection guide is unrelated to this gallery.
 
 ## MCP Registry publication

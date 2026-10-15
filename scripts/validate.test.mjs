@@ -364,3 +364,24 @@ test('public validation rejects a Team-or-Enterprise-only Claude submission clai
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Team or Enterprise/u);
 });
+
+test('Gemini extension manifest rejects version, endpoint, header and transport drift', async (t) => {
+  const cases = [
+    ['version', (m) => { m.version = '9.9.9'; }],
+    ['endpoint', (m) => { m.mcpServers.memostem.httpUrl = 'https://example.com/mcp'; }],
+    ['SSE transport', (m) => { m.mcpServers.memostem.url = m.mcpServers.memostem.httpUrl; delete m.mcpServers.memostem.httpUrl; }],
+    ['credential header', (m) => { m.mcpServers.memostem.headers = { Authorization: 'Bearer example-only' }; }],
+  ];
+  for (const [name, mutate] of cases) {
+    await t.test(name, async (subtest) => {
+      const temporaryRoot = await copyRepository(subtest, 'gemini-extension');
+      const file = path.join(temporaryRoot, 'gemini-extension.json');
+      const manifest = JSON.parse(await readFile(file, 'utf8'));
+      mutate(manifest);
+      await writeFile(file, JSON.stringify(manifest));
+      const result = runValidation(temporaryRoot);
+      assert.equal(result.status, 1, name);
+      assert.match(result.stderr, /Gemini extension manifest/u);
+    });
+  }
+});
