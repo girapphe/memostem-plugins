@@ -267,9 +267,22 @@ test('portal package stages exactly the memostem skill, assets and manifest', as
   assert.equal(files.includes('mcp.json'), false);
   const manifest = JSON.parse(await readFile(path.join(stage, 'plugin.json'), 'utf8'));
   assert.equal('apps' in manifest.extensions['com.openai'], false);
+  assert.equal(manifest.extensions['com.openai'].interface.displayName, 'MemoStem');
+  assert.equal(manifest.extensions['com.openai'].interface.supportURL, 'https://www.memostem.com/support');
 
   const withMcp = await stagePortal(t, { withMcpJson: true });
   assert.ok((await assertPortalStage(root, withMcp, packageVersion, { withMcpJson: true })).includes('mcp.json'));
+});
+
+test('portal package takes an existing listing name without changing the source manifest', async (t) => {
+  const name = 'app-0123456789abcdef';
+  const stage = await stagePortal(t, { name });
+  await assertPortalStage(root, stage, packageVersion, { name });
+  assert.equal(JSON.parse(await readFile(path.join(stage, 'plugin.json'), 'utf8')).name, name);
+  await assert.rejects(assertPortalStage(root, stage, packageVersion), /portable manifest/u);
+  await assert.rejects(stagePortal(t, { name: 'Bad Name' }), /invalid portal plugin name/u);
+  const source = JSON.parse(await readFile(path.join(root, 'plugins/memostem/plugin.json'), 'utf8'));
+  assert.equal(source.name, 'memostem');
 });
 
 test('portal package rejects forbidden entries, extra skills and skill drift', async (t) => {
