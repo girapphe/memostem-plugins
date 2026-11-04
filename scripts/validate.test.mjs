@@ -267,6 +267,8 @@ test('portal package stages exactly the memostem skill, assets and manifest', as
   assert.equal(files.includes('mcp.json'), false);
   const manifest = JSON.parse(await readFile(path.join(stage, 'plugin.json'), 'utf8'));
   assert.equal('apps' in manifest.extensions['com.openai'], false);
+  assert.equal(manifest.extensions['com.openai'].interface.displayName, 'MemoStem');
+  assert.equal(manifest.extensions['com.openai'].interface.supportURL, 'https://www.memostem.com/support');
 
   const withMcp = await stagePortal(t, { withMcpJson: true });
   assert.ok((await assertPortalStage(root, withMcp, packageVersion, { withMcpJson: true })).includes('mcp.json'));

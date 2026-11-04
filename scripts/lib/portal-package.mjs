@@ -8,6 +8,9 @@ import path from 'node:path';
 
 export const portalRootEntries = ['assets', 'plugin.json', 'skills'];
 export const portalForbiddenNames = ['hooks', '.app.json', '.claude-plugin', '.codex-plugin', '.mcp.json'];
+// The public directory listing is "MemoStem"; "for ChatGPT" only tells the
+// marketplace package apart from the main plugin in a Codex marketplace.
+const portalDisplayName = 'MemoStem';
 const forbiddenManifestKeys = ['clientSecret', 'test_credentials', 'reviewer_instructions'];
 
 async function readJson(file) {
@@ -41,7 +44,8 @@ export async function buildPortalManifest(root, { name } = {}) {
   const chatgpt = await readJson(path.join(root, 'plugins/memostem-chatgpt/plugin.json'));
   const { apps: _apps, ...interfaceOnly } = chatgpt.extensions['com.openai'];
   if (name !== undefined) assertPortalName(name);
-  return { ...source, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': interfaceOnly } };
+  const openai = { ...interfaceOnly, interface: { ...interfaceOnly.interface, displayName: portalDisplayName } };
+  return { ...source, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': openai } };
 }
 
 export async function stagePortalPackage(root, stageDir, { withMcpJson = false, name } = {}) {
@@ -106,7 +110,8 @@ export async function assertPortalStage(root, stageDir, packageVersion, { withMc
   assertPortalManifest(manifest, packageVersion);
   const sourceManifest = await readJson(path.join(root, 'plugins/memostem/plugin.json'));
   const chatgptManifest = await readJson(path.join(root, 'plugins/memostem-chatgpt/plugin.json'));
-  const { apps: _apps, ...expectedInterface } = chatgptManifest.extensions['com.openai'];
+  const { apps: _apps, ...chatgptOpenai } = chatgptManifest.extensions['com.openai'];
+  const expectedInterface = { ...chatgptOpenai, interface: { ...chatgptOpenai.interface, displayName: portalDisplayName } };
   assert.deepEqual(
     manifest,
     { ...sourceManifest, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': expectedInterface } },
