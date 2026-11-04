@@ -101,10 +101,15 @@ for (const [index, uri] of resources.map((entry) => entry.uri).sort().entries())
 }
 console.log('[OK] MCP App resources and exact empty-domain CSP');
 
+// RFC 9728 path-suffixed discovery for the MCP endpoint. Accept the origin
+// until the server advertises the endpoint URL as its resource.
 const protectedResource = await fetch(
-  `${origin}/.well-known/oauth-protected-resource/mcp`,
+  `${origin}/.well-known/oauth-protected-resource/api/mcp`,
 ).then((response) => response.json());
-assert.equal(protectedResource.resource, origin);
+assert.ok(
+  [`${origin}/api/mcp`, origin].includes(protectedResource.resource),
+  `unexpected protected resource ${protectedResource.resource}`,
+);
 for (const scope of ['knowledge:drafts:create', 'knowledge:context:read', 'knowledge:drafts:status']) {
   assert.ok(protectedResource.scopes_supported.includes(scope), `protected resource must advertise ${scope}`);
 }
