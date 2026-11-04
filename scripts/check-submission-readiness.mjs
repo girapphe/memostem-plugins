@@ -81,10 +81,17 @@ for (const tool of tools) {
 console.log(`[OK] ${tools.length} anonymous/reviewer-entry tools have titles and annotations`);
 
 const resources = (await mcpRequest(3, 'resources/list')).resources;
-assert.deepEqual(resources.map((resource) => resource.uri).sort(), [
+const resourceUris = resources.map((resource) => resource.uri);
+for (const uri of ['ui://memostem/knowledge-candidate-picker.html', 'ui://memostem/onboarding.html']) {
+  assert.ok(resourceUris.includes(uri), `missing MCP App resource ${uri}`);
+}
+// The read-only preview card ships with the server ahead of this check.
+const knownResourceUris = new Set([
   'ui://memostem/knowledge-candidate-picker.html',
+  'ui://memostem/knowledge-preview.html',
   'ui://memostem/onboarding.html',
 ]);
+assert.deepEqual(resourceUris.filter((uri) => !knownResourceUris.has(uri)), [], 'unexpected MCP App resource');
 for (const [index, uri] of resources.map((entry) => entry.uri).sort().entries()) {
   const resource = (await mcpRequest(4 + index, 'resources/read', { uri })).contents[0];
   assert.equal(resource.mimeType, 'text/html;profile=mcp-app');
@@ -94,10 +101,15 @@ for (const [index, uri] of resources.map((entry) => entry.uri).sort().entries())
 }
 console.log('[OK] MCP App resources and exact empty-domain CSP');
 
+// RFC 9728 path-suffixed discovery for the MCP endpoint. Accept the origin
+// until the server advertises the endpoint URL as its resource.
 const protectedResource = await fetch(
-  `${origin}/.well-known/oauth-protected-resource/mcp`,
+  `${origin}/.well-known/oauth-protected-resource/api/mcp`,
 ).then((response) => response.json());
-assert.equal(protectedResource.resource, origin);
+assert.ok(
+  [`${origin}/api/mcp`, origin].includes(protectedResource.resource),
+  `unexpected protected resource ${protectedResource.resource}`,
+);
 for (const scope of ['knowledge:drafts:create', 'knowledge:context:read', 'knowledge:drafts:status']) {
   assert.ok(protectedResource.scopes_supported.includes(scope), `protected resource must advertise ${scope}`);
 }
