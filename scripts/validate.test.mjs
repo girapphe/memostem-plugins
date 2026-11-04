@@ -272,6 +272,13 @@ test('portal package stages exactly the memostem skill, assets and manifest', as
 
   const withMcp = await stagePortal(t, { withMcpJson: true });
   assert.ok((await assertPortalStage(root, withMcp, packageVersion, { withMcpJson: true })).includes('mcp.json'));
+  const server = JSON.parse(await readFile(path.join(withMcp, 'mcp.json'), 'utf8')).mcpServers.memostem;
+  assert.equal(server.url, 'https://www.memostem.com/api/mcp');
+  assert.deepEqual(server.extensions['com.openai'].auth, {
+    type: 'mixed',
+    client: { mode: 'dcr' },
+    baseScopes: ['openid', 'knowledge:drafts:create', 'knowledge:context:read', 'knowledge:drafts:status'],
+  });
 });
 
 test('portal package takes an existing listing name without changing the source manifest', async (t) => {

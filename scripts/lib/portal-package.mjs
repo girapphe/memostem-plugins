@@ -48,6 +48,16 @@ export async function buildPortalManifest(root, { name } = {}) {
   return { ...source, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': openai } };
 }
 
+// The portal reads each server's auth from mcp.json: guest tools work
+// unauthenticated and the rest need OAuth with dynamic client registration.
+export async function buildPortalMcp(root) {
+  const portable = await readJson(path.join(root, 'plugins/memostem/mcp.json'));
+  const contract = await readJson(path.join(root, 'contracts/mcp-compatibility.json'));
+  const server = portable.mcpServers.memostem;
+  const auth = { type: 'mixed', client: { mode: 'dcr' }, baseScopes: contract.oauth_scopes };
+  return { ...portable, mcpServers: { memostem: { ...server, extensions: { 'com.openai': { auth } } } } };
+}
+
 export async function stagePortalPackage(root, stageDir, { withMcpJson = false, name } = {}) {
   const pluginRoot = path.join(root, 'plugins/memostem');
   await mkdir(stageDir, { recursive: true });
@@ -57,7 +67,9 @@ export async function stagePortalPackage(root, stageDir, { withMcpJson = false, 
     path.join(stageDir, 'plugin.json'),
     `${JSON.stringify(await buildPortalManifest(root, { name }), null, 2)}\n`,
   );
-  if (withMcpJson) await cp(path.join(pluginRoot, 'mcp.json'), path.join(stageDir, 'mcp.json'));
+  if (withMcpJson) {
+    await writeFile(path.join(stageDir, 'mcp.json'), `${JSON.stringify(await buildPortalMcp(root), null, 2)}\n`);
+  }
 }
 
 function findForbidden(value, trail = []) {
@@ -123,8 +135,8 @@ export async function assertPortalStage(root, stageDir, packageVersion, { withMc
   if (withMcpJson) {
     assert.deepEqual(
       await readJson(path.join(stageDir, 'mcp.json')),
-      await readJson(path.join(root, 'plugins/memostem/mcp.json')),
-      'portal mcp.json must equal the portable MCP config',
+      await buildPortalMcp(root),
+      'portal mcp.json must be the portable MCP config plus mixed OAuth',
     );
   }
   return files;
