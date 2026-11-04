@@ -30,21 +30,28 @@ export async function listStagedFiles(stageDir) {
   return walkFiles(stageDir);
 }
 
-export async function buildPortalManifest(root) {
+// An existing portal listing requires the ZIP `name` to equal its portal-issued
+// plugin ID. That ID stays in the portal and is passed at build time, never committed.
+export function assertPortalName(name) {
+  assert.match(name, /^[a-z0-9][a-z0-9-]{0,127}$/u, `invalid portal plugin name: ${name}`);
+}
+
+export async function buildPortalManifest(root, { name } = {}) {
   const source = await readJson(path.join(root, 'plugins/memostem/plugin.json'));
   const chatgpt = await readJson(path.join(root, 'plugins/memostem-chatgpt/plugin.json'));
   const { apps: _apps, ...interfaceOnly } = chatgpt.extensions['com.openai'];
-  return { ...source, extensions: { 'com.openai': interfaceOnly } };
+  if (name !== undefined) assertPortalName(name);
+  return { ...source, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': interfaceOnly } };
 }
 
-export async function stagePortalPackage(root, stageDir, { withMcpJson = false } = {}) {
+export async function stagePortalPackage(root, stageDir, { withMcpJson = false, name } = {}) {
   const pluginRoot = path.join(root, 'plugins/memostem');
   await mkdir(stageDir, { recursive: true });
   await cp(path.join(pluginRoot, 'skills'), path.join(stageDir, 'skills'), { recursive: true });
   await cp(path.join(pluginRoot, 'assets'), path.join(stageDir, 'assets'), { recursive: true });
   await writeFile(
     path.join(stageDir, 'plugin.json'),
-    `${JSON.stringify(await buildPortalManifest(root), null, 2)}\n`,
+    `${JSON.stringify(await buildPortalManifest(root, { name }), null, 2)}\n`,
   );
   if (withMcpJson) await cp(path.join(pluginRoot, 'mcp.json'), path.join(stageDir, 'mcp.json'));
 }
@@ -70,7 +77,7 @@ export function assertPortalManifest(manifest, packageVersion, label = 'portal m
 }
 
 // Asserts the staged tree is exactly the distributable portal package.
-export async function assertPortalStage(root, stageDir, packageVersion, { withMcpJson = false } = {}) {
+export async function assertPortalStage(root, stageDir, packageVersion, { withMcpJson = false, name } = {}) {
   const expectedRoot = withMcpJson ? [...portalRootEntries, 'mcp.json'].sort() : portalRootEntries;
   assert.deepEqual((await readdir(stageDir)).sort(), expectedRoot, 'portal package root must contain only the allowed entries');
   const files = await listStagedFiles(stageDir);
@@ -102,7 +109,7 @@ export async function assertPortalStage(root, stageDir, packageVersion, { withMc
   const { apps: _apps, ...expectedInterface } = chatgptManifest.extensions['com.openai'];
   assert.deepEqual(
     manifest,
-    { ...sourceManifest, extensions: { 'com.openai': expectedInterface } },
+    { ...sourceManifest, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': expectedInterface } },
     'portal manifest must be the portable manifest plus the OpenAI interface only',
   );
   const logo = manifest.extensions['com.openai'].interface.logo;

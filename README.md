@@ -151,6 +151,10 @@ from `plugins/memostem` without them. Sources checked 2026-10-15:
 [Submit a plugin](https://developers.openai.com/plugins/deploy/submission).
 Whether the portal needs a root `mcp.json` or shows a Desktop-only label for a
 ZIP is not yet confirmed; `--with-mcp-json` builds the variant that includes it.
+A new version of an existing portal listing must carry that listing's plugin ID
+as its manifest `name`: pass it with `npm run package:portal -- --name=<plugin ID>`.
+The ID is shown only in the portal and is not committed here; the source
+`plugins/memostem/plugin.json` keeps `name: "memostem"` for every other channel.
 The `memostem-chatgpt` marketplace package is kept unchanged for Codex
 marketplace installs. The public
 [MemoStem connection page](https://www.memostem.com/plugins) explains the
