@@ -16,7 +16,8 @@ anything automatically.
 [Privacy](https://www.memostem.com/privacy) ·
 [Terms](https://www.memostem.com/terms) ·
 [Support](https://www.memostem.com/support) ·
-[Security](SECURITY.md)
+[Security](SECURITY.md) ·
+[Contact](mailto:okyong.choi@girapphe.com)
 
 This public repository is the official distribution source for MemoStem's
 chat-host skills, plugin packages, and hosted remote MCP connection metadata.
@@ -411,6 +412,12 @@ local marketplace. Validation permits that Codex-only build suffix while
 requiring the underlying release version to match the Claude and Registry
 manifests. Start a fresh task after reinstalling so its tools and instructions
 come from the new snapshot.
+
+## Contact
+
+For support, partnership, or directory review questions, email
+[okyong.choi@girapphe.com](mailto:okyong.choi@girapphe.com). Report security
+issues as described in [SECURITY.md](SECURITY.md).
 
 ## Publication boundary
 

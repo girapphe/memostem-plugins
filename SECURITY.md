@@ -10,7 +10,8 @@ credentials, or generated authentication state.
 
 ## Reporting a vulnerability
 
-Use GitHub's private vulnerability reporting for this repository. Do not place
+Use GitHub's private vulnerability reporting for this repository, or email
+[okyong.choi@girapphe.com](mailto:okyong.choi@girapphe.com). Do not place
 tokens, personal data, exploit details, or private MemoStem source in a public
 issue.
 
