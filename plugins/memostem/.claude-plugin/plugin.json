@@ -9,6 +9,8 @@
   },
   "homepage": "https://github.com/girapphe/memostem-plugins",
   "repository": "https://github.com/girapphe/memostem-plugins",
+  "privacyPolicyUrl": "https://www.memostem.com/privacy",
+  "icon": ".claude-plugin/icon.png",
   "keywords": [
     "memostem",
     "mcp",
