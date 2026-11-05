@@ -1,6 +1,7 @@
 {
   "name": "memostem",
   "version": "0.6.3",
+  "license": "MIT",
   "description": "Your reviewed knowledge, across AI conversations.",
   "author": {
     "name": "Girapphe",
