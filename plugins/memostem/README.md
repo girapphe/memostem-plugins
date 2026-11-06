@@ -17,9 +17,6 @@ conversations.
 - **Remote MCP connector** (`.mcp.json`): connects to
   `https://www.memostem.com/api/mcp` over Streamable HTTP. Guest capture needs
   no sign-in; account tools use OAuth 2.0 when you choose to connect.
-- **SessionStart hook** (`hooks/hooks.json`): prints a short fixed reminder of
-  the consent rules into the session context. It runs no other program, reads
-  no files, and sends nothing over the network.
 
 ## What is sent, and where
 
