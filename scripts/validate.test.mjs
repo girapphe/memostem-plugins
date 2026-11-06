@@ -26,6 +26,27 @@ test('current public package passes the complete validator', () => {
   assert.match(result.stdout, /public plugin boundary and manifests are valid/u);
 });
 
+test('Claude submission rejects automatic and manifest-declared hooks', async (t) => {
+  for (const kind of ['automatic', 'inline', 'custom path']) {
+    await t.test(kind, async (subtest) => {
+      const temporaryRoot = await copyRepository(subtest, 'claude-hooks');
+      const pluginRoot = path.join(temporaryRoot, 'plugins/memostem');
+      const manifestPath = path.join(pluginRoot, '.claude-plugin/plugin.json');
+      if (kind === 'automatic') {
+        await mkdir(path.join(pluginRoot, 'hooks'));
+        await writeFile(path.join(pluginRoot, 'hooks/hooks.json'), '{"hooks":{}}\n');
+      } else {
+        const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+        manifest.hooks = kind === 'inline' ? { SessionStart: [] } : './custom-hooks.json';
+        await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+      }
+      const result = runValidation(temporaryRoot);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /Claude (plugin must not contain a hooks directory|manifest must not declare hooks)/u);
+    });
+  }
+});
+
 test('public validation rejects maintenance skills and unknown skills', async (t) => {
   const temporaryRoot = await copyRepository(t, 'public-boundary');
   for (const skill of ['memostem-card-hygiene', 'memostem-db-sync', 'memostem-knowledge-graph', 'memostem-protected-release', 'memostem-validation', 'future-developer-workflow']) {

@@ -39,6 +39,11 @@ const registryManifest = await readJson('server.json');
 const packageManifest = await readJson('package.json');
 const compatibilityContract = await readJson('contracts/mcp-compatibility.json');
 
+// Claude reads the plugin folder directly, not the separately staged OpenAI ZIP.
+// Both the automatic hook location and inline/custom manifest hooks are forbidden.
+assert.equal((await readdir(pluginRoot)).includes('hooks'), false, 'Claude plugin must not contain a hooks directory');
+assert.equal(Object.hasOwn(claudeManifest, 'hooks'), false, 'Claude manifest must not declare hooks');
+
 assert.equal(codexMarketplace.name, 'memostem');
 assert.equal(codexMarketplace.interface.displayName, 'MemoStem');
 assert.equal(codexMarketplace.plugins.length, 1);

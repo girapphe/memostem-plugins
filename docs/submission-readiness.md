@@ -29,10 +29,18 @@ npm run package:portal
 git diff --check
 ```
 
-The release metadata is `0.6.3` across the Codex, Claude, portable Agent
-Plugins, package, marketplace, and MCP Registry manifests. Do not tag or publish
-`0.6.3` until the final source SHA passes the private MemoStem compatibility
-check and the publisher intentionally starts the release step.
+The release candidate metadata is `0.6.4` across the Codex, Claude, portable
+Agent Plugins, package, marketplace, and MCP Registry manifests. The existing
+`v0.6.3` tag predates removal of the command hook: do not submit that tag as the
+hook-free build. Record the exact source SHA and tracked branch or tag in the
+Claude portal. Run the private MemoStem compatibility check on the final source
+SHA before tagging or publishing `v0.6.4`. Publishing a GitHub Release also
+triggers the MCP Registry workflow; it is a separate publisher action.
+
+For the existing Claude submission, check its current state. If rejected, use
+Resubmit for review; otherwise use Check for new commits. Record the scanned SHA,
+validation and security findings, and review and publication states separately.
+Do not claim the hook policy finding has cleared without portal evidence.
 
 ## Prepared public material
 
