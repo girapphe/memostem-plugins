@@ -13,6 +13,12 @@ Freeze one public source commit before opening any portal draft. Record it in
 the channel Issue and use the same commit for the uploaded/imported skill,
 listing copy, screenshots, and reviewer testing.
 
+If a ChatGPT or Claude directory URL changes during a release, update the
+consumer-facing links in `README.md` and the app’s canonical map at
+`packages/shared/src/ai-provider-links.ts` in the separate private app repository.
+The app map feeds web, mobile, settings, and provider setup; do not update only
+one surface. A version-only release does not require changing provider URLs.
+
 ```bash
 git fetch origin main
 git rev-parse origin/main
