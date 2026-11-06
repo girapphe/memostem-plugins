@@ -13,17 +13,23 @@ request does not authorize saving a copy, changing a card, or enrolling in pract
    and retry the check after the person completes it. If read permission is
    absent, use the host's OAuth reconnect or reconsent flow; do not request
    write permission for a read-only task. Never request credentials in chat.
-2. When stable topic or tag IDs would help, call `list_knowledge_catalog` and
+2. When the person asks to browse their cards or open the library, use
+   `browse_memostem_cards` if the connected server exposes it. The interactive
+   view lists the owner's active approved cards and opens selected details;
+   it never changes knowledge. Follow the tool's actual pagination and text
+   fallback when the host cannot show the app. If it is unavailable, ask for
+   a subject and use the search workflow below.
+3. When stable topic or tag IDs would help, call `list_knowledge_catalog` and
    select relevant taxonomy from its response. Do not enumerate the entire
    library when the named subject is enough to search.
-3. Call `search_knowledge` for the user's subject and relevant filters from the
+4. Call `search_knowledge` for the user's subject and relevant filters from the
    catalog. Follow the live schema and keep the result set bounded to the
    question. Refine an ambiguous query before fetching many items.
-4. Call `get_knowledge_context` with only the exact relevant result IDs. When
+5. Call `get_knowledge_context` with only the exact relevant result IDs. When
    the user already supplied a valid explicit selection, use that selection
    without an unnecessary broad search. Do not fetch raw source conversations.
    Skip catalog lookup when it adds no useful filter.
-5. Answer from the returned content, retaining supplied item references,
+6. Answer from the returned content, retaining supplied item references,
    lifecycle labels, verification status, and uncertainty. Separate your own explanations or
    deductions from what the retrieved knowledge actually states.
 

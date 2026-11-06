@@ -86,6 +86,17 @@ authenticated session in each supported host. Use H-05 in the
 [host acceptance protocol](channel-status.md#host-acceptance-protocol) to record
 actual rendering, selected-only creation, and text fallback separately.
 
+## Browse approved cards (MCP Apps)
+
+The hosted `browse_memostem_cards` app lets an authenticated owner with
+`knowledge:context:read` browse active approved cards, page through results,
+and open a selected card's details. It is read-only and uses the same owner
+boundary as the existing context tools. ChatGPT may expose a sidebar or
+conversation entry point; Claude can open the standard MCP App from a tool
+invocation. Host support and authentication determine whether those surfaces
+appear. Text-only hosts receive a readable fallback. Verify each host with an
+authenticated account before claiming production availability.
+
 ## Owner-scoped context and lifecycle filters
 
 `get_topic_context` returns only the authenticated owner's knowledge. Omitting

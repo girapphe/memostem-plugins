@@ -125,6 +125,8 @@ https://www.memostem.com/api/mcp
 
 ### ChatGPT
 
+Open the [MemoStem listing in ChatGPT Plugins](https://chatgpt.com/plugins/plugin_asdk_app_6ab2c7ad97a48191a10f7d75a95de2ab?q=memostem).
+
 The OpenAI plugin portal takes a plugin ZIP; the MCP server is connected
 separately (**With MCP**, **Universal**, URL above), not imported from the ZIP.
 Build the ZIP from the `memostem` package with `npm run package:portal`. It
@@ -157,9 +159,18 @@ alone does not list or activate a ChatGPT plugin.
 
 ### Claude
 
+Find MemoStem in the [Claude Connectors Directory](https://claude.ai/directory?q=MemoStem).
+
 Add the same endpoint as a custom connector in Claude and complete MemoStem
 OAuth. Claude can also load the Git marketplace below for Claude Code and
 compatible plugin surfaces.
+
+When a directory listing URL changes as part of a plugin release, update this
+README and the application’s shared provider-link map at
+`packages/shared/src/ai-provider-links.ts` in the private app repository, then run both repositories’
+document and plugin checks. A package version change alone does not change the
+directory URL; keep the public listing identity and install destinations in
+sync when a provider supplies a new link.
 
 ### Kimi
 
