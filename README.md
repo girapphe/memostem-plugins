@@ -89,26 +89,12 @@ and [recovery and status](plugins/memostem/skills/memostem/references/recovery-w
 They are loaded when the request needs them. Both direct-MCP and ChatGPT web
 packages ship the same guides.
 
-### Session reminders in supported runtimes
+### No lifecycle hooks
 
-The direct-MCP package includes a static `SessionStart` hook at
-[`hooks/hooks.json`](plugins/memostem/hooks/hooks.json). In a compatible,
-trusted Codex or Claude Code runtime, it reminds the assistant to use the
-request-specific skill at startup, resume, clear, or compaction. It prints a
-fixed context message using the runtime shell's `printf`; it reads no input
-or files, calls no service, and saves no knowledge. It does not launch a tool
-call or force a save offer.
-
-Codex requires hook trust review before execution. The hook requires a shell
-with `printf`; hosts without that command can use the skill without the hook.
-The portal ZIP omits `hooks/`; it carries the skill guides only.
-A plugin import or successful local command is not proof that a host loaded
-or executed the hook. Proactive offers remain dependent on the host and the
-current conversation.
-
-See the official [OpenAI plugin package guide](https://developers.openai.com/plugins/build/plugins),
-[Codex hook reference](https://learn.chatgpt.com/docs/hooks), and
-[Claude Code hook reference](https://code.claude.com/docs/en/hooks).
+The packages ship no lifecycle hooks. The Claude plugin directory accepts
+command hooks only from Verified organizations, so the earlier `SessionStart`
+reminder was removed; the `memostem` skill carries the same consent and
+retrieval rules on every host.
 
 ## Ask for useful cards
 
