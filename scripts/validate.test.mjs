@@ -181,37 +181,6 @@ test('native adapter retains http transport', async (t) => {
   assert.equal(runValidation(temporaryRoot).status, 1);
 });
 
-test('ChatGPT web package rejects direct MCP declarations and App-reference drift', async (t) => {
-  const cases = [
-    ['direct portable MCP', async (temporaryRoot) => {
-      await writeFile(
-        path.join(temporaryRoot, 'plugins/memostem-chatgpt/mcp.json'),
-        JSON.stringify({ mcpServers: { memostem: { type: 'streamable-http', url: 'https://www.memostem.com/api/mcp' } } }),
-      );
-    }],
-    ['direct native MCP', async (temporaryRoot) => {
-      await writeFile(
-        path.join(temporaryRoot, 'plugins/memostem-chatgpt/.mcp.json'),
-        JSON.stringify({ mcpServers: { memostem: { type: 'http', url: 'https://www.memostem.com/api/mcp' } } }),
-      );
-    }],
-    ['App identifier drift', async (temporaryRoot) => {
-      const filename = path.join(temporaryRoot, 'plugins/memostem-chatgpt/.app.json');
-      const manifest = JSON.parse(await readFile(filename, 'utf8'));
-      manifest.apps.memostem.id = 'plugin_not_an_app_id';
-      await writeFile(filename, JSON.stringify(manifest));
-    }],
-  ];
-  for (const [name, mutate] of cases) {
-    await t.test(name, async (subtest) => {
-      const temporaryRoot = await copyRepository(subtest, `chatgpt-web-${name.replaceAll(' ', '-')}`);
-      await mutate(temporaryRoot);
-      const result = runValidation(temporaryRoot);
-      assert.equal(result.status, 1, name);
-    });
-  }
-});
-
 test('portable package rejects external symlink and embedded credentials', async (t) => {
   await t.test('external symlink', async (subtest) => {
     const temporaryRoot = await copyRepository(subtest, 'portable-link');
@@ -228,26 +197,6 @@ test('portable package rejects external symlink and embedded credentials', async
     assert.equal(result.status, 1);
     assert.match(result.stderr, /possible secret/u);
   });
-});
-
-test('public validation rejects guide and agent drift between distributions', async (t) => {
-  const temporaryRoot = await copyRepository(t, 'skill-guide-drift');
-  const guide = path.join(temporaryRoot, 'plugins', 'memostem-chatgpt', 'skills', 'memostem', 'agents', 'openai.yaml');
-  await writeFile(guide, `${await readFile(guide, 'utf8')}\n# stale web package\n`);
-  const result = runValidation(temporaryRoot);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /skill file drift/u);
-});
-
-test('skill sync restores the web package from the direct-MCP source', async (t) => {
-  const temporaryRoot = await copyRepository(t, 'skill-sync');
-  const webSkill = path.join(temporaryRoot, 'plugins', 'memostem-chatgpt', 'skills', 'memostem');
-  await writeFile(path.join(webSkill, 'agents', 'openai.yaml'), '# stale web package\n');
-  await writeFile(path.join(webSkill, 'orphan.md'), 'removed by sync\n');
-  const sync = spawnSync(process.execPath, ['scripts/sync-skills.mjs'], { cwd: temporaryRoot, encoding: 'utf8' });
-  assert.equal(sync.status, 0, sync.stderr);
-  const result = runValidation(temporaryRoot);
-  assert.equal(result.status, 0, result.stderr);
 });
 
 const packageVersion = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')).version;

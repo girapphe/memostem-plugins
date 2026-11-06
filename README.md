@@ -86,8 +86,8 @@ it, plus every consent rule. It includes focused guides for
 [the guest shelf](plugins/memostem/skills/memostem/references/guest-shelf-workflows.md),
 [retrieval and study](plugins/memostem/skills/memostem/references/retrieval-workflows.md),
 and [recovery and status](plugins/memostem/skills/memostem/references/recovery-workflows.md).
-They are loaded when the request needs them. Both direct-MCP and ChatGPT web
-packages ship the same guides.
+They are loaded when the request needs them. The OpenAI portal ZIP ships the
+same guides.
 
 ### No lifecycle hooks
 
@@ -142,8 +142,8 @@ A new version of an existing portal listing must carry that listing's plugin ID
 as its manifest `name`: pass it with `npm run package:portal -- --name=<plugin ID>`.
 The ID is shown only in the portal and is not committed here; the source
 `plugins/memostem/plugin.json` keeps `name: "memostem"` for every other channel.
-The `memostem-chatgpt` marketplace package is kept unchanged for Codex
-marketplace installs. The public
+The OpenAI listing copy for that ZIP lives in
+`contracts/openai-portal-interface.json`. The public
 [MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
 MemoStem uses mixed, lazy authentication. Guest capture needs no account;
@@ -237,10 +237,8 @@ are not a substitute for this plugin path.
 
 ### ChatGPT marketplace update
 
-The `memostem-chatgpt@memostem` marketplace package is retained for Codex
-marketplace installs. For the OpenAI plugin portal, build the ZIP with
-`npm run package:portal` instead of uploading that package: it carries
-`.app.json`, which the portal cannot currently accept. The OpenAI docs describe
+For the OpenAI plugin portal, build the ZIP with `npm run package:portal`; the
+Codex marketplace lists only `memostem@memostem`. The OpenAI docs describe
 Desktop-only labels for local MCP servers and hooks, not for a remote
 `mcp.json`; whether the portal labels a ZIP Desktop only is unverified until a
 draft is created. Installing a package and completing OAuth are separate steps.
@@ -358,15 +356,12 @@ version and endpoint aligned. It is not listed until the repository carries the
 
 Portable format validation does not establish support in any particular host.
 Kimi's documented import route converts a source package; Gemini and Grok use
-custom MCP connections. Existing Codex and Claude install names are unchanged.
-`plugins/memostem-chatgpt` is a retained marketplace package with root
-`plugin.json`, `.app.json`, and the same skill tree; it is not the portal
-upload. The portal ZIP is built from `plugins/memostem` only
+custom MCP connections. The Codex install name `memostem@memostem` and the
+Claude install name are unchanged; the former `memostem-chatgpt` package was
+removed. The portal ZIP is built from `plugins/memostem` only
 (`npm run package:portal`, output `dist/memostem-<version>-<shortsha>.zip`,
-git-ignored; requires a clean tree). Edit skills only under
-`plugins/memostem/skills`, then run `npm run sync:skills` to copy them into the
-retained package; `npm run check` fails when the two skill trees differ and
-asserts the staged ZIP tree.
+git-ignored; requires a clean tree). Skills have a single copy under
+`plugins/memostem/skills`; `npm run check` asserts the staged ZIP tree.
 
 ## Validate locally
 

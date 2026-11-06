@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="MemoStem Recall Sprout logo">
-  <rect x="32" y="32" width="448" height="448" rx="134" fill="#ffffff"/>
-  <path d="M256 349V230" fill="none" stroke="#5747d9" stroke-width="42" stroke-linecap="round"/>
-  <path d="M256 256c-80-10-131-61-134-134 74-3 134 42 134 134Z" fill="#6d5dfc"/>
-  <path d="M256 208c64-74 134-77 176-54-16 77-77 125-176 109v-55Z" fill="#f53dae"/>
-  <path d="M179 352h154" fill="none" stroke="#21124d" stroke-width="42" stroke-linecap="round"/>
-</svg>

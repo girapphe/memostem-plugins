@@ -8,9 +8,9 @@ import path from 'node:path';
 
 export const portalRootEntries = ['assets', 'plugin.json', 'skills'];
 export const portalForbiddenNames = ['hooks', '.app.json', '.claude-plugin', '.codex-plugin', '.mcp.json'];
-// The public directory listing is "MemoStem"; "for ChatGPT" only tells the
-// marketplace package apart from the main plugin in a Codex marketplace.
-const portalDisplayName = 'MemoStem';
+// OpenAI listing copy for the portal ZIP. It lives outside plugins/memostem so
+// the portable manifest stays the same for every other channel.
+const portalInterfacePath = 'contracts/openai-portal-interface.json';
 const forbiddenManifestKeys = ['clientSecret', 'test_credentials', 'reviewer_instructions'];
 
 async function readJson(file) {
@@ -41,10 +41,8 @@ export function assertPortalName(name) {
 
 export async function buildPortalManifest(root, { name } = {}) {
   const source = await readJson(path.join(root, 'plugins/memostem/plugin.json'));
-  const chatgpt = await readJson(path.join(root, 'plugins/memostem-chatgpt/plugin.json'));
-  const { apps: _apps, ...interfaceOnly } = chatgpt.extensions['com.openai'];
+  const openai = await readJson(path.join(root, portalInterfacePath));
   if (name !== undefined) assertPortalName(name);
-  const openai = { ...interfaceOnly, interface: { ...interfaceOnly.interface, displayName: portalDisplayName } };
   return { ...source, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': openai } };
 }
 
@@ -109,9 +107,7 @@ export async function assertPortalStage(root, stageDir, packageVersion, { withMc
   const manifest = await readJson(path.join(stageDir, 'plugin.json'));
   assertPortalManifest(manifest, packageVersion);
   const sourceManifest = await readJson(path.join(root, 'plugins/memostem/plugin.json'));
-  const chatgptManifest = await readJson(path.join(root, 'plugins/memostem-chatgpt/plugin.json'));
-  const { apps: _apps, ...chatgptOpenai } = chatgptManifest.extensions['com.openai'];
-  const expectedInterface = { ...chatgptOpenai, interface: { ...chatgptOpenai.interface, displayName: portalDisplayName } };
+  const expectedInterface = await readJson(path.join(root, portalInterfacePath));
   assert.deepEqual(
     manifest,
     { ...sourceManifest, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': expectedInterface } },
