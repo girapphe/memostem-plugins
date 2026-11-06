@@ -1,6 +1,6 @@
 # Channel readiness and evidence
 
-Record date: **2026-09-22**. Owner: **@OkYongChoi**, publisher/account operator.
+Historical record date: **2026-09-22**. Owner: **@OkYongChoi**, publisher/account operator.
 This record covers repository preparation plus the scoped production OAuth
 evidence described below. No provider host session or submission portal was
 exercised during implementation. Existing external listings
@@ -48,9 +48,11 @@ failure was observed; these account-dependent tests have not been attempted.
 - `git diff --check` passed. Exact public revisions and CI runs are recorded in
   the PRs linked from [#15](https://github.com/girapphe/memostem-plugins/issues/15).
 
-These checks do not prove model behavior, host installation, store review,
-public listing or deployment. Versions are prepared for 0.6.3;
-no release or registry publication has been performed by this implementation.
+These historical checks do not prove current model behavior, host installation,
+store review, public listing or deployment. The v0.6.3 GitHub release exists and
+contains a command hook. The v0.6.4 release candidate removes it. Current Claude
+portal scan, approval, publication, and MCP Registry state require fresh evidence;
+the historical implementation record above does not establish those states.
 
 Live credential-free preflight on 2026-09-22 confirmed the public product,
 privacy, terms, support and logo URLs; production database health; MCP
