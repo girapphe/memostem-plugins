@@ -127,25 +127,11 @@ https://www.memostem.com/api/mcp
 
 Open the [MemoStem listing in ChatGPT Plugins](https://chatgpt.com/plugins/plugin_asdk_app_6ab2c7ad97a48191a10f7d75a95de2ab?q=memostem).
 
-The OpenAI plugin portal takes a plugin ZIP; the MCP server is connected
-separately (**With MCP**, **Universal**, URL above), not imported from the ZIP.
-Build the ZIP from the `memostem` package with `npm run package:portal`. It
-contains the single `memostem` skill, `assets/`, and a root `plugin.json` with
-the OpenAI interface metadata, and omits `hooks/`, `.app.json`, `.claude-plugin/`,
-`.codex-plugin/`, and `.mcp.json`. The portal rescans the connected MCP server
-daily and offers a manual Rescan. Plugins with lifecycle hooks and packages with
-`apps/.app.json` cannot currently be submitted, which is why the ZIP is staged
-from `plugins/memostem` without them. Sources checked 2026-10-15:
-[Build plugins](https://developers.openai.com/plugins/build/plugins) and
-[Submit a plugin](https://developers.openai.com/plugins/deploy/submission).
-Whether the portal needs a root `mcp.json` or shows a Desktop-only label for a
-ZIP is not yet confirmed; `--with-mcp-json` builds the variant that includes it.
-A new version of an existing portal listing must carry that listing's plugin ID
-as its manifest `name`: pass it with `npm run package:portal -- --name=<plugin ID>`.
-The ID is shown only in the portal and is not committed here; the source
-`plugins/memostem/plugin.json` keeps `name: "memostem"` for every other channel.
-The OpenAI listing copy for that ZIP lives in
-`contracts/openai-portal-interface.json`. The public
+Maintainers publish through the OpenAI plugin portal with a ZIP built by
+`npm run package:portal` (the `memostem` skill, `assets/`, and a generated
+root `plugin.json`; no hooks and no `.app.json`). The MCP server is connected
+separately in the portal (**With MCP**, **Universal**, URL above).
+The public
 [MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
 MemoStem uses mixed, lazy authentication. Guest capture needs no account;
@@ -164,13 +150,6 @@ Find MemoStem in the [Claude Connectors Directory](https://claude.ai/directory?q
 Add the same endpoint as a custom connector in Claude and complete MemoStem
 OAuth. Claude can also load the Git marketplace below for Claude Code and
 compatible plugin surfaces.
-
-When a directory listing URL changes as part of a plugin release, update this
-README and the application’s shared provider-link map at
-`packages/shared/src/ai-provider-links.ts` in the private app repository, then run both repositories’
-document and plugin checks. A package version change alone does not change the
-directory URL; keep the public listing identity and install destinations in
-sync when a provider supplies a new link.
 
 ### Kimi
 
@@ -245,14 +224,6 @@ permission, then calls `create_knowledge_bundle_drafts`. A successful login or
 tool listing alone does not prove that any draft was created. The assistant
 must report the server's actual pending count and review link. Browser forms
 are not a substitute for this plugin path.
-
-### ChatGPT marketplace update
-
-For the OpenAI plugin portal, build the ZIP with `npm run package:portal`; the
-Codex marketplace lists only `memostem@memostem`. The OpenAI docs describe
-Desktop-only labels for local MCP servers and hooks, not for a remote
-`mcp.json`; whether the portal labels a ZIP Desktop only is unverified until a
-draft is created. Installing a package and completing OAuth are separate steps.
 
 ### Claude Code
 
@@ -340,39 +311,16 @@ study, draft status, and save recovery through the available MemoStem tools.
 Developer maintenance skills belong in the private application repository and
 are excluded from every public plugin package.
 
-## Directory publication
+## Publishing
 
-- The remote server metadata is published from `server.json` to the official
-  MCP Registry when a GitHub Release is published.
-- Paste-ready OpenAI, Anthropic and Kimi listing copy, prompts, review cases, and
-  activation gates live in [docs/directory-submissions.md](docs/directory-submissions.md).
-- Five-channel evidence, account prerequisites and follow-up Issues are in
-  [the readiness record](docs/channel-status.md).
-- Provider review and approval are external states. A public GitHub repository
-  or a successful MCP Registry workflow does not prove an OpenAI or Anthropic
-  directory listing is live.
-
-## Portable package
-
-`plugins/memostem` is also an [Agent Plugins 1.0](https://agent-plugins.org/specification)
-package: root `plugin.json`, root `mcp.json`, and the same `skills/` tree.
-The portable MCP config uses `streamable-http`; existing Codex/Claude adapters
-keep `.mcp.json` with `http`. OAuth discovery and credential storage belong to
-the client. No token or OAuth credential is packaged.
-
-`gemini-extension.json` at the repository root is a remote-MCP-only Gemini CLI
-extension manifest (no skill, no credentials); `npm run check` keeps its
-version and endpoint aligned. It is not listed until the repository carries the
-`gemini-cli-extension` topic.
-
-Portable format validation does not establish support in any particular host.
-Kimi's documented import route converts a source package; Gemini and Grok use
-custom MCP connections. The Codex install name `memostem@memostem` and the
-Claude install name are unchanged; the former `memostem-chatgpt` package was
-removed. The portal ZIP is built from `plugins/memostem` only
-(`npm run package:portal`, output `dist/memostem-<version>-<shortsha>.zip`,
-git-ignored; requires a clean tree). Skills have a single copy under
-`plugins/memostem/skills`; `npm run check` asserts the staged ZIP tree.
+- Remote server metadata is published from `server.json` to the official MCP
+  Registry when a GitHub Release is published.
+- `gemini-extension.json` is a remote-MCP-only Gemini CLI extension manifest
+  (no skill, no credentials). It is not listed until the repository carries the
+  `gemini-cli-extension` topic.
+- Provider review and approval are external states: a public repository or a
+  successful registry workflow does not prove a directory listing is live.
+- Bump the release version everywhere with `npm run version:set -- <x.y.z>`.
 
 ## Validate locally
 
@@ -383,27 +331,15 @@ claude plugin validate .
 claude plugin validate plugins/memostem
 ```
 
-The dependency-free repository check validates both marketplaces, cross-platform
-metadata, the complete skill trees, MCP Registry metadata, public/private
-boundaries, symlinks, common secret patterns, and the versioned
-[`contracts/mcp-compatibility.json`](contracts/mcp-compatibility.json) contract.
-That contract names mixed authentication, guest shelf limits, the endpoint,
-OAuth scopes, required tools, MCP Apps
-resource and action bindings, text fallback, and public fixtures that the private
-application validates semantically against its real MCP schemas. It deliberately replaces byte-for-byte cross-repository copies.
+`npm run check` is dependency-free. It validates both marketplaces,
+cross-platform metadata, the skill tree, MCP Registry metadata, the
+public/private boundary, symlinks, common secret patterns, and the versioned
+[`contracts/mcp-compatibility.json`](contracts/mcp-compatibility.json)
+contract, which the private application validates against its real MCP schemas.
 
-Before releasing a public branch that changes the contract or its fixtures, a
+Before releasing a branch that changes the contract or its fixtures, a
 MemoStem maintainer runs the private `Public plugin compatibility` workflow
-with this branch name as `public_plugin_ref`. The workflow checks out this
-repository temporarily; it does not copy plugin sources into the private Git
-history.
-
-For local Codex iteration, the plugin-creator cachebuster helper can append
-`+codex.<timestamp>` to the Codex manifest version before reinstalling from a
-local marketplace. Validation permits that Codex-only build suffix while
-requiring the underlying release version to match the Claude and Registry
-manifests. Start a fresh task after reinstalling so its tools and instructions
-come from the new snapshot.
+with this branch name as `public_plugin_ref`.
 
 ## Contact
 

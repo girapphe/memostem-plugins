@@ -82,9 +82,8 @@ knowledge or enroll it in practice. Host tool-approval controls still apply.
 The public validator rejects missing or changed UI bindings. The private
 application's compatibility check verifies the bindings against the MCP server;
 its browser tests exercise picker behavior. Neither check substitutes for an
-authenticated session in each supported host. Use H-05 in the
-[host acceptance protocol](channel-status.md#host-acceptance-protocol) to record
-actual rendering, selected-only creation, and text fallback separately.
+authenticated session in each supported host. Record actual rendering,
+selected-only creation, and text fallback separately for each host.
 
 ## Browse approved cards (MCP Apps)
 
@@ -233,9 +232,7 @@ and complete the required authentication. For Business/Enterprise, an admin
 must provision the connector before members can use it. Test in general chat,
 not Grok Build. Use `provider: "other"`; do not invent a `grok` enum value.
 Public catalog submission is a separate distribution path (a PR to
-`xai-org/plugin-marketplace`; see the
-[submission kit](directory-submissions.md#gemini-and-grok-connection-readiness)),
-not yet exercised for MemoStem.
+`xai-org/plugin-marketplace`), not yet exercised for MemoStem.
 [Official custom connector guide](https://docs.x.ai/grok/connectors).
 
 ### Verify save and retrieve

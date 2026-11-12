@@ -74,19 +74,6 @@ test('public validation rejects release version drift', async (t) => {
   assert.match(result.stderr, /9\.9\.9/u);
 });
 
-test('public validation rejects an incomplete submission readiness contract', async (t) => {
-  const temporaryRoot = await copyRepository(t, 'submission-readiness');
-  const readinessPath = path.join(temporaryRoot, 'docs', 'submission-readiness.md');
-  const readiness = await readFile(readinessPath, 'utf8');
-  await writeFile(
-    readinessPath,
-    readiness.replace('Apps Management write access', 'provider portal access'),
-  );
-  const result = runValidation(temporaryRoot);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /submission readiness must describe Apps Management write access/u);
-});
-
 test('public validation rejects weakened consent instructions', async (t) => {
   const temporaryRoot = await copyRepository(t, 'consent-contract');
   const skillPath = path.join(temporaryRoot, 'plugins', 'memostem', 'skills', 'memostem', 'SKILL.md');
@@ -138,40 +125,6 @@ test('public validation rejects loss of retrieval permission or read-only bounda
   }
 });
 
-test('portable manifests reject schema, metadata, transport and path drift', async (t) => {
-  const cases = [
-    ['plugin schema missing', 'plugin.json', d => { delete d.$schema; }],
-    ['plugin schema version', 'plugin.json', d => { d.$schema = 'https://agent-plugins.org/schemas/9.0.0/plugin.schema.json'; }],
-    ['name missing', 'plugin.json', d => { delete d.name; }],
-    ['name drift', 'plugin.json', d => { d.name = 'another-plugin'; }],
-    ['release drift', 'plugin.json', d => { d.version = '9.9.9'; }],
-    ['description drift', 'plugin.json', d => { d.description = 'Different product'; }],
-    ['external skills path', 'plugin.json', d => { d.skills = '../private/skills'; }],
-    ['external MCP path', 'plugin.json', d => { d.mcpServers = '../private/mcp.json'; }],
-    ['inline MCP', 'plugin.json', d => { d.mcpServers = { memostem: {} }; }],
-    ['MCP schema missing', 'mcp.json', d => { delete d.$schema; }],
-    ['MCP schema mismatch', 'mcp.json', d => { d.$schema = 'https://agent-plugins.org/schemas/9.0.0/mcp.schema.json'; }],
-    ['servers missing', 'mcp.json', d => { delete d.mcpServers; }],
-    ['endpoint drift', 'mcp.json', d => { d.mcpServers.memostem.url = 'https://example.com/mcp'; }],
-    ['native transport in portable config', 'mcp.json', d => { d.mcpServers.memostem.type = 'http'; }],
-    ['missing transport', 'mcp.json', d => { delete d.mcpServers.memostem.type; }],
-    ['credential header', 'mcp.json', d => { d.mcpServers.memostem.headers = { Authorization: 'Bearer example-only' }; }],
-    ['extra server', 'mcp.json', d => { d.mcpServers.other = { type: 'stdio', command: '../private/server' }; }],
-  ];
-  for (const [name, file, mutate] of cases) {
-    await t.test(name, async (subtest) => {
-      const temporaryRoot = await copyRepository(subtest, 'portable');
-      const filename = path.join(temporaryRoot, 'plugins/memostem', file);
-      const manifest = JSON.parse(await readFile(filename, 'utf8'));
-      mutate(manifest);
-      await writeFile(filename, JSON.stringify(manifest));
-      const result = runValidation(temporaryRoot);
-      assert.equal(result.status, 1, name);
-      assert.match(result.stderr, /portable manifest|portable MCP/u);
-    });
-  }
-});
-
 test('native adapter retains http transport', async (t) => {
   const temporaryRoot = await copyRepository(t, 'native-transport');
   const filename = path.join(temporaryRoot, 'plugins/memostem/.mcp.json');
@@ -181,7 +134,7 @@ test('native adapter retains http transport', async (t) => {
   assert.equal(runValidation(temporaryRoot).status, 1);
 });
 
-test('portable package rejects external symlink and embedded credentials', async (t) => {
+test('plugin package rejects external symlink and embedded credentials', async (t) => {
   await t.test('external symlink', async (subtest) => {
     const temporaryRoot = await copyRepository(subtest, 'portable-link');
     await symlink(root, path.join(temporaryRoot, 'plugins/memostem/external'));
@@ -214,13 +167,11 @@ test('portal package stages exactly the memostem skill, assets and manifest', as
   assert.ok(files.includes('plugin.json'));
   assert.ok(files.includes('skills/memostem/SKILL.md'));
   assert.equal(files.includes('mcp.json'), false);
+  assert.equal(files.includes('.mcp.json'), false);
   const manifest = JSON.parse(await readFile(path.join(stage, 'plugin.json'), 'utf8'));
   assert.equal('apps' in manifest.extensions['com.openai'], false);
   assert.equal(manifest.extensions['com.openai'].interface.displayName, 'MemoStem');
   assert.equal(manifest.extensions['com.openai'].interface.supportURL, 'https://www.memostem.com/support');
-
-  const withMcp = await stagePortal(t, { withMcpJson: true });
-  assert.ok((await assertPortalStage(root, withMcp, packageVersion, { withMcpJson: true })).includes('mcp.json'));
 });
 
 test('portal package takes an existing listing name without changing the source manifest', async (t) => {
@@ -228,9 +179,9 @@ test('portal package takes an existing listing name without changing the source 
   const stage = await stagePortal(t, { name });
   await assertPortalStage(root, stage, packageVersion, { name });
   assert.equal(JSON.parse(await readFile(path.join(stage, 'plugin.json'), 'utf8')).name, name);
-  await assert.rejects(assertPortalStage(root, stage, packageVersion), /portable manifest/u);
+  await assert.rejects(assertPortalStage(root, stage, packageVersion), /portal manifest/u);
   await assert.rejects(stagePortal(t, { name: 'Bad Name' }), /invalid portal plugin name/u);
-  const source = JSON.parse(await readFile(path.join(root, 'plugins/memostem/plugin.json'), 'utf8'));
+  const source = JSON.parse(await readFile(path.join(root, 'plugins/memostem/.codex-plugin/plugin.json'), 'utf8'));
   assert.equal(source.name, 'memostem');
 });
 
@@ -241,7 +192,7 @@ test('portal package rejects forbidden entries, extra skills and skill drift', a
     ['.claude-plugin', async (stage) => { await mkdir(path.join(stage, '.claude-plugin')); await writeFile(path.join(stage, '.claude-plugin/plugin.json'), '{}'); }],
     ['.codex-plugin', async (stage) => { await mkdir(path.join(stage, '.codex-plugin')); await writeFile(path.join(stage, '.codex-plugin/plugin.json'), '{}'); }],
     ['.mcp.json', async (stage) => writeFile(path.join(stage, '.mcp.json'), '{}')],
-    ['mcp.json without the flag', async (stage) => writeFile(path.join(stage, 'mcp.json'), '{}')],
+    ['mcp.json', async (stage) => writeFile(path.join(stage, 'mcp.json'), '{}')],
     ['hooks nested in a skill', async (stage) => { await mkdir(path.join(stage, 'skills/memostem/hooks')); await writeFile(path.join(stage, 'skills/memostem/hooks/a.json'), '{}'); }],
   ];
   for (const [name, mutate] of forbidden) {
@@ -315,16 +266,6 @@ test('portal packager builds a deterministic ZIP from a clean tree', async (t) =
   assert.match(first.stdout, /dist\/memostem-\d+\.\d+\.\d+-[0-9a-f]{7}\.zip/u);
   await new Promise((resolve) => setTimeout(resolve, 1100));
   assert.match(build().stdout, new RegExp(sha, 'u'), 'same commit must give the same SHA-256');
-});
-
-test('public validation rejects a Team-or-Enterprise-only Claude submission claim', async (t) => {
-  const temporaryRoot = await copyRepository(t, 'claude-plan');
-  const kitPath = path.join(temporaryRoot, 'docs', 'directory-submissions.md');
-  const kit = await readFile(kitPath, 'utf8');
-  await writeFile(kitPath, `${kit}\nUse a Claude Team or Enterprise organization.\n`);
-  const result = runValidation(temporaryRoot);
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, /Team or Enterprise/u);
 });
 
 test('Gemini extension manifest rejects version, endpoint, header and transport drift', async (t) => {
