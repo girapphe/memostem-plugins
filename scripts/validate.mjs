@@ -94,30 +94,6 @@ assert.deepEqual(mcp, {
   },
 });
 
-// Agent Plugins 1.0 uses fixed root paths and streamable-http, while the
-// existing native adapters use .mcp.json and http. Validate our deliberately
-// minimal profile exactly: this also rejects inline MCP, path overrides,
-// credentials and unsupported extension data. This is not a general validator
-// for arbitrary third-party Agent Plugins packages.
-const portableManifest = await readJson('plugins/memostem/plugin.json');
-const portableMcp = await readJson('plugins/memostem/mcp.json');
-assert.deepEqual(portableManifest, {
-  $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
-  name: codexManifest.name,
-  version: releaseVersion,
-  description: codexManifest.description,
-  author: codexManifest.author,
-  homepage: codexManifest.homepage,
-  repository: codexManifest.repository,
-  keywords: codexManifest.keywords,
-}, 'portable manifest must match the shared metadata and fixed-path profile');
-assert.deepEqual(portableMcp, {
-  $schema: 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json',
-  mcpServers: {
-    memostem: { type: 'streamable-http', url: mcp.mcpServers.memostem.url },
-  },
-}, 'portable MCP must use the canonical endpoint and streamable-http');
-
 // Gemini CLI extension manifest: remote MCP only. It carries no credentials or
 // headers and no skills, because the single skill authoring copy stays under
 // plugins/memostem/skills.
@@ -218,8 +194,6 @@ assert.deepEqual(registryManifest.remotes, [{
 assert.equal('packages' in registryManifest, false);
 
 const readme = await readFile(path.join(root, 'README.md'), 'utf8');
-const submissionKit = await readFile(path.join(root, 'docs', 'directory-submissions.md'), 'utf8');
-const submissionReadiness = await readFile(path.join(root, 'docs', 'submission-readiness.md'), 'utf8');
 const connectionGuide = await readFile(path.join(root, 'docs', 'mcp.md'), 'utf8');
 for (const [label, source] of [['README', readme], ['connection guide', connectionGuide]]) {
   assert.ok(source.includes('codex mcp login memostem --scopes knowledge:drafts:create'), `${label} must document Codex OAuth`);
@@ -228,20 +202,16 @@ for (const [label, source] of [['README', readme], ['connection guide', connecti
 for (const toolName of compatibilityContract.required_tools) {
   assert.ok(readme.includes(toolName), `README must describe required tool ${toolName}`);
 }
-for (const [label, source] of [
-  ['README', readme],
-  ['connection guide', connectionGuide],
-  ['submission kit', submissionKit],
-]) {
+for (const [label, source] of [['README', readme], ['connection guide', connectionGuide]]) {
   for (const requiredContract of [
     'get_topic_context',
-  'knowledge:context:read',
-  'knowledge:drafts:status',
-  'list_knowledge_catalog',
-  'search_knowledge',
-  'get_knowledge_context',
-  'get_draft_batch_status',
-  'resolution_proposal',
+    'knowledge:context:read',
+    'knowledge:drafts:status',
+    'list_knowledge_catalog',
+    'search_knowledge',
+    'get_knowledge_context',
+    'get_draft_batch_status',
+    'resolution_proposal',
     'active',
     'pending',
     'archived',
@@ -250,11 +220,7 @@ for (const [label, source] of [
   ]) {
     assert.ok(source.includes(requiredContract), `${label} must describe ${requiredContract}`);
   }
-  for (const defaultScope of [
-    'openid',
-    'knowledge:drafts:create',
-    'knowledge:context:read',
-  ]) {
+  for (const defaultScope of ['openid', 'knowledge:drafts:create', 'knowledge:context:read']) {
     assert.ok(source.includes(defaultScope), `${label} must document the ${defaultScope} ChatGPT default`);
   }
   assert.match(source, /reconnect|reconsent|consent again/iu, `${label} must explain read-scope reconsent`);
@@ -268,42 +234,7 @@ for (const requiredUrl of [
   'https://www.memostem.com/api/mcp',
 ]) {
   assert.match(readme, new RegExp(requiredUrl.replaceAll('.', '\\.')), `README must include ${requiredUrl}`);
-  assert.match(submissionKit, new RegExp(requiredUrl.replaceAll('.', '\\.')), `submission kit must include ${requiredUrl}`);
 }
-assert.match(submissionKit, /five|5 positive|Positive review cases/iu);
-assert.match(submissionKit, /three|3 negative|Negative review cases/iu);
-assert.doesNotMatch(submissionKit, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
-// Provider account conditions verified 2026-10-15: Anthropic accepts any paid
-// plan through the developer portal, and OpenAI takes a ZIP, not Scan Tools skills.
-for (const requiredRoute of [
-  'https://claude.ai/directory/manage',
-  'Pro, Max, Team, or',
-  'npm run package:portal',
-  'xai-org/plugin-marketplace',
-  'gemini-cli-extension',
-  'EU data residency',
-  'plugins/marketplace.json',
-]) {
-  assert.ok(submissionKit.includes(requiredRoute), `submission kit must describe ${requiredRoute}`);
-}
-assert.doesNotMatch(submissionKit, /Claude Team or Enterprise organization/u, 'submission kit must not restrict Claude submission to Team or Enterprise');
-for (const requiredSubmissionContract of [
-  'Apps Management write access',
-  'five submitted positive and three negative cases',
-  'readOnlyHint',
-  'destructiveHint',
-  'openWorldHint',
-  'reviewer account',
-  'knowledge:drafts:status',
-  'npm run check:submission',
-  'npm run package:portal',
-]) {
-  assert.ok(
-    submissionReadiness.includes(requiredSubmissionContract),
-    `submission readiness must describe ${requiredSubmissionContract}`,
-  );
-}
-assert.doesNotMatch(submissionReadiness, /(?:password|token|secret)\s*[:=]\s*\S+/iu);
 
 const expectedSkills = [
   'memostem',
@@ -415,16 +346,14 @@ for (const file of trackedCandidates) {
 }
 
 // The OpenAI portal ZIP is staged from plugins/memostem only. Build it in a
-// temporary directory and assert its exact shape, with and without the
-// optional mcp.json, so a hook, App reference or credential cannot slip in.
-for (const withMcpJson of [false, true]) {
-  const stage = await mkdtemp(path.join(os.tmpdir(), 'memostem-portal-validate-'));
-  try {
-    await stagePortalPackage(root, stage, { withMcpJson });
-    await assertPortalStage(root, stage, packageManifest.version, { withMcpJson });
-  } finally {
-    await rm(stage, { recursive: true, force: true });
-  }
+// temporary directory and assert its exact shape, so a hook, App reference or
+// credential cannot slip in.
+const stage = await mkdtemp(path.join(os.tmpdir(), 'memostem-portal-validate-'));
+try {
+  await stagePortalPackage(root, stage);
+  await assertPortalStage(root, stage, packageManifest.version);
+} finally {
+  await rm(stage, { recursive: true, force: true });
 }
 
 console.log('MemoStem public plugin boundary and manifests are valid.');

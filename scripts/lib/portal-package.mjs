@@ -4,12 +4,15 @@ import path from 'node:path';
 
 // The OpenAI plugin portal takes a ZIP whose skills live inside the archive;
 // the MCP server is connected separately (With MCP, Universal URL). The ZIP is
-// staged from plugins/memostem only: no committed third copy exists.
+// staged from plugins/memostem only: no committed third copy exists. Its root
+// plugin.json is derived from the Codex manifest plus the OpenAI listing copy.
 
 export const portalRootEntries = ['assets', 'plugin.json', 'skills'];
+const sharedManifestFields = ['name', 'version', 'description', 'author', 'homepage', 'repository', 'keywords'];
+const portalSchema = 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json';
 export const portalForbiddenNames = ['hooks', '.app.json', '.claude-plugin', '.codex-plugin', '.mcp.json'];
 // OpenAI listing copy for the portal ZIP. It lives outside plugins/memostem so
-// the portable manifest stays the same for every other channel.
+// the native manifests stay the same for every other channel.
 const portalInterfacePath = 'contracts/openai-portal-interface.json';
 const forbiddenManifestKeys = ['clientSecret', 'test_credentials', 'reviewer_instructions'];
 
@@ -40,13 +43,16 @@ export function assertPortalName(name) {
 }
 
 export async function buildPortalManifest(root, { name } = {}) {
-  const source = await readJson(path.join(root, 'plugins/memostem/plugin.json'));
+  const codex = await readJson(path.join(root, 'plugins/memostem/.codex-plugin/plugin.json'));
   const openai = await readJson(path.join(root, portalInterfacePath));
   if (name !== undefined) assertPortalName(name);
-  return { ...source, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': openai } };
+  const shared = Object.fromEntries(sharedManifestFields.map((field) => [field, codex[field]]));
+  // Local Codex iteration may append a +codex.<stamp> build suffix; ship the release version.
+  shared.version = shared.version.replace(/\+codex\.[a-z0-9-]+$/u, '');
+  return { $schema: portalSchema, ...shared, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': openai } };
 }
 
-export async function stagePortalPackage(root, stageDir, { withMcpJson = false, name } = {}) {
+export async function stagePortalPackage(root, stageDir, { name } = {}) {
   const pluginRoot = path.join(root, 'plugins/memostem');
   await mkdir(stageDir, { recursive: true });
   await cp(path.join(pluginRoot, 'skills'), path.join(stageDir, 'skills'), { recursive: true });
@@ -55,7 +61,6 @@ export async function stagePortalPackage(root, stageDir, { withMcpJson = false, 
     path.join(stageDir, 'plugin.json'),
     `${JSON.stringify(await buildPortalManifest(root, { name }), null, 2)}\n`,
   );
-  if (withMcpJson) await cp(path.join(pluginRoot, 'mcp.json'), path.join(stageDir, 'mcp.json'));
 }
 
 function findForbidden(value, trail = []) {
@@ -79,9 +84,8 @@ export function assertPortalManifest(manifest, packageVersion, label = 'portal m
 }
 
 // Asserts the staged tree is exactly the distributable portal package.
-export async function assertPortalStage(root, stageDir, packageVersion, { withMcpJson = false, name } = {}) {
-  const expectedRoot = withMcpJson ? [...portalRootEntries, 'mcp.json'].sort() : portalRootEntries;
-  assert.deepEqual((await readdir(stageDir)).sort(), expectedRoot, 'portal package root must contain only the allowed entries');
+export async function assertPortalStage(root, stageDir, packageVersion, { name } = {}) {
+  assert.deepEqual((await readdir(stageDir)).sort(), portalRootEntries, 'portal package root must contain only the allowed entries');
   const files = await listStagedFiles(stageDir);
   for (const file of files) {
     const segments = file.split('/');
@@ -106,22 +110,13 @@ export async function assertPortalStage(root, stageDir, packageVersion, { withMc
 
   const manifest = await readJson(path.join(stageDir, 'plugin.json'));
   assertPortalManifest(manifest, packageVersion);
-  const sourceManifest = await readJson(path.join(root, 'plugins/memostem/plugin.json'));
-  const expectedInterface = await readJson(path.join(root, portalInterfacePath));
   assert.deepEqual(
     manifest,
-    { ...sourceManifest, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': expectedInterface } },
-    'portal manifest must be the portable manifest plus the OpenAI interface only',
+    await buildPortalManifest(root, { name }),
+    'portal manifest must be the shared Codex metadata plus the OpenAI interface only',
   );
   const logo = manifest.extensions['com.openai'].interface.logo;
   assert.ok(files.includes(logo.replace(/^\.\//u, '')), `portal manifest logo must be packaged: ${logo}`);
 
-  if (withMcpJson) {
-    assert.deepEqual(
-      await readJson(path.join(stageDir, 'mcp.json')),
-      await readJson(path.join(root, 'plugins/memostem/mcp.json')),
-      'portal mcp.json must equal the portable MCP config',
-    );
-  }
   return files;
 }
