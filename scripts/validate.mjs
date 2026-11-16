@@ -320,6 +320,16 @@ const proactiveCaptureAgent = await readFile(
 assert.match(proactiveCaptureAgent, /allow_implicit_invocation:\s*true/u);
 assert.match(proactiveCaptureAgent, /Reply in the user's current language, or the host locale/u);
 
+// The Claude directory refuses a plugin folder holding files other than
+// Markdown, text, JSON, YAML or PNG/JPEG/GIF/WebP/ICO images (for example SVG
+// or scripts) unless the organization is Verified.
+const claudeDirectoryFile = /\.(md|txt|json|ya?ml|png|jpe?g|gif|webp|ico)$|\/(LICENSE|\.gitignore)$/iu;
+for (const file of await walk(pluginRoot)) {
+  const relative = path.relative(pluginRoot, file).replaceAll('\\', '/');
+  if (relative === '.DS_Store' || relative.split('/').includes('.omc')) continue;
+  assert.match(`/${relative}`, claudeDirectoryFile, `plugins/memostem/${relative} is not an allowed Claude directory file type`);
+}
+
 const publicFiles = await walk(root);
 const trackedCandidates = publicFiles.filter((file) => !file.includes(`${path.sep}.git${path.sep}`));
 const forbiddenRoots = [

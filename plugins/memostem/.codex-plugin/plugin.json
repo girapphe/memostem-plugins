@@ -34,7 +34,7 @@
     "privacyPolicyURL": "https://www.memostem.com/privacy",
     "termsOfServiceURL": "https://www.memostem.com/terms",
     "brandColor": "#21124D",
-    "logo": "./assets/logo-mark.svg",
+    "logo": "./assets/logo-mark.png",
     "defaultPrompt": [
       "Start MemoStem. Connect if needed, then show my topics or explain how to save knowledge.",
       "Check my MemoStem connection, then save the general knowledge I selected as an atomic memo draft.",
