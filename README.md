@@ -130,7 +130,10 @@ Open the [MemoStem listing in ChatGPT Plugins](https://chatgpt.com/plugins/plugi
 Maintainers publish through the OpenAI plugin portal with a ZIP built by
 `npm run package:portal` (the `memostem` skill, `assets/`, and a generated
 root `plugin.json`; no hooks and no `.app.json`). The MCP server is connected
-separately in the portal (**With MCP**, **Universal**, URL above).
+separately in the portal (**With MCP**, **Universal**, URL above). A new
+version of an existing listing must keep its MCP declaration: pass
+`--name=<portal package name>` and `--with-mcp-json` to add the generated
+root `mcp.json`.
 The public
 [MemoStem connection page](https://www.memostem.com/plugins) explains the
 privacy boundary and points signed-in users to the in-product setup guide.
