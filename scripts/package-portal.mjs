@@ -12,11 +12,13 @@ import { secretPatterns } from './lib/secret-patterns.mjs';
 // dist/memostem-<version>-<shortsha>.zip (never committed). The MCP server is
 // connected separately in the portal, so no MCP config ships in the archive.
 // --name=<portal plugin ID> sets the manifest name an existing listing requires.
+// --with-mcp-json adds the MCP declaration an existing listing requires.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const nameArg = args.find((arg) => arg.startsWith('--name='));
 const name = nameArg?.slice('--name='.length);
-const unknown = args.filter((arg) => arg !== nameArg);
+const withMcpJson = args.includes('--with-mcp-json');
+const unknown = args.filter((arg) => arg !== nameArg && arg !== '--with-mcp-json');
 assert.deepEqual(unknown, [], `unknown arguments: ${unknown.join(' ')}`);
 
 function run(command, args, options = {}) {
@@ -32,14 +34,14 @@ assert.equal(
 );
 const shortSha = run('git', ['rev-parse', '--short=7', 'HEAD']).trim();
 const version = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')).version;
-const zipName = `memostem-${version}-${shortSha}${name ? '-portal-name' : ''}.zip`;
+const zipName = `memostem-${version}-${shortSha}${name ? '-portal-name' : ''}${withMcpJson ? '-with-mcp-json' : ''}.zip`;
 const distDir = path.join(root, 'dist');
 const zipPath = path.join(distDir, zipName);
 
 const stage = await mkdtemp(path.join(os.tmpdir(), 'memostem-portal-'));
 try {
-  await stagePortalPackage(root, stage, { name });
-  const files = await assertPortalStage(root, stage, version, { name });
+  await stagePortalPackage(root, stage, { name, withMcpJson });
+  const files = await assertPortalStage(root, stage, version, { name, withMcpJson });
   for (const file of files) {
     const source = await readFile(path.join(stage, file), 'utf8');
     for (const pattern of secretPatterns) {
@@ -64,7 +66,7 @@ try {
   const sha256 = createHash('sha256').update(await readFile(zipPath)).digest('hex');
   await writeFile(`${zipPath}.sha256`, `${sha256}  ${zipName}\n`);
   console.log(`Portal package: ${path.relative(root, zipPath)}`);
-  console.log(`Source commit: ${shortSha} (version ${version}, name ${name ?? 'memostem'})`);
+  console.log(`Source commit: ${shortSha} (version ${version}, name ${name ?? 'memostem'}, mcp.json ${withMcpJson ? 'included' : 'omitted'})`);
   console.log('Files:');
   for (const file of files) console.log(`  ${file}`);
   console.log(`SHA-256: ${sha256}`);

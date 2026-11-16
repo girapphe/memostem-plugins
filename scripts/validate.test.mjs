@@ -185,6 +185,16 @@ test('portal package takes an existing listing name without changing the source 
   assert.equal(source.name, 'memostem');
 });
 
+test('portal package can ship the generated MCP declaration and never local state', async (t) => {
+  const stage = await stagePortal(t, { withMcpJson: true });
+  const files = await assertPortalStage(root, stage, packageVersion, { withMcpJson: true });
+  assert.ok(files.includes('mcp.json'));
+  assert.equal(files.some((file) => file.split('/').includes('.omc')), false);
+  const mcp = JSON.parse(await readFile(path.join(stage, 'mcp.json'), 'utf8'));
+  assert.equal(mcp.mcpServers.memostem.url, 'https://www.memostem.com/api/mcp');
+  await assert.rejects(assertPortalStage(root, stage, packageVersion), /allowed entries/u);
+});
+
 test('portal package rejects forbidden entries, extra skills and skill drift', async (t) => {
   const forbidden = [
     ['hooks', async (stage) => { await mkdir(path.join(stage, 'hooks')); await writeFile(path.join(stage, 'hooks/hooks.json'), '{}'); }],

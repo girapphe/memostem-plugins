@@ -23,6 +23,7 @@ async function readJson(file) {
 async function walkFiles(directory, base = directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
+    if (entry.name === '.omc') continue; // ignored local tooling state, never packaged
     const absolute = path.join(directory, entry.name);
     const metadata = await lstat(absolute);
     assert.equal(metadata.isSymbolicLink(), false, `symlinks are not allowed: ${absolute}`);
@@ -52,11 +53,29 @@ export async function buildPortalManifest(root, { name } = {}) {
   return { $schema: portalSchema, ...shared, ...(name === undefined ? {} : { name }), extensions: { 'com.openai': openai } };
 }
 
-export async function stagePortalPackage(root, stageDir, { name } = {}) {
+// An existing portal listing rejects a ZIP that omits its MCP declaration, so
+// `--with-mcp-json` ships the portable config. It is generated from the
+// committed `.mcp.json` endpoint and is never committed as a second copy.
+export async function buildPortalMcpJson(root) {
+  const mcp = await readJson(path.join(root, 'plugins/memostem/.mcp.json'));
+  return {
+    $schema: 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json',
+    mcpServers: { memostem: { type: 'streamable-http', url: mcp.mcpServers.memostem.url } },
+  };
+}
+
+// Local tooling (for example .omc/state) can leave ignored files in the tree;
+// they must never reach the archive.
+const skipLocalState = (source) => !source.split(path.sep).includes('.omc');
+
+export async function stagePortalPackage(root, stageDir, { name, withMcpJson = false } = {}) {
   const pluginRoot = path.join(root, 'plugins/memostem');
   await mkdir(stageDir, { recursive: true });
-  await cp(path.join(pluginRoot, 'skills'), path.join(stageDir, 'skills'), { recursive: true });
-  await cp(path.join(pluginRoot, 'assets'), path.join(stageDir, 'assets'), { recursive: true });
+  await cp(path.join(pluginRoot, 'skills'), path.join(stageDir, 'skills'), { recursive: true, filter: skipLocalState });
+  await cp(path.join(pluginRoot, 'assets'), path.join(stageDir, 'assets'), { recursive: true, filter: skipLocalState });
+  if (withMcpJson) {
+    await writeFile(path.join(stageDir, 'mcp.json'), `${JSON.stringify(await buildPortalMcpJson(root), null, 2)}\n`);
+  }
   await writeFile(
     path.join(stageDir, 'plugin.json'),
     `${JSON.stringify(await buildPortalManifest(root, { name }), null, 2)}\n`,
@@ -84,8 +103,9 @@ export function assertPortalManifest(manifest, packageVersion, label = 'portal m
 }
 
 // Asserts the staged tree is exactly the distributable portal package.
-export async function assertPortalStage(root, stageDir, packageVersion, { name } = {}) {
-  assert.deepEqual((await readdir(stageDir)).sort(), portalRootEntries, 'portal package root must contain only the allowed entries');
+export async function assertPortalStage(root, stageDir, packageVersion, { name, withMcpJson = false } = {}) {
+  const expectedRoot = withMcpJson ? [...portalRootEntries, 'mcp.json'].sort() : portalRootEntries;
+  assert.deepEqual((await readdir(stageDir)).sort(), expectedRoot, 'portal package root must contain only the allowed entries');
   const files = await listStagedFiles(stageDir);
   for (const file of files) {
     const segments = file.split('/');
@@ -115,6 +135,13 @@ export async function assertPortalStage(root, stageDir, packageVersion, { name }
     await buildPortalManifest(root, { name }),
     'portal manifest must be the shared Codex metadata plus the OpenAI interface only',
   );
+  if (withMcpJson) {
+    assert.deepEqual(
+      await readJson(path.join(stageDir, 'mcp.json')),
+      await buildPortalMcpJson(root),
+      'portal mcp.json must equal the generated MCP declaration',
+    );
+  }
   const logo = manifest.extensions['com.openai'].interface.logo;
   assert.ok(files.includes(logo.replace(/^\.\//u, '')), `portal manifest logo must be packaged: ${logo}`);
 
