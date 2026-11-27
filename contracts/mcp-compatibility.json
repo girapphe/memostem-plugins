@@ -53,5 +53,35 @@
     "create_tool": "create_knowledge_bundle_drafts",
     "fallback": "text_selection"
   },
+  "mcp_app_selection": {
+    "confirm_tool": "confirm_knowledge_bundle_selection",
+    "visibility": [
+      "app"
+    ],
+    "token_source": "review_tool_result_meta",
+    "approval": "owner_inbox_approval_checks",
+    "result_statuses": [
+      "approved",
+      "partial",
+      "pending"
+    ],
+    "result_fields": [
+      "status",
+      "batch_id",
+      "created",
+      "bundle_count",
+      "approved_count",
+      "pending_count",
+      "failed_count",
+      "candidates",
+      "knowledge_path",
+      "knowledge_url",
+      "review_path",
+      "review_url",
+      "review_flags"
+    ],
+    "knowledge_path": "/my-knowledge",
+    "fallback_tool": "create_knowledge_bundle_drafts"
+  },
   "onboarding_resource_uri": "ui://memostem/onboarding.html"
 }

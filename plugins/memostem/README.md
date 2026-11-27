@@ -23,7 +23,10 @@ conversations.
 Only the knowledge you explicitly select, or name in a direct save request, is
 sent to the MemoStem MCP endpoint above. The plugin never uploads a full
 conversation or transcript, never sends secrets or personal material, never
-approves drafts automatically, and never publishes your knowledge. Nothing is
+approves drafts automatically, and never publishes your knowledge. Drafts the
+assistant creates wait in your Candidate Inbox; only your own Add click in the
+MemoStem picker can save checked items straight to My Knowledge, and the
+assistant tells you which happened only from the actual result. Nothing is
 sent to any other destination.
 
 ## Links

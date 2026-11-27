@@ -217,6 +217,15 @@ candidates, follow [candidate selection](references/capture-workflows.md#let-the
 in an MCP Apps host, the person's Add click is consent for only the checked
 candidates, and the App saves them; do not call a creation tool again.
 
+With a connected account in a host that renders MCP Apps, prefer showing the
+candidates with `review_knowledge_bundle_candidates`, even for a direct save
+request, so the person confirms in the picker: their Add click can save the
+checked items straight to My Knowledge, while a model creation call always
+lands in Candidate Inbox as pending. Never call
+`confirm_knowledge_bundle_selection` yourself; it is app-only, used solely by
+the picker's Add click, and a model call is rejected. In a text-only host,
+continue with the creation tools.
+
 ## Connection, guest shelf, and account rules
 
 These hard rules apply on every path. The linked guides hold the full protocol.
@@ -266,7 +275,9 @@ draft" / "방금 설명한 원리를 메모 초안 하나로 저장해 줘."
 ## Create the drafts
 
 After consent and a successful connection check, call
-`create_knowledge_bundle_drafts` with only the selected material, written by
+`create_knowledge_bundle_drafts` (or, in an MCP Apps host,
+`review_knowledge_bundle_candidates` as described above) with only the
+selected material, written by
 the rules above. A request to create both atomic memos and flashcards
 authorizes both formats; otherwise do not create duplicate formats or extra
 bundles just to reach a target count.
@@ -287,12 +298,33 @@ both a memo and a flashcard; by default create only the concept.
 
 ## Confirm the result without duplicating it
 
+Report where the knowledge actually went, only from a real result: "saved to
+My Knowledge" or "sent to Candidate Inbox for review". Never assume either.
+
 Read the real tool response. A successful bundle response has `status:
 "pending"`, `batch_id`, `bundle_count`, `created`, and `review_path`;
 `create_card_drafts` uses `draft_count` instead. Check that the count matches
-the submitted selection. Report that the drafts are private and pending, give
-the returned count and review path on `https://www.memostem.com`, and do not
-describe them as approved, canonical, published, or added to practice.
+the submitted selection. Report that the drafts are private and pending in
+Candidate Inbox, give the returned count and review path on
+`https://www.memostem.com`, and do not describe them as approved, canonical,
+published, or added to practice. Guest shelf cards are likewise never in My
+Knowledge.
+
+After a picker Add click, the picker itself shows the outcome. A
+`confirm_knowledge_bundle_selection` result with `status: "approved"` means
+`approved_count` items were saved to My Knowledge; `"partial"` means
+`approved_count` were saved and `pending_count` wait in Candidate Inbox;
+`"pending"` means all of them wait in Candidate Inbox. `failed_count` items
+hit an unexpected approval error and stay pending in Candidate Inbox; the
+picker offers a retry for them on the same operation, and the person can also
+review them in the Inbox. A picker without a selection token saves through
+`create_knowledge_bundle_drafts`, which is always pending. The picker can also
+use that path if the host rejects the confirm call before it runs and no
+earlier confirm attempt for the operation could have executed. Where the host
+supports it, the picker then adds a "MemoStem picker result" note to your
+context with the status, the My Knowledge and Inbox counts, and links; report
+from that note. If no such note or result reached you, tell the person to check
+the picker's message or links rather than claiming either outcome.
 
 If `created` is false, report the existing batch rather than new drafts. For a
 timeout or uncertain result, retry only with the same provider, `request_id`,

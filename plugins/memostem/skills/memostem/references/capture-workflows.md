@@ -32,15 +32,44 @@ connection check. It validates and previews candidates without saving them.
 Use the same typed-bundle rules below and begin with no selection.
 
 In an MCP Apps-capable host, the person checks candidates and clicks Add. That
-click is consent to create only the checked private pending drafts; do not ask
-for a second chat confirmation or call a creation tool again after the App
-saves. Read the actual result and direct them to the returned Inbox for review
-and approval. Previewing candidates alone is never a successful save.
+click is consent to save only the checked candidates; do not ask for a second
+chat confirmation or call a creation tool again after the App saves. When the
+server issued a selection token with the rendered picker, the App calls the
+app-only `confirm_knowledge_bundle_selection` tool and the checked items go
+straight to My Knowledge, except any that the normal approval checks decline,
+which stay pending in Candidate Inbox. Without a token (for example a host that
+does not forward result `_meta` to the view), or when the host rejects the
+app-only tool as unknown before the server runs it and no earlier confirm
+attempt for the operation could have executed, the App calls
+`create_knowledge_bundle_drafts` and every checked item waits in Candidate
+Inbox. When a confirm attempt may have run, the picker locks the selection on
+an unresolved result. Retrying resends the same operation without creating a
+second batch.
+Never call `confirm_knowledge_bundle_selection` yourself; it is not a model
+tool and rejects calls without the picker's signed token.
 
-If the host does not render the App, show the returned numbered candidates,
-ask which to keep, and create only that selection after a clear reply. For a
-direct request to save already named material, proceed with the creation path
-below; an extra selection step is unnecessary.
+The picker shows the actual outcome with links to My Knowledge or Candidate
+Inbox. On hosts that support model context updates it also gives you a
+"MemoStem picker result" note with `status`, the My Knowledge count, the Inbox
+count, and links. Report "saved to My Knowledge" or "sent to Candidate Inbox
+for review" only from that note or a result you actually saw (`status`
+`approved`, `partial`, or `pending` with `approved_count`, `pending_count`,
+and `failed_count`; each entry in `candidates` is `approved`, `pending`, or
+`failed`, and a failed item stays pending in Candidate Inbox and keeps a
+retry action in the picker); otherwise point the person to the picker's message. Previewing candidates alone is never a
+successful save.
+
+Because only the picker can save straight to My Knowledge, prefer the picker
+in an MCP Apps host even for a direct request to save already named material:
+show those candidates, already identified, and let the person confirm with Add.
+If the host does not render the App, or the person says no picker appeared,
+show the returned numbered candidates, ask which to keep, and create only that
+selection after a clear reply; for a direct request to save already named
+material in a text-only host, proceed with the creation path below without an
+extra selection step. Drafts created this way stay pending in Candidate Inbox.
+
+Keep each picker review within 728 KiB of normalized UTF-8 JSON. Split larger
+reviews into smaller requests and save only the selected candidates in each.
 
 ## Make the selected idea stand alone
 
