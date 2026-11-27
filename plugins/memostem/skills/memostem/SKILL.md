@@ -317,10 +317,10 @@ After a picker Add click, the picker itself shows the outcome. A
 `"pending"` means all of them wait in Candidate Inbox. `failed_count` items
 hit an unexpected approval error and stay pending in Candidate Inbox; the
 picker offers a retry for them on the same operation, and the person can also
-review them in the Inbox. A
-picker without a
-selection token, or whose host rejects the app-only tool, saves through
-`create_knowledge_bundle_drafts`, which is always pending. Where the host
+review them in the Inbox. A picker without a selection token saves through
+`create_knowledge_bundle_drafts`, which is always pending. The picker can also
+use that path if the host rejects the confirm call before it runs and no
+earlier confirm attempt for the operation could have executed. Where the host
 supports it, the picker then adds a "MemoStem picker result" note to your
 context with the status, the My Knowledge and Inbox counts, and links; report
 from that note. If no such note or result reached you, tell the person to check

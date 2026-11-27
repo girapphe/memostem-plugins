@@ -39,11 +39,12 @@ app-only `confirm_knowledge_bundle_selection` tool and the checked items go
 straight to My Knowledge, except any that the normal approval checks decline,
 which stay pending in Candidate Inbox. Without a token (for example a host that
 does not forward result `_meta` to the view), or when the host rejects the
-app-only tool as unknown before the server runs it, the App calls
+app-only tool as unknown before the server runs it and no earlier confirm
+attempt for the operation could have executed, the App calls
 `create_knowledge_bundle_drafts` and every checked item waits in Candidate
-Inbox. A server-side failure, timeout, or lost response is shown in the picker
-as retryable, not as a fallback; a retry resends the same selection and never
-creates a second batch.
+Inbox. When a confirm attempt may have run, the picker locks the selection on
+an unresolved result. Retrying resends the same operation without creating a
+second batch.
 Never call `confirm_knowledge_bundle_selection` yourself; it is not a model
 tool and rejects calls without the picker's signed token.
 
