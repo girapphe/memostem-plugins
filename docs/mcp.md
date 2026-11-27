@@ -3,8 +3,10 @@
 MemoStem captures independently teachable general knowledge from AI conversations.
 A connected client can suggest one reusable idea at a natural stopping point,
 but MemoStem accepts only concise material a person clearly agrees to select
-from the current conversation. It saves that material as private pending drafts and
-keeps approval inside MemoStem. It does not ingest a full conversation archive.
+from the current conversation. Model tool calls save that material as private
+pending drafts and keep approval inside MemoStem; only the person's own Add
+click in the hosted candidate picker can save straight to My Knowledge. It does
+not ingest a full conversation archive.
 
 ## Endpoint and tools
 
@@ -38,8 +40,13 @@ Protected tools are exposed from the scopes the signed-in owner grants:
 - `get_draft_batch_status` with `knowledge:drafts:status`
 - `review_knowledge_bundle_candidates` with `knowledge:drafts:create`
 
-Creation tools save only private pending drafts. They do not auto-approve
-knowledge or write to the public graph. Every logged-in owner may grant the
+The hosted picker can also call the app-only
+`confirm_knowledge_bundle_selection` tool (see the next section). Hosts do not
+list it to the model, and models must never call it.
+
+Model-callable creation tools (`create_knowledge_bundle_drafts`,
+`create_card_drafts`, and the guest shelf) save only private pending drafts.
+They do not auto-approve knowledge or write to the public graph. Every logged-in owner may grant the
 separate context scope; no administrator override is required. A draft-only
 client does not receive the read tool, and a context-only client does not
 receive creation tools.
@@ -69,17 +76,35 @@ these bindings in its additive `mcp_apps` section:
 | `review_tool` | `review_knowledge_bundle_candidates` previews identified candidates without saving. |
 | `resource_uri` | The tool's `_meta.ui.resourceUri` resolves to `ui://memostem/knowledge-candidate-picker.html`. |
 | `mime_type` | The resource is served as `text/html;profile=mcp-app`. |
-| `create_tool` | Clicking Add calls `create_knowledge_bundle_drafts` through the host's MCP Apps bridge with only selected candidates. |
+| `create_tool` | When no selection token reached the picker, clicking Add calls `create_knowledge_bundle_drafts` through the host's MCP Apps bridge with only selected candidates; they wait as pending drafts in Candidate Inbox. |
 | `fallback` | `text_selection`: hosts without UI receive candidate text and wait for an explicit selection before creation. |
 
-Start with no selected items. Preview details, select the items to keep, then
-click Add. The click authorizes those private pending drafts; the assistant
-must not repeat creation or ask for another chat confirmation. The returned
-count and Candidate Inbox link describe the actual creation result. Reviewing
-candidates alone does not save them, and adding drafts does not approve
-knowledge or enroll it in practice. Host tool-approval controls still apply.
+The additive `mcp_app_selection` section records the direct-save path:
 
-The public validator rejects missing or changed UI bindings. The private
+| Contract field | Hosted behavior |
+| --- | --- |
+| `confirm_tool` | With a selection token, clicking Add calls `confirm_knowledge_bundle_selection` with only the checked candidates. |
+| `visibility` | `["app"]`: the tool is registered with `_meta.ui.visibility: ["app"]`, so MCP Apps hosts do not list it to the model. Models must never call it. |
+| `token_source` | `review_tool_result_meta`: `review_knowledge_bundle_candidates` returns a server-signed `selection_token` only in result `_meta`, never in `content` or `structuredContent`. It is bound to the owner, the review `request_id`, and the exact rendered candidates, and expires after 12 hours. A missing, forged, expired, other-owner, other-review, or altered token is rejected before anything is written. |
+| `approval` | `owner_inbox_approval_checks`: the server creates the batch with the normal draft checks, then approves each draft through the same owner approval the web and mobile Inbox use. A draft those checks decline (review flags, evidence or relations needing detailed review, quota, a stale version) stays pending. |
+| `result_statuses` | `approved` (every selected item is in My Knowledge), `partial` (some approved, the rest pending in Candidate Inbox), or `pending` (none approved). |
+| `result_fields` | `status`, `batch_id`, `created`, `bundle_count`, `approved_count`, `pending_count`, `knowledge_path` (`/my-knowledge`), `knowledge_url`, `review_path`, `review_url`, and `review_flags`. |
+| `fallback_tool` | A host that does not forward result `_meta` to the view, or a server without a signing secret, issues no token; the picker then uses `create_knowledge_bundle_drafts` and everything stays pending in Candidate Inbox. |
+
+Start with no selected items. Preview details, select the items to keep, then
+click Add. The click is the person's consent for exactly the checked items; the
+assistant must not repeat creation or ask for another chat confirmation. The
+picker shows where the items actually went: "saved to My Knowledge", "sent to
+Candidate Inbox for review", or a split of both, with matching links. The
+assistant reports only what a real tool result says; the picker does not send
+its outcome to the model, so when the assistant has not seen the result it
+points the person to the picker's message instead of guessing. Reviewing
+candidates alone does not save them, and nothing is enrolled in practice. Host
+tool-approval controls still apply.
+
+The public validator rejects missing or changed UI bindings, an app-only tool
+listed or visible to the model, and a fallback other than the pending creation
+tool. The private
 application's compatibility check verifies the bindings against the MCP server;
 its browser tests exercise picker behavior. Neither check substitutes for an
 authenticated session in each supported host. Record actual rendering,
@@ -247,8 +272,10 @@ Public catalog submission is a separate distribution path (a PR to
    EUV 원리를 메모 초안 하나로 저장해 줘." Save only that selected general
    knowledge, then report the actual pending count and review link.
 4. If choosing candidates, start with no selection. An MCP Apps Add click saves
-   only checked candidates; never create them again afterward. Without Apps,
-   show the numbered result and await explicit text selection.
+   only checked candidates, straight to My Knowledge when the picker received a
+   selection token and otherwise as pending drafts; never create them again
+   afterward. Without Apps, show the numbered result and await explicit text
+   selection; those drafts stay pending in Candidate Inbox.
 5. Review/approve in MemoStem, then connect another host to the same owner and
    retrieve the approved item. No raw conversation crosses between hosts.
 
@@ -410,7 +437,9 @@ listing are separate distribution states.
 - Treat context reads as owner-scoped retrieval, not permission to enumerate
   another user's IDs or bypass lifecycle filters.
 - Draft creation is not approval. Review, edit, merge, update, ignore, or save
-  every candidate in MemoStem.
+  every pending candidate in MemoStem. The only exception is the person's own
+  Add click in the hosted picker, which the server verifies with a signed
+  selection token before approving through the normal owner checks.
 - The plugin repository contains only connection metadata and workflow
   instructions. The hosted private application enforces authentication,
   authorization, owner scoping, rate limits, and persistence.

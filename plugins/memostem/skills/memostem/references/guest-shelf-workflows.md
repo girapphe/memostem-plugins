@@ -23,7 +23,9 @@ arguments. Never quote, summarize, log, display, or put it in a URL. Only the
 separate short-lived `review_url` is meant to be shared with the person. It
 opens a mobile or desktop web confirmation screen before the read-only shelf.
 Report the actual `persisted`, `card_count`, `remaining_capacity`, and
-`expires_at`. Do not call a guest card approved or saved to an account.
+`expires_at`. Do not call a guest card approved, saved to an account, or in My
+Knowledge. Guest capture has no picker or direct-save path; every guest card
+stays pending until the owner connects and reviews it.
 
 ## Reopen the shelf
 

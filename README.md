@@ -106,10 +106,15 @@ retrieval rules on every host.
   so I can choose which to keep.”
 
 In an MCP Apps-capable host with a connected account, check candidates and click
-Add. That click creates only the selected private pending drafts; no second chat
-confirmation is needed. If the host shows a text list instead, reply with the
-candidates to keep. Then open Candidate Inbox to read, edit, and approve them.
-Previewing or adding drafts does not approve knowledge or enroll it in practice.
+Add. That click saves only the selected items, straight to My Knowledge where
+the host supports it; anything that needs another look, or every item on a host
+that does not pass the picker its selection token, waits in Candidate Inbox. The
+picker tells you which happened, and no second chat confirmation is needed. If
+the host shows a text list instead, reply with the candidates to keep; those
+become pending drafts to read, edit, and approve in Candidate Inbox. Previewing
+does not save anything, and nothing is enrolled in practice. The assistant
+reports only the result it actually received and never calls the picker's
+app-only save tool itself.
 The picker UI is served by the hosted MCP server; see the
 [MCP Apps contract and host requirements](docs/mcp.md#interactive-candidate-picker-mcp-apps).
 
@@ -285,7 +290,11 @@ private pending review after consent. `validate_knowledge_bundle` and
   `knowledge_scope: "general_knowledge"`.
 - `review_knowledge_bundle_candidates`: present a bounded candidate selection
   before creation; an MCP Apps Add action or an explicit text selection passes
-  only the chosen candidates to draft creation.
+  only the chosen candidates on. In the picker, Add calls the app-only
+  `confirm_knowledge_bundle_selection` (never listed to or called by the model)
+  with a server-signed selection token, saving the checked items to My
+  Knowledge through the normal approval checks; without a token it falls back
+  to pending draft creation.
 - `create_card_drafts`: compatible concept-card draft creation.
 - `get_draft_batch_status`: with `knowledge:drafts:status`, read whether each
   submitted draft is still pending or was approved, merged, updated, or ignored
@@ -300,7 +309,7 @@ was permanently deleted. No context response contains raw conversation history.
 
 An optional `resolution_proposal` contains a complete proposed final card,
 target version, source item IDs, change summary, and reason. It is never a
-partial patch or a completed merge. Draft creation cannot approve knowledge, publish to the public graph, or retain
+partial patch or a completed merge. Model-called draft creation cannot approve knowledge, publish to the public graph, or retain
 a conversation transcript. Question-and-answer cards use answered `question`
 bundles; they do not automatically enroll in practice. See the
 [working payload example](plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json)

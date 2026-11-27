@@ -133,6 +133,31 @@ assert.deepEqual(compatibilityContract, {
     create_tool: 'create_knowledge_bundle_drafts',
     fallback: 'text_selection',
   },
+  // Additive: the picker's Add click saves straight to My Knowledge through an
+  // app-only tool gated by a server-signed selection token. Without the token
+  // the picker keeps using mcp_apps.create_tool, which stays pending.
+  mcp_app_selection: {
+    confirm_tool: 'confirm_knowledge_bundle_selection',
+    visibility: ['app'],
+    token_source: 'review_tool_result_meta',
+    approval: 'owner_inbox_approval_checks',
+    result_statuses: ['approved', 'partial', 'pending'],
+    result_fields: [
+      'status',
+      'batch_id',
+      'created',
+      'bundle_count',
+      'approved_count',
+      'pending_count',
+      'knowledge_path',
+      'knowledge_url',
+      'review_path',
+      'review_url',
+      'review_flags',
+    ],
+    knowledge_path: '/my-knowledge',
+    fallback_tool: 'create_knowledge_bundle_drafts',
+  },
   endpoint: mcp.mcpServers.memostem.url,
   oauth_scopes: [
     'openid',
@@ -171,6 +196,12 @@ assert.deepEqual(compatibilityContract, {
     merge_resolution_proposal: 'plugins/memostem/skills/memostem/references/merge-proposal.json',
   },
 });
+const appSelection = compatibilityContract.mcp_app_selection;
+assert.equal(appSelection.fallback_tool, compatibilityContract.mcp_apps.create_tool, 'picker fallback must be the pending creation tool');
+for (const [label, tools] of [['required', compatibilityContract.required_tools], ['anonymous', compatibilityContract.anonymous_tools]]) {
+  assert.equal(tools.includes(appSelection.confirm_tool), false, `app-only ${appSelection.confirm_tool} must not be a ${label} model tool`);
+}
+assert.equal(appSelection.visibility.includes('model'), false, `${appSelection.confirm_tool} must never be visible to the model`);
 for (const [toolName, fixturePath] of Object.entries(compatibilityContract.fixtures)) {
   assert.ok(compatibilityContract.required_tools.includes(toolName), `${toolName} fixture must name a required tool`);
   const fixtureMetadata = await lstat(path.join(root, fixturePath));
@@ -304,6 +335,17 @@ for (const requiredContract of [
 ]) {
   assert.ok(proactiveCaptureSkill.includes(requiredContract), `capture skill must describe ${requiredContract}`);
 }
+// The picker's direct save is app-only: the skill and guide must forbid model
+// calls and require reporting the actual destination from the result.
+assert.ok(
+  proactiveCaptureSkill.includes(`Never call\n\`${appSelection.confirm_tool}\` yourself`),
+  'capture skill must forbid model calls to the app-only confirm tool',
+);
+for (const destination of ['saved to\nMy Knowledge', 'sent to Candidate Inbox for review', 'Never assume either']) {
+  assert.ok(proactiveCaptureSkill.includes(destination), `capture skill must report the actual destination: ${destination}`);
+}
+assert.ok(connectionGuide.includes(appSelection.confirm_tool), 'connection guide must document the app-only confirm tool');
+assert.match(connectionGuide, /Models must never call it/u, 'connection guide must forbid model calls to the confirm tool');
 const captureExample = await readJson('plugins/memostem/skills/memostem/references/atomic-memo-flashcard.json');
 assert.deepEqual(captureExample.bundles.map((bundle) => bundle.knowledge_type), ['concept', 'question']);
 const mergeProposalExample = await readJson('plugins/memostem/skills/memostem/references/merge-proposal.json');
