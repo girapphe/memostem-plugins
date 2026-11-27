@@ -315,8 +315,9 @@ After a picker Add click, the picker itself shows the outcome. A
 `approved_count` items were saved to My Knowledge; `"partial"` means
 `approved_count` were saved and `pending_count` wait in Candidate Inbox;
 `"pending"` means all of them wait in Candidate Inbox. `failed_count` items
-hit an unexpected approval error and are still pending; the person can retry
-in the picker. A picker without a
+hit an unexpected approval error and stay pending in Candidate Inbox, where the
+person can review and approve them; do not promise a retry in the picker. A
+picker without a
 selection token, or whose host rejects the app-only tool, saves through
 `create_knowledge_bundle_drafts`, which is always pending. Where the host
 supports it, the picker then adds a "MemoStem picker result" note to your

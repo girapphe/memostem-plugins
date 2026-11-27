@@ -53,8 +53,8 @@ count, and links. Report "saved to My Knowledge" or "sent to Candidate Inbox
 for review" only from that note or a result you actually saw (`status`
 `approved`, `partial`, or `pending` with `approved_count`, `pending_count`,
 and `failed_count`; each entry in `candidates` is `approved`, `pending`, or
-`failed`, and a failed item is still pending and can be retried in the
-picker); otherwise point the person to the picker's message. Previewing candidates alone is never a
+`failed`, and a failed item stays pending in Candidate Inbox for the person
+to review); otherwise point the person to the picker's message. Previewing candidates alone is never a
 successful save.
 
 Because only the picker can save straight to My Knowledge, prefer the picker
