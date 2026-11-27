@@ -39,10 +39,10 @@ app-only `confirm_knowledge_bundle_selection` tool and the checked items go
 straight to My Knowledge, except any that the normal approval checks decline,
 which stay pending in Candidate Inbox. Without a token (for example a host that
 does not forward result `_meta` to the view), or when the host rejects the
-app-only tool before the server runs it, the App calls
+app-only tool as unknown before the server runs it, the App calls
 `create_knowledge_bundle_drafts` and every checked item waits in Candidate
-Inbox. A server-side failure is shown in the picker as retryable, not as a
-fallback.
+Inbox. A server-side failure, timeout, or lost response is shown in the picker
+as retryable, not as a fallback.
 Never call `confirm_knowledge_bundle_selection` yourself; it is not a model
 tool and rejects calls without the picker's signed token.
 
@@ -51,8 +51,10 @@ Inbox. On hosts that support model context updates it also gives you a
 "MemoStem picker result" note with `status`, the My Knowledge count, the Inbox
 count, and links. Report "saved to My Knowledge" or "sent to Candidate Inbox
 for review" only from that note or a result you actually saw (`status`
-`approved`, `partial`, or `pending` with `approved_count` and
-`pending_count`); otherwise point the person to the picker's message. Previewing candidates alone is never a
+`approved`, `partial`, or `pending` with `approved_count`, `pending_count`,
+and `failed_count`; each entry in `candidates` is `approved`, `pending`, or
+`failed`, and a failed item is still pending and can be retried in the
+picker); otherwise point the person to the picker's message. Previewing candidates alone is never a
 successful save.
 
 Because only the picker can save straight to My Knowledge, prefer the picker

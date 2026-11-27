@@ -149,6 +149,8 @@ assert.deepEqual(compatibilityContract, {
       'bundle_count',
       'approved_count',
       'pending_count',
+      'failed_count',
+      'candidates',
       'knowledge_path',
       'knowledge_url',
       'review_path',
