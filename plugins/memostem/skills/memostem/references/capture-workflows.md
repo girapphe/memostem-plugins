@@ -68,6 +68,9 @@ selection after a clear reply; for a direct request to save already named
 material in a text-only host, proceed with the creation path below without an
 extra selection step. Drafts created this way stay pending in Candidate Inbox.
 
+Keep each picker review within 728 KiB of normalized UTF-8 JSON. Split larger
+reviews into smaller requests and save only the selected candidates in each.
+
 ## Make the selected idea stand alone
 
 - Name the concept in the title and central question. Replace phrases such as
