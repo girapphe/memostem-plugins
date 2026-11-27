@@ -315,10 +315,12 @@ After a picker Add click, the picker itself shows the outcome. A
 `approved_count` items were saved to My Knowledge; `"partial"` means
 `approved_count` were saved and `pending_count` wait in Candidate Inbox;
 `"pending"` means all of them wait in Candidate Inbox. A picker without a
-selection token saves through `create_knowledge_bundle_drafts`, which is
-always pending. The picker does not normally send its result to you: if you
-have not seen it, tell the person to check the picker's message or links
-rather than claiming either outcome.
+selection token, or whose host rejects the app-only tool, saves through
+`create_knowledge_bundle_drafts`, which is always pending. Where the host
+supports it, the picker then adds a "MemoStem picker result" note to your
+context with the status, the My Knowledge and Inbox counts, and links; report
+from that note. If no such note or result reached you, tell the person to check
+the picker's message or links rather than claiming either outcome.
 
 If `created` is false, report the existing batch rather than new drafts. For a
 timeout or uncertain result, retry only with the same provider, `request_id`,

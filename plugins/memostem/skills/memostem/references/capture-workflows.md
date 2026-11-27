@@ -38,16 +38,21 @@ server issued a selection token with the rendered picker, the App calls the
 app-only `confirm_knowledge_bundle_selection` tool and the checked items go
 straight to My Knowledge, except any that the normal approval checks decline,
 which stay pending in Candidate Inbox. Without a token (for example a host that
-does not forward result `_meta` to the view), the App calls
-`create_knowledge_bundle_drafts` and every checked item waits in Candidate Inbox.
+does not forward result `_meta` to the view), or when the host rejects the
+app-only tool before the server runs it, the App calls
+`create_knowledge_bundle_drafts` and every checked item waits in Candidate
+Inbox. A server-side failure is shown in the picker as retryable, not as a
+fallback.
 Never call `confirm_knowledge_bundle_selection` yourself; it is not a model
 tool and rejects calls without the picker's signed token.
 
 The picker shows the actual outcome with links to My Knowledge or Candidate
-Inbox. Report "saved to My Knowledge" or "sent to Candidate Inbox for review"
-only from a result you actually saw (`status` `approved`, `partial`, or
-`pending` with `approved_count` and `pending_count`); otherwise point the
-person to the picker's message. Previewing candidates alone is never a
+Inbox. On hosts that support model context updates it also gives you a
+"MemoStem picker result" note with `status`, the My Knowledge count, the Inbox
+count, and links. Report "saved to My Knowledge" or "sent to Candidate Inbox
+for review" only from that note or a result you actually saw (`status`
+`approved`, `partial`, or `pending` with `approved_count` and
+`pending_count`); otherwise point the person to the picker's message. Previewing candidates alone is never a
 successful save.
 
 Because only the picker can save straight to My Knowledge, prefer the picker

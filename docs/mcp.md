@@ -89,16 +89,19 @@ The additive `mcp_app_selection` section records the direct-save path:
 | `approval` | `owner_inbox_approval_checks`: the server creates the batch with the normal draft checks, then approves each draft through the same owner approval the web and mobile Inbox use. A draft those checks decline (review flags, evidence or relations needing detailed review, quota, a stale version) stays pending. |
 | `result_statuses` | `approved` (every selected item is in My Knowledge), `partial` (some approved, the rest pending in Candidate Inbox), or `pending` (none approved). |
 | `result_fields` | `status`, `batch_id`, `created`, `bundle_count`, `approved_count`, `pending_count`, `knowledge_path` (`/my-knowledge`), `knowledge_url`, `review_path`, `review_url`, and `review_flags`. |
-| `fallback_tool` | A host that does not forward result `_meta` to the view, or a server without a signing secret, issues no token; the picker then uses `create_knowledge_bundle_drafts` and everything stays pending in Candidate Inbox. |
+| `fallback_tool` | The picker uses `create_knowledge_bundle_drafts`, and everything stays pending in Candidate Inbox, only when it has no token (a host that does not forward result `_meta` to the view, or a server without a signing secret) or when the host rejects the app-only tool before the server runs it (for example a published directory app that still serves the tool list captured at review time). A result the server produced (marked with `_meta["memostem/server_result"]`) or an ambiguous timeout is shown as a retryable failure instead, and the fallback reuses the same selection-derived `request_id`, so one selection never becomes two batches. |
 
 Start with no selected items. Preview details, select the items to keep, then
 click Add. The click is the person's consent for exactly the checked items; the
 assistant must not repeat creation or ask for another chat confirmation. The
 picker shows where the items actually went: "saved to My Knowledge", "sent to
-Candidate Inbox for review", or a split of both, with matching links. The
-assistant reports only what a real tool result says; the picker does not send
-its outcome to the model, so when the assistant has not seen the result it
-points the person to the picker's message instead of guessing. Reviewing
+Candidate Inbox for review", or a split of both, with matching links. After
+a successful save, a host that supports MCP Apps model context updates also receives
+a short picker result for the model: the status, the My Knowledge and Inbox
+counts, and their links, with no card content. The assistant reports only what
+such a result or a real tool result says; on a host without model-context
+support, or before the result arrives, it points the person to the picker's
+message instead of guessing. Reviewing
 candidates alone does not save them, and nothing is enrolled in practice. Host
 tool-approval controls still apply.
 
