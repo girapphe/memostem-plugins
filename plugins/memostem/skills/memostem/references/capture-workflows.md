@@ -42,7 +42,8 @@ does not forward result `_meta` to the view), or when the host rejects the
 app-only tool as unknown before the server runs it, the App calls
 `create_knowledge_bundle_drafts` and every checked item waits in Candidate
 Inbox. A server-side failure, timeout, or lost response is shown in the picker
-as retryable, not as a fallback.
+as retryable, not as a fallback; a retry resends the same selection and never
+creates a second batch.
 Never call `confirm_knowledge_bundle_selection` yourself; it is not a model
 tool and rejects calls without the picker's signed token.
 
@@ -53,8 +54,8 @@ count, and links. Report "saved to My Knowledge" or "sent to Candidate Inbox
 for review" only from that note or a result you actually saw (`status`
 `approved`, `partial`, or `pending` with `approved_count`, `pending_count`,
 and `failed_count`; each entry in `candidates` is `approved`, `pending`, or
-`failed`, and a failed item stays pending in Candidate Inbox for the person
-to review); otherwise point the person to the picker's message. Previewing candidates alone is never a
+`failed`, and a failed item stays pending in Candidate Inbox and keeps a
+retry action in the picker); otherwise point the person to the picker's message. Previewing candidates alone is never a
 successful save.
 
 Because only the picker can save straight to My Knowledge, prefer the picker
